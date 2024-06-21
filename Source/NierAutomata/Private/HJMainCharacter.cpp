@@ -57,13 +57,13 @@ void AHJMainCharacter::BeginPlay()
 	// Pet 엑터가 생성되는 위치 지정 
 	AHJPet* pet = GetWorld()->SpawnActor<AHJPet>(petFactory);
 	pet->SetActorLocation(petPos->GetComponentLocation());
-
 }
 
 // Called every frame
 void AHJMainCharacter::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
+
 	// 방향 부여 
 	FVector diru = FVector::ForwardVector * u;
 	FVector dirr = FVector::RightVector * r;

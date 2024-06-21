@@ -48,6 +48,6 @@ public:
 	float u;
 	float r;
 
-	int speed = 800;
+	float speed = 800;
 
 };

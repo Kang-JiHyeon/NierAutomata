@@ -4,16 +4,16 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
-#include "HJPet.generated.h"
+#include "HJPetBullet.generated.h"
 
 UCLASS()
-class NIERAUTOMATA_API AHJPet : public AActor
+class NIERAUTOMATA_API AHJPetBullet : public AActor
 {
 	GENERATED_BODY()
 	
 public:	
 	// Sets default values for this actor's properties
-	AHJPet();
+	AHJPetBullet();
 
 protected:
 	// Called when the game starts or when spawned
@@ -29,21 +29,6 @@ public:
 	UPROPERTY(EditAnywhere)
 	class UStaticMeshComponent* compMesh;
 
-	UPROPERTY(EditAnywhere)
-	USceneComponent* firePos;
-
-	UPROPERTY(EditAnywhere)
-	TSubclassOf<class AHJPetBullet> bulletFactory;
-
-
-	float speed = 500;
-	// ≈∏∞Ÿ ø¢≈Õ ¡ˆ¡§ 
-	UPROPERTY(EditAnywhere)
-	class AActor* target;
-
-	float currTime = 0;
-
-	UPROPERTY(EditAnywhere)
-	float createTime = 1;
+	float speed = 700;
 
 };
