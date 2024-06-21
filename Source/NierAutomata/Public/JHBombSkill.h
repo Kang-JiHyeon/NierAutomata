@@ -4,16 +4,16 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
-#include "JHBomb.generated.h"
+#include "JHBombSkill.generated.h"
 
 UCLASS()
-class NIERAUTOMATA_API AJHBomb : public AActor
+class NIERAUTOMATA_API AJHBombSkill : public AActor
 {
 	GENERATED_BODY()
 	
 public:	
 	// Sets default values for this actor's properties
-	AJHBomb();
+	AJHBombSkill();
 
 protected:
 	// Called when the game starts or when spawned
@@ -22,17 +22,26 @@ protected:
 public:	
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
-	virtual void NotifyActorBeginOverlap(AActor* OtherActor) override;
 
 	UPROPERTY(EditAnywhere)
-	class USphereComponent* sphereComp;
+	class UCapsuleComponent* capsuleComp;
+
 	UPROPERTY(EditAnywhere)
 	class UStaticMeshComponent* meshComp;
 
 	UPROPERTY(EditAnywhere)
-	float force = 10;
+	TSubclassOf<class AJHBomb> bombFactory;
+
+	//UPROPERTY(EditAnywhere)
+	//class USceneComponent* firePosisions;
+
+	UPROPERTY(EditAnywhere)
+	TArray<class USceneComponent*> firePositions;
 
 
-public:
-	void Fire();
+	UPROPERTY(EditAnywhere)
+	int bombCount = 10;
+
+
+
 };
