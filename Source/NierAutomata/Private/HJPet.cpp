@@ -63,12 +63,18 @@ void AHJPet::BeginPlay()
 void AHJPet::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
-	FVector dir = target->GetActorLocation() + FVector(-200,0,300) - GetActorLocation();
-	dir.Normalize();
-	// *중요한 문제* 거리가 충족되었을 때, 계속해서 충돌하는 오류 발생 // if 문으로 거리 설정 필요 
-	FVector p0 = GetActorLocation();
-	FVector vt = dir * speed * DeltaTime;
-	SetActorLocation(p0 + vt);
+	
+	// 타겟을따라가야함
+	FVector dir = target->GetActorLocation() + FVector(-200, 0, 300) - GetActorLocation();
+	// 만약에 거리가 멀경우
+	if (dir.Length() > 20)
+	{
+		dir.Normalize();
+		FVector p0 = GetActorLocation();
+		FVector vt = dir * speed * DeltaTime;
+		SetActorLocation(p0 + vt);
+	}
+	// *중요한 문제* 거리가 충족되었을 때, 계속해서 충돌하는 오류 발생 // if 문으로 거리 설정 필요
 
 	// 1초마다 Bullet이 자동으로 생성되도록 설정 
 	currTime += DeltaTime;

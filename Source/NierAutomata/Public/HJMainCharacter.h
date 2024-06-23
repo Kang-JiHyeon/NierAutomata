@@ -41,13 +41,20 @@ public:
 	UPROPERTY(EditAnywhere)
 	TSubclassOf<class AHJPet> petFactory;
 
+	// 캐릭터 이동 
 	void UpDown(float value);
 	void LeftRight(float value);
 	void InputJump();
 
+	// 카메라 이동 
+	void Turn(float value);
+	void Lookup(float value);
+
 	float u;
 	float r;
 
-	float speed = 800;
+	//float speed = 800;
+
+	
 
 };

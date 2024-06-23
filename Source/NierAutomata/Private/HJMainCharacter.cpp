@@ -20,8 +20,14 @@ AHJMainCharacter::AHJMainCharacter()
 	SpringArm->SetRelativeLocation(FVector(0, 0, 150));
 	SpringArm->SetRelativeRotation(FRotator(-15.0f, 0.0f, 0.0f));
 	SpringArm->TargetArmLength = 400;
+	SpringArm->bUsePawnControlRotation = true;
 	Camera->SetupAttachment(SpringArm);
-	
+
+	// 카메라 회전 부여 
+	/*Camera->bUsePawnControlRotation = false;*/
+	/*bUseControllerRotationYaw = true;*/
+	SpringArm->bUsePawnControlRotation = true;
+
 	// 캐릭터에 스케레탈 메쉬 부여 
 	ConstructorHelpers::FObjectFinder<USkeletalMesh>
 		tempMesh(TEXT("/Script/Engine.SkeletalMesh'/Engine/Tutorial/SubEditors/TutorialAssets/Character/TutorialTPP.TutorialTPP'"));
@@ -54,6 +60,24 @@ void AHJMainCharacter::BeginPlay()
 {
 	Super::BeginPlay();
 
+	// 애니메이션 에셋 로딩 Case1. 
+	/*GetMesh()->SetAnimationMode(EAnimationMode::AnimationBlueprint);
+
+	ConstructorHelpers::FClassFinder<UAnimInstance>
+		HJAnim(TEXT("/Script/Engine.AnimBlueprint'/Game/Animation/HJAnimation.HJAnimation_C'"));
+	if (HJAnim.Succeeded())
+	{
+		GetMesh()->SetAnimInstanceClass(HJAnim.Class);
+	}*/
+
+	// 애니메이션 에셋 로딩 Case2.
+	GetMesh()->SetAnimationMode(EAnimationMode::AnimationSingleNode);
+	UAnimationAsset* AnimAsset = LoadObject<UAnimationAsset>
+		(nullptr, TEXT("/Script/Engine.AnimSequence'/Game/Animation/WarriorRun.WarriorRun'"));
+	if (AnimAsset != nullptr)
+	{
+		GetMesh()->PlayAnimation(AnimAsset, true);
+	}
 	// Pet 엑터가 생성되는 위치 지정 
 	AHJPet* pet = GetWorld()->SpawnActor<AHJPet>(petFactory);
 	pet->SetActorLocation(petPos->GetComponentLocation());
@@ -65,13 +89,13 @@ void AHJMainCharacter::Tick(float DeltaTime)
 	Super::Tick(DeltaTime);
 
 	// 방향 부여 
-	FVector diru = FVector::ForwardVector * u;
+	/*FVector diru = FVector::ForwardVector * u;
 	FVector dirr = FVector::RightVector * r;
 	FVector dir = diru + dirr;
 	dir.Normalize();
 	FVector p0 = GetActorLocation();
 	FVector dt = dir * speed * DeltaTime;
-	SetActorLocation(p0 + dt);
+	SetActorLocation(p0 + dt);*/
 
 }
 
@@ -83,20 +107,34 @@ void AHJMainCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCom
 	PlayerInputComponent->BindAxis(TEXT("UpDown"), this, &AHJMainCharacter::UpDown);
 	PlayerInputComponent->BindAxis(TEXT("LeftRight"), this, &AHJMainCharacter::LeftRight);
 	PlayerInputComponent->BindAction(TEXT("Jump"), IE_Pressed, this, &AHJMainCharacter::InputJump);
+	// 카메라 컴포넌트 회전 움직임 부여 
+	PlayerInputComponent->BindAxis(TEXT("Turn"), this, &AHJMainCharacter::Turn);
+	PlayerInputComponent->BindAxis(TEXT("Lookup"), this, &AHJMainCharacter::Lookup);
 }
 
 void AHJMainCharacter::UpDown(float value)
 {
-	u = value;
+	AddMovementInput(GetActorForwardVector(), value);
+	/*u = value;*/
 }
 
 void AHJMainCharacter::LeftRight(float value)
 {
-	r = value;
+	AddMovementInput(GetActorRightVector(), value);
+	/*r = value;*/
 }
 
 void AHJMainCharacter::InputJump()
 {
 	Jump();
+}
+
+void AHJMainCharacter::Turn(float value)
+{
+	AddControllerYawInput(value);
+}
+void AHJMainCharacter::Lookup(float value)
+{
+	AddControllerPitchInput(value);
 }
 
