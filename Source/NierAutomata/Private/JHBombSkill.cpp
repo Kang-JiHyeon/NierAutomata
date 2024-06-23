@@ -38,18 +38,26 @@ AJHBombSkill::AJHBombSkill()
 	if (tempBomb.Succeeded())
 		bombFactory = tempBomb.Class;
 
+	firePos = CreateDefaultSubobject<USceneComponent>(TEXT("FirePos"));
+	firePos->SetupAttachment(capsuleComp);
+	firePos->SetRelativeRotation(FRotator(45, 0, 360 / 1));
+
 	// 발사 위치
-	for (int i = 0; i < bombCount; i++) {
+	for (int i = 1; i <= bombCount; i++) {
 		//firePositions.Add(CreateDefaultSubobject<USceneComponent>(TEXT("FirePos")));
-		UE_LOG(LogTemp, Warning, TEXT("sdfsdf"));
+
+		//firePos->SetupAttachment(capsuleComp);
+		//firePos->SetRelativeRotation(FRotator(45, 0, 360 / i));
+
+		//UE_LOG(LogTemp, Warning, TEXT("firePos %d"), i);
 		//firePositions.Emplace(CreateDefaultSubobject<USceneComponent>(TEXT("FirePos %d"), i));
 	}
 
-	for (int i = 0; i < firePositions.Num(); i++) {
+	//for (int i = 0; i < firePositions.Num(); i++) {
 
-		firePositions[i]->SetupAttachment(capsuleComp);
-		firePositions[i]->SetRelativeRotation(FRotator(45, 0, 360 / i));
-	}
+	//	firePositions[i]->SetupAttachment(capsuleComp);
+	//	firePositions[i]->SetRelativeRotation(FRotator(45, 0, 360 / i));
+	//}
 
 
 }
@@ -58,6 +66,10 @@ AJHBombSkill::AJHBombSkill()
 void AJHBombSkill::BeginPlay()
 {
 	Super::BeginPlay();
+
+	GetWorld()->SpawnActor<AJHBomb>(bombFactory, firePos->GetRelativeLocation(), firePos->GetRelativeRotation());
+
+	UE_LOG(LogTemp, Warning, TEXT("Fire!!"));
 	
 }
 

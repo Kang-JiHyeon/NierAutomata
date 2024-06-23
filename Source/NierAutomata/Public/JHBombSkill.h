@@ -37,6 +37,8 @@ public:
 
 	UPROPERTY(EditAnywhere)
 	TArray<class USceneComponent*> firePositions;
+	UPROPERTY(EditAnywhere)
+	class USceneComponent* firePos;
 
 
 	UPROPERTY(EditAnywhere)
