@@ -28,13 +28,14 @@ public:
 
 	// Called to bind functionality to input
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
-
+	// 카메라 위치 설정  
 	UPROPERTY(VisibleAnywhere)
 	USpringArmComponent* SpringArm;
 
 	UPROPERTY(VisibleAnywhere)
 	UCameraComponent* Camera;
 
+	// 펫 위치 설정 
 	UPROPERTY(EditAnywhere)
 	USceneComponent* petPos;
 
@@ -44,17 +45,14 @@ public:
 	// 캐릭터 이동 
 	void UpDown(float value);
 	void LeftRight(float value);
+	// 점프, 대시, 공격 
 	void InputJump();
+	void InputDash();
+	void InputAttack();
 
 	// 카메라 이동 
 	void Turn(float value);
 	void Lookup(float value);
 
-	float u;
-	float r;
-
-	//float speed = 800;
-
-	
 
 };

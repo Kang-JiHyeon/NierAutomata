@@ -1,6 +1,8 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 
+#include "GameFramework/CharacterMovementComponent.h"
+#include "HJAnimInstance2.h"
 #include "HJMainCharacter.h"
 #include "HJPet.h"
 #include "GameFramework/Character.h"
@@ -52,6 +54,18 @@ AHJMainCharacter::AHJMainCharacter()
 
 	// 점프 효과 부여 
 	JumpMaxCount = 2;
+	GetCharacterMovement()->JumpZVelocity = 800.0f;
+	// 이동속도 조정 
+	GetCharacterMovement()->MaxWalkSpeed = 600.0f;
+
+	// 애니메이션 부여 
+	GetMesh()->SetAnimationMode(EAnimationMode::AnimationBlueprint);
+	ConstructorHelpers::FClassFinder<UAnimInstance>
+		CharAnim(TEXT("/Script/Engine.AnimBlueprint'/Game/Animation/HJAnimation.HJAnimation_C'"));
+	if (CharAnim.Succeeded())
+	{
+		GetMesh()->SetAnimInstanceClass(CharAnim.Class);
+	}
 
 }
 
@@ -60,24 +74,6 @@ void AHJMainCharacter::BeginPlay()
 {
 	Super::BeginPlay();
 
-	// 애니메이션 에셋 로딩 Case1. 
-	/*GetMesh()->SetAnimationMode(EAnimationMode::AnimationBlueprint);
-
-	ConstructorHelpers::FClassFinder<UAnimInstance>
-		HJAnim(TEXT("/Script/Engine.AnimBlueprint'/Game/Animation/HJAnimation.HJAnimation_C'"));
-	if (HJAnim.Succeeded())
-	{
-		GetMesh()->SetAnimInstanceClass(HJAnim.Class);
-	}*/
-
-	// 애니메이션 에셋 로딩 Case2.
-	GetMesh()->SetAnimationMode(EAnimationMode::AnimationSingleNode);
-	UAnimationAsset* AnimAsset = LoadObject<UAnimationAsset>
-		(nullptr, TEXT("/Script/Engine.AnimSequence'/Game/Animation/WarriorRun.WarriorRun'"));
-	if (AnimAsset != nullptr)
-	{
-		GetMesh()->PlayAnimation(AnimAsset, true);
-	}
 	// Pet 엑터가 생성되는 위치 지정 
 	AHJPet* pet = GetWorld()->SpawnActor<AHJPet>(petFactory);
 	pet->SetActorLocation(petPos->GetComponentLocation());
@@ -87,15 +83,6 @@ void AHJMainCharacter::BeginPlay()
 void AHJMainCharacter::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
-
-	// 방향 부여 
-	/*FVector diru = FVector::ForwardVector * u;
-	FVector dirr = FVector::RightVector * r;
-	FVector dir = diru + dirr;
-	dir.Normalize();
-	FVector p0 = GetActorLocation();
-	FVector dt = dir * speed * DeltaTime;
-	SetActorLocation(p0 + dt);*/
 
 }
 
@@ -107,28 +94,41 @@ void AHJMainCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCom
 	PlayerInputComponent->BindAxis(TEXT("UpDown"), this, &AHJMainCharacter::UpDown);
 	PlayerInputComponent->BindAxis(TEXT("LeftRight"), this, &AHJMainCharacter::LeftRight);
 	PlayerInputComponent->BindAction(TEXT("Jump"), IE_Pressed, this, &AHJMainCharacter::InputJump);
+	PlayerInputComponent->BindAction(TEXT("Dash"), IE_Pressed, this, &AHJMainCharacter::InputDash);
+	PlayerInputComponent->BindAction(TEXT("Attack"), IE_Pressed, this, &AHJMainCharacter::InputAttack);
 	// 카메라 컴포넌트 회전 움직임 부여 
 	PlayerInputComponent->BindAxis(TEXT("Turn"), this, &AHJMainCharacter::Turn);
 	PlayerInputComponent->BindAxis(TEXT("Lookup"), this, &AHJMainCharacter::Lookup);
 }
-
+// 움직임 구현 
 void AHJMainCharacter::UpDown(float value)
 {
 	AddMovementInput(GetActorForwardVector(), value);
-	/*u = value;*/
 }
 
 void AHJMainCharacter::LeftRight(float value)
 {
 	AddMovementInput(GetActorRightVector(), value);
-	/*r = value;*/
 }
-
+// 점프 구현 
 void AHJMainCharacter::InputJump()
 {
 	Jump();
 }
+// 대쉬 구현 
+void AHJMainCharacter::InputDash()
+{
+	GetCharacterMovement()->MaxWalkSpeed = 1200.0f;
+}
+// 공격 구현 
+void AHJMainCharacter::InputAttack()
+{
+	auto AnimInstance = Cast<UHJAnimInstance2>(GetMesh()->GetAnimInstance());
+	if (nullptr == AnimInstance) return;
 
+	AnimInstance->PlayAttackMontage();
+}
+// 카메라 회전 구현 
 void AHJMainCharacter::Turn(float value)
 {
 	AddControllerYawInput(value);

@@ -46,4 +46,8 @@ public:
 	UPROPERTY(EditAnywhere)
 	float createTime = 1;
 
+	// 카메라 이동 
+	void Turn(float value);
+	void Lookup(float value);
+
 };

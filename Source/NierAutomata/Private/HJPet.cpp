@@ -84,6 +84,6 @@ void AHJPet::Tick(float DeltaTime)
 		bullet->SetActorLocation(firePos->GetComponentLocation());
 		currTime = 0;
 	}
-
 }
+	// Character의 카메라 회전과 Pet의 카메라 회전을 같은 BindAxis로 연동 
 
