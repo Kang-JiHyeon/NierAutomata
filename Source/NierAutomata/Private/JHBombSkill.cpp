@@ -11,55 +11,43 @@ AJHBombSkill::AJHBombSkill()
  	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
 
-	capsuleComp = CreateDefaultSubobject<UCapsuleComponent>(TEXT("Capsule"));
-	SetRootComponent(capsuleComp);
+	CapsuleComp = CreateDefaultSubobject<UCapsuleComponent>(TEXT("Capsule"));
+	SetRootComponent(CapsuleComp);
 	// 크기
-	capsuleComp->SetCapsuleHalfHeight(50);
-	capsuleComp->SetCapsuleRadius(50);
+	CapsuleComp->SetCapsuleHalfHeight(50);
+	CapsuleComp->SetCapsuleRadius(50);
 	
 	// 충돌체
 	//capsuleComp->SetCollisionProfileName(TEXT("NoCollision"));
 
-	meshComp = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("Mesh"));
-	meshComp->SetupAttachment(capsuleComp);
-	meshComp->SetCollisionProfileName(TEXT("NoCollision"));
+	MeshComp = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("Mesh"));
+	MeshComp->SetupAttachment(CapsuleComp);
+	MeshComp->SetCollisionProfileName(TEXT("NoCollision"));
 
 
 	ConstructorHelpers::FObjectFinder<UStaticMesh> tempMesh(TEXT("/Script/Engine.StaticMesh'/Engine/BasicShapes/Cylinder.Cylinder'"));
 	if (tempMesh.Succeeded())
-		meshComp->SetStaticMesh(tempMesh.Object);
+		MeshComp->SetStaticMesh(tempMesh.Object);
 	//meshComp->SetRelativeLocation(FVector(0, 0, -50));
 
 	ConstructorHelpers::FObjectFinder<UMaterial> tempMat(TEXT("/Script/Engine.Material'/Engine/MapTemplates/Materials/BasicAsset02.BasicAsset02'"));
 	if (tempMat.Succeeded())
-		meshComp->SetMaterial(0, tempMat.Object);
+		MeshComp->SetMaterial(0, tempMat.Object);
 
 	ConstructorHelpers::FClassFinder<AJHBomb> tempBomb(TEXT("/Script/Engine.Blueprint'/Game/Blueprints/BP_JHBomb.BP_JHBomb_C'"));
 	if (tempBomb.Succeeded())
-		bombFactory = tempBomb.Class;
-
-	firePos = CreateDefaultSubobject<USceneComponent>(TEXT("FirePos"));
-	firePos->SetupAttachment(capsuleComp);
-	firePos->SetRelativeRotation(FRotator(45, 0, 360 / 1));
+		BombFactory = tempBomb.Class;
 
 	// 발사 위치
-	for (int i = 1; i <= bombCount; i++) {
-		//firePositions.Add(CreateDefaultSubobject<USceneComponent>(TEXT("FirePos")));
+	for (int32 i = 0; i < BombCount; i++) {
+		FString FirePosName = FString::Printf(TEXT("FirePos_%d"), i);
+		USceneComponent* TempFirePos = CreateDefaultSubobject<USceneComponent>(*FirePosName);
 
-		//firePos->SetupAttachment(capsuleComp);
-		//firePos->SetRelativeRotation(FRotator(45, 0, 360 / i));
+		TempFirePos->SetupAttachment(CapsuleComp);
+		TempFirePos->SetRelativeRotation(FRotator(50, i * (360 / BombCount), 0));
 
-		//UE_LOG(LogTemp, Warning, TEXT("firePos %d"), i);
-		//firePositions.Emplace(CreateDefaultSubobject<USceneComponent>(TEXT("FirePos %d"), i));
+		FirePositions.Add(TempFirePos);
 	}
-
-	//for (int i = 0; i < firePositions.Num(); i++) {
-
-	//	firePositions[i]->SetupAttachment(capsuleComp);
-	//	firePositions[i]->SetRelativeRotation(FRotator(45, 0, 360 / i));
-	//}
-
-
 }
 
 // Called when the game starts or when spawned
@@ -67,9 +55,18 @@ void AJHBombSkill::BeginPlay()
 {
 	Super::BeginPlay();
 
-	GetWorld()->SpawnActor<AJHBomb>(bombFactory, firePos->GetRelativeLocation(), firePos->GetRelativeRotation());
 
-	UE_LOG(LogTemp, Warning, TEXT("Fire!!"));
+	for (auto FirePos : FirePositions) {
+		//UE_LOG(LogTemp, Warning, TEXT("%s"), *FirePos->GetName());
+		UE_LOG(LogTemp, Warning, TEXT("FirePos Exist!!"));
+	}
+
+	UE_LOG(LogTemp, Warning, TEXT("Begin Play!!"));
+
+	//BombSkill();
+	
+	//BombSkill(1500);
+	//BombSkill(2000);
 	
 }
 
@@ -78,5 +75,51 @@ void AJHBombSkill::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
+	CurrTime += DeltaTime;
+
+	if (CurrTime >= SkillTime) {
+
+		CurrTime = 0;
+
+		BombSkill();
+	}
+
 }
 
+void AJHBombSkill::BombSkill()
+{
+	try
+	{
+		UE_LOG(LogTemp, Warning, TEXT("BombSkill Start!!"));
+
+		if (FirePositions.Num() <= 0) {
+			UE_LOG(LogTemp, Warning, TEXT("FirePositions null!!"));
+			return;
+		}
+
+		if (BombFactory == nullptr) {
+
+			UE_LOG(LogTemp, Warning, TEXT("BombFactory null!!"));
+			return;
+		}
+
+		for (auto FirePos : FirePositions)
+		{
+			if (FirePos == nullptr)
+			{
+				UE_LOG(LogTemp, Warning, TEXT("FirePositions[i] null!!"));
+				return;
+			}
+
+			GetWorld()->SpawnActor<AJHBomb>(BombFactory, FirePos->GetComponentLocation(), FirePos->GetComponentRotation());
+			
+			UE_LOG(LogTemp, Warning, TEXT("Spawn Bomb!!"));
+		}
+
+	}
+	catch (const std::exception&)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("BombSkill error!!"));
+	}
+
+}

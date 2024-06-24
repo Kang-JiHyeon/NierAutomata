@@ -60,7 +60,7 @@ void AJHBomb::NotifyActorBeginOverlap(AActor* OtherActor)
 {
 	Super::NotifyActorBeginOverlap(OtherActor);
 	
-	Destroy();
+	//Destroy();
 }
 
 void AJHBomb::Fire()
@@ -69,3 +69,8 @@ void AJHBomb::Fire()
 
 	//UE_LOG(LogTemp, Log, TEXT("ÆøÅº ¹ß»ç"));
 }
+
+//void AJHBomb::SetForce(float NewForce)
+//{
+//	force = NewForce;
+//}

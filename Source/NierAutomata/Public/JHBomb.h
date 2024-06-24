@@ -30,9 +30,10 @@ public:
 	class UStaticMeshComponent* meshComp;
 
 	UPROPERTY(EditAnywhere)
-	float force = 10;
+	float force = 1000;
 
 
 public:
 	void Fire();
+	//void SetForce(float newForce);
 };

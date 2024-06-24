@@ -24,26 +24,31 @@ public:
 	virtual void Tick(float DeltaTime) override;
 
 	UPROPERTY(EditAnywhere)
-	class UCapsuleComponent* capsuleComp;
+	class UCapsuleComponent* CapsuleComp;
 
 	UPROPERTY(EditAnywhere)
-	class UStaticMeshComponent* meshComp;
+	class UStaticMeshComponent* MeshComp;
 
 	UPROPERTY(EditAnywhere)
-	TSubclassOf<class AJHBomb> bombFactory;
-
-	//UPROPERTY(EditAnywhere)
-	//class USceneComponent* firePosisions;
+	TSubclassOf<class AJHBomb> BombFactory;
 
 	UPROPERTY(EditAnywhere)
-	TArray<class USceneComponent*> firePositions;
-	UPROPERTY(EditAnywhere)
-	class USceneComponent* firePos;
+	TArray<class USceneComponent*> FirePositions;
 
 
 	UPROPERTY(EditAnywhere)
-	int bombCount = 10;
+	int BombCount = 10;
 
+	float SkillTime = 1;
+	float CurrTime = 0;
+
+	float Force = 1000;
+	int32 MaxFireCount = 3;
+	int32 CurrFireCount = 0;
+
+
+private:
+	void BombSkill();
 
 
 };
