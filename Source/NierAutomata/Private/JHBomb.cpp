@@ -60,7 +60,7 @@ void AJHBomb::NotifyActorBeginOverlap(AActor* OtherActor)
 {
 	Super::NotifyActorBeginOverlap(OtherActor);
 	
-	//Destroy();
+	Destroy();
 }
 
 void AJHBomb::Fire()
