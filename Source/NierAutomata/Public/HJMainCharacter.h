@@ -25,6 +25,8 @@ protected:
 public:	
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
+	// 델리게이트 추가 
+	virtual void PostInitializeComponents() override;
 
 	// Called to bind functionality to input
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
@@ -54,5 +56,37 @@ public:
 	void Turn(float value);
 	void Lookup(float value);
 
+	// 델리게이트 기능 
+	UFUNCTION()
+	void OnAttackMontageEnded(UAnimMontage* Montage, bool bInterrupted);
 
+	// 공격콤보 구현 
+	void AttackStartComboState();
+	void AttackEndComboState();
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	bool CanNextCombo;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	bool IsComboInputOn;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	int32 CurrentCombo;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	int32 MaxCombo;
+
+	UPROPERTY(EditAnywhere)
+	bool IsAttacking;
+
+	UPROPERTY(EditAnywhere)
+	class UHJAnimInstance2* HJAnim;
+
+	// 시간 부여 
+	/*float currTime = 0;
+
+	int Count = 0;
+
+	UPROPERTY(EditAnywhere)
+	float createTime = 2;*/
 };

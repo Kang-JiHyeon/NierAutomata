@@ -6,6 +6,8 @@
 #include "Animation/AnimInstance.h"
 #include "HJAnimInstance2.generated.h"
 
+DECLARE_MULTICAST_DELEGATE(FOnNextAttackCheckDelegate);
+DECLARE_MULTICAST_DELEGATE(FOnAttackHitCheckDelegate);
 /**
  * 
  */
@@ -18,16 +20,28 @@ public:
 	UHJAnimInstance2();
 	virtual void NativeUpdateAnimation(float DeltaSeconds) override;
 
+	void PlayAttackMontage();
+	void JumpToAttackMontageSection(int32 NewSection);
+
+	FOnNextAttackCheckDelegate OnNextAttackCheck;
+	FOnAttackHitCheckDelegate OnAttackHitCheck;
+
+	UFUNCTION()
+	void AnimNotify_AttackHitCheck();
+
+	UFUNCTION()
+	void AnimNotify_NextAttackCheck();
+
+	FName GetAttackMontageSectionName(int32 Section);
+
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 	float CurrentPawnSpeed;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 	bool IsInAir;
-	// 공격 몽타주 연결 
-	void PlayAttackMontage();
 
+	// 공격 몽타주 연결 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 	UAnimMontage* AttackMontage;
-
 
 };

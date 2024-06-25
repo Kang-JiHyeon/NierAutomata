@@ -36,9 +36,28 @@ void UHJAnimInstance2::NativeUpdateAnimation(float DeltaSeconds)
 
 void UHJAnimInstance2::PlayAttackMontage()
 {
-	if (!Montage_IsPlaying(AttackMontage))
-	{
-		Montage_Play(AttackMontage, 1.0f);
-	}
+	Montage_Play(AttackMontage, 1.0f);
+}
+// 콤보 공격 구현 
+void UHJAnimInstance2::JumpToAttackMontageSection(int32 NewSection)
+{
+	FName name = GetAttackMontageSectionName(NewSection);
+	UE_LOG(LogTemp, Warning, TEXT("What is the problem %s"), *name.ToString());
+	Montage_JumpToSection(name, AttackMontage);
+}
+
+void UHJAnimInstance2::AnimNotify_AttackHitCheck()
+{
+	OnAttackHitCheck.Broadcast();
+}
+
+void UHJAnimInstance2::AnimNotify_NextAttackCheck()
+{
+	OnNextAttackCheck.Broadcast();
+}
+
+FName UHJAnimInstance2::GetAttackMontageSectionName(int32 Section)
+{
+	return FName(*FString::Printf(TEXT("Attacked%d"), Section));
 }
 
