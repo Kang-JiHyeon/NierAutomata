@@ -60,6 +60,7 @@ void UJHBombSkill::Attack()
 	//	CurrTime = 0;
 	//	Fire();
 	//}
+	Fire();
 }
 
 void UJHBombSkill::Fire()
