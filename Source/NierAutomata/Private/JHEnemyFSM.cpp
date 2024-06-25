@@ -2,6 +2,10 @@
 
 
 #include "JHEnemyFSM.h"
+#include "JHEnemy.h"
+#include "JHBombSkill.h"
+#include <Kismet/GameplayStatics.h>
+#include <Kismet/KismetMathLibrary.h>
 
 // Sets default values for this component's properties
 UJHEnemyFSM::UJHEnemyFSM()
@@ -10,7 +14,7 @@ UJHEnemyFSM::UJHEnemyFSM()
 	// off to improve performance if you don't need them.
 	PrimaryComponentTick.bCanEverTick = true;
 
-	// ...
+	BombSkill = CreateDefaultSubobject<UJHBombSkill>(TEXT("BombSkill"));
 }
 
 
@@ -19,7 +23,7 @@ void UJHEnemyFSM::BeginPlay()
 {
 	Super::BeginPlay();
 
-	// ...
+	Me = Cast<AJHEnemy>(GetOwner());
 	
 }
 
@@ -29,52 +33,84 @@ void UJHEnemyFSM::TickComponent(float DeltaTime, ELevelTick TickType, FActorComp
 {
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
 
-	
+	FString LogMsg = UEnum::GetValueAsString(MState);
+	GEngine->AddOnScreenDebugMessage(0, 1, FColor::Cyan, LogMsg);
 
-	//switch (mState)
-	//{
-	//	case EEnemyState::Idle:
-	//		IdleState();
-	//		break;
-	//	case EEnemyState::Move:
-	//		MoveState();
-	//		break;
-	//	case EEnemyState::Attack:
-	//		AttackState();
-	//		break;
-	//	case EEnemyState::Damage:
-	//		DamageState();
-	//		break;
-	//	case EEnemyState::Die:
-	//		DieState();
-	//		break;
-	//	default:
-	//		break;
-	//}
+	switch (MState)
+	{
+	case EEnemyState::Idle:
+		IdleState();
+		break;
+	case EEnemyState::Move:
+		MoveState();
+		break;
+	case EEnemyState::Attack:
+		AttackState();
+		break;
+	case EEnemyState::Damage:
+		DamageState();
+		break;
+	case EEnemyState::Die:
+		DieState();
+		break;
+	default:
+		break;
+	}
 }
 
 void UJHEnemyFSM::IdleState()
 {
-	UE_LOG(LogTemp, Warning, TEXT("Idle!!"));
+	CurrentTime += GetWorld()->DeltaTimeSeconds;
+
+	if (CurrentTime > IdleDelayTime)
+	{
+		CurrentTime = 0;
+		MState = EEnemyState::Move;
+	}
+
 }
 
 void UJHEnemyFSM::MoveState()
 {
-	UE_LOG(LogTemp, Warning, TEXT("Move!!"));
+	// todo : 이동 위치 지정 필요
+
+	// 중앙으로 이동
+	FVector CurrPos = Me->GetActorLocation();
+	FVector DestPos = FVector::Zero() + FVector::UpVector * CurrPos.Z;
+	FVector Dir = DestPos - CurrPos;
+
+	if (Dir.Size() <= AttackRange) {
+		Me->SetActorLocation(DestPos);
+		MState = EEnemyState::Attack;
+	}
+
+	Dir.Normalize();
+
+	// 이동
+	Me->SetActorLocation(CurrPos + Dir * MoveSpeed * GetWorld()->DeltaTimeSeconds);
+	// 회전
+	UKismetMathLibrary::FindLookAtRotation(CurrPos, DestPos);
 }
 
 void UJHEnemyFSM::AttackState()
 {
-	UE_LOG(LogTemp, Warning, TEXT("Attack!!"));
+	CurrentTime += GetWorld()->DeltaTimeSeconds;
+
+	if (CurrentTime > AttackTime) {
+
+		CurrentTime = 0;
+		BombSkill->Fire();
+
+		MState = EEnemyState::Idle;
+	}
+
 }
 
 void UJHEnemyFSM::DamageState()
 {
-	UE_LOG(LogTemp, Warning, TEXT("Damage!!"));
 }
 
 void UJHEnemyFSM::DieState()
 {
-	UE_LOG(LogTemp, Warning, TEXT("Die!!"));
 }
 

@@ -3,31 +3,34 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "GameFramework/Actor.h"
+#include "Components/SceneComponent.h"
 #include "JHBombSkill.generated.h"
 
-UCLASS()
-class NIERAUTOMATA_API AJHBombSkill : public AActor
+
+UCLASS(ClassGroup = (Custom), meta = (BlueprintSpawnableComponent))
+class NIERAUTOMATA_API UJHBombSkill : public USceneComponent
 {
 	GENERATED_BODY()
-	
-public:	
-	// Sets default values for this actor's properties
-	AJHBombSkill();
+
+public:
+	// Sets default values for this component's properties
+	UJHBombSkill();
 
 protected:
-	// Called when the game starts or when spawned
+	// Called when the game starts
 	virtual void BeginPlay() override;
 
-public:	
+public:
 	// Called every frame
-	virtual void Tick(float DeltaTime) override;
+	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
+
+public:
 
 	UPROPERTY(EditAnywhere)
-	class UCapsuleComponent* CapsuleComp;
+	class USceneComponent* SuperFirePos;
 
 	UPROPERTY(EditAnywhere)
-	class UStaticMeshComponent* MeshComp;
+	class AJHEnemy* Me;
 
 	UPROPERTY(EditAnywhere)
 	TSubclassOf<class AJHBomb> BombFactory;
@@ -39,16 +42,13 @@ public:
 	UPROPERTY(EditAnywhere)
 	int BombCount = 10;
 
-	float SkillTime = 1;
+	float SkillTime = 2;
 	float CurrTime = 0;
 
 	float Force = 1000;
 	int32 MaxFireCount = 3;
 	int32 CurrFireCount = 0;
 
-
-private:
-	void BombSkill();
-
-
+	void Attack();
+	void Fire();
 };

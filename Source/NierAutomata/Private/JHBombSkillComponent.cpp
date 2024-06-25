@@ -21,19 +21,19 @@ UJHBombSkillComponent::UJHBombSkillComponent()
 	// �浹ü
 	//capsuleComp->SetCollisionProfileName(TEXT("NoCollision"));
 
-	MeshComp = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("Mesh"));
-	//MeshComp->SetupAttachment(CapsuleComp);
-	MeshComp->SetCollisionProfileName(TEXT("NoCollision"));
+	//MeshComp = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("Mesh"));
+	////MeshComp->SetupAttachment(CapsuleComp);
+	//MeshComp->SetCollisionProfileName(TEXT("NoCollision"));
 
 
-	ConstructorHelpers::FObjectFinder<UStaticMesh> tempMesh(TEXT("/Script/Engine.StaticMesh'/Engine/BasicShapes/Cylinder.Cylinder'"));
-	if (tempMesh.Succeeded())
-		MeshComp->SetStaticMesh(tempMesh.Object);
-	//meshComp->SetRelativeLocation(FVector(0, 0, -50));
+	//ConstructorHelpers::FObjectFinder<UStaticMesh> tempMesh(TEXT("/Script/Engine.StaticMesh'/Engine/BasicShapes/Cylinder.Cylinder'"));
+	//if (tempMesh.Succeeded())
+	//	MeshComp->SetStaticMesh(tempMesh.Object);
+	////meshComp->SetRelativeLocation(FVector(0, 0, -50));
 
-	ConstructorHelpers::FObjectFinder<UMaterial> tempMat(TEXT("/Script/Engine.Material'/Engine/MapTemplates/Materials/BasicAsset02.BasicAsset02'"));
-	if (tempMat.Succeeded())
-		MeshComp->SetMaterial(0, tempMat.Object);
+	//ConstructorHelpers::FObjectFinder<UMaterial> tempMat(TEXT("/Script/Engine.Material'/Engine/MapTemplates/Materials/BasicAsset02.BasicAsset02'"));
+	//if (tempMat.Succeeded())
+	//	MeshComp->SetMaterial(0, tempMat.Object);
 
 	ConstructorHelpers::FClassFinder<AJHBomb> tempBomb(TEXT("/Script/Engine.Blueprint'/Game/Blueprints/BP_JHBomb.BP_JHBomb_C'"));
 	if (tempBomb.Succeeded())

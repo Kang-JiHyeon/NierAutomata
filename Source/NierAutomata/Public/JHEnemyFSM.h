@@ -16,6 +16,13 @@ enum class EEnemyState : uint8
 	Die
 };
 
+UENUM(BlueprintType)
+enum class EAttackSkillState : uint8
+{
+	Bomb,
+	Laser,
+	Ring
+};
 
 UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
 class NIERAUTOMATA_API UJHEnemyFSM : public UActorComponent
@@ -36,18 +43,35 @@ public:
 
 public:
 	// 에너미 상태
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = FSM)
-	EEnemyState mState = EEnemyState::Idle;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = FSMComponent)
+	EEnemyState MState = EEnemyState::Idle;
 
-	float idleDelayTime = 2;
+	// 대기
+	UPROPERTY(EditAnywhere)
+	float IdleDelayTime = 2;
+	float CurrentTime = 0;
 
-	// 타겟
+	// 이동
+	UPROPERTY(VisibleAnywhere)
+	class AActor* Target;
+
+	UPROPERTY()
+	class AJHEnemy* Me;
+	UPROPERTY(EditAnywhere)
+	float MoveSpeed = 500;
+	UPROPERTY(EditAnywhere)
+	float AttackRange = 10;
+
+	// 공격
+	class UJHBombSkill* BombSkill;
 	
-	// 이동 속도
-	float moveSpeed = 1.f;
-	// 체력
-	int32 maxHp = 100;
-private:
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	EAttackSkillState SkillState = EAttackSkillState::Bomb;
+
+	UPROPERTY(EditAnywhere)
+	float AttackTime = 5;
+
+
 	void IdleState();
 	void MoveState();
 	void AttackState();
