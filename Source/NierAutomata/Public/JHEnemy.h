@@ -18,22 +18,24 @@ public:
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
-
+	
 public:	
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
-
+	
+	// Boss
 	UPROPERTY(EditAnywhere)
 	class UCapsuleComponent* CapsuleComp;
 
 	UPROPERTY(EditAnywhere)
 	class UStaticMeshComponent* MeshComp;
 
+	// FSM
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
 	class UJHEnemyFSM* Fsm;
 
-
-
+	/* Skill */
+	// Bomb
 	UPROPERTY(EditAnywhere)
 	class UJHBombSkill* BombSkill;
 
@@ -45,5 +47,16 @@ public:
 
 	UPROPERTY(EditAnywhere)
 	int BombCount = 10;
+
+
+	// Missile
+	UPROPERTY(EditAnywhere)
+	class UJHMissileSkill* MessileSkill;
+
+	UPROPERTY()
+	TSubclassOf<class AJHMissile> MessileFactory;
+
+	UPROPERTY(EditAnywhere)
+	class USceneComponent* MessilePosition;
 
 };

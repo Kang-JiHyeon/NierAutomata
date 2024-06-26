@@ -69,14 +69,14 @@ public:
 	UPROPERTY()
 	class UJHBombSkill* BombSkill;
 	
+	UPROPERTY()
+	class UJHMissileSkill* MessileSkill;
+	
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	EAttackSkillState SkillState = EAttackSkillState::Bomb;
 
 	UPROPERTY(EditAnywhere)
 	float AttackTime = 5;
-
-
-
 
 
 	void IdleState();

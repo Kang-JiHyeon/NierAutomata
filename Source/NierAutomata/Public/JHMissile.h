@@ -4,16 +4,16 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
-#include "JHBomb.generated.h"
+#include "JHMissile.generated.h"
 
 UCLASS()
-class NIERAUTOMATA_API AJHBomb : public AActor
+class NIERAUTOMATA_API AJHMissile : public AActor
 {
 	GENERATED_BODY()
 	
 public:	
 	// Sets default values for this actor's properties
-	AJHBomb();
+	AJHMissile();
 
 protected:
 	// Called when the game starts or when spawned
@@ -22,17 +22,38 @@ protected:
 public:	
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
+
 	virtual void NotifyActorBeginOverlap(AActor* OtherActor) override;
+public:
 
 	UPROPERTY(EditAnywhere)
-	class USphereComponent* SphereComp;
+	class UBoxComponent* BoxComp;
 	UPROPERTY(EditAnywhere)
 	class UStaticMeshComponent* MeshComp;
 
-	UPROPERTY(EditAnywhere)
-	float Force = 1000;
+	UPROPERTY(VisibleAnywhere)
+	APawn* Target;
 
-public:
-	void Fire();
-	void SetForce(float Value);
+	UPROPERTY()
+	FVector Direction = FVector::ForwardVector;
+
+	UPROPERTY(EditAnywhere)
+	float Speed = 1500;
+
+	UPROPERTY(EditAnywhere)
+	float UpTime = 1;
+
+	UPROPERTY() 
+	float CurrUpTime;
+
+	UPROPERTY(EditAnywhere)
+	float TraceTime = 2;
+
+	UPROPERTY()
+	float CurrTraceTime;
+
+
+	UPROPERTY()
+	bool bTrace;
+
 };

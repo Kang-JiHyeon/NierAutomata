@@ -5,6 +5,8 @@
 #include "JHEnemyFSM.h"
 #include "JHBombSkill.h"
 #include "JHBomb.h"
+#include "JHMissileSkill.h"
+#include "JHMissile.h"
 #include "Components/CapsuleComponent.h"
 
 // Sets default values
@@ -20,7 +22,6 @@ AJHEnemy::AJHEnemy()
 	CapsuleComp->SetCapsuleRadius(25);
 
 	// todo : 캡슐 충돌체 설정
-
 	MeshComp = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("Mesh"));
 	MeshComp->SetupAttachment(CapsuleComp);
 	MeshComp->SetCollisionProfileName(TEXT("NoCollision"));
@@ -30,19 +31,14 @@ AJHEnemy::AJHEnemy()
 		MeshComp->SetStaticMesh(TempMesh.Object);
 	MeshComp->SetRelativeLocation(FVector(0, 0, -50));
 
-	//ConstructorHelpers::FObjectFinder<UMaterial> TempMat(TEXT("/Script/Engine.Material'/Engine/MapTemplates/Materials/BasicAsset02.BasicAsset02'"));
-	//if (TempMat.Succeeded())
-	//	MeshComp->SetMaterial(0, TempMat.Object);
-
 	// FSM
 	Fsm = CreateDefaultSubobject<UJHEnemyFSM>(TEXT("EnemyFSM"));
-
 
 	// Bomb
 	BombSkill = CreateDefaultSubobject<UJHBombSkill>(TEXT("BombSkill"));
 	BombSkill->SetupAttachment(CapsuleComp);
 
-	//// 발사 위치
+	
 	for (int32 i = 0; i < BombCount; i++) {
 		FString FirePosName = FString::Printf(TEXT("FirePos_%d"), i);
 		USceneComponent* TempFirePos = CreateDefaultSubobject<USceneComponent>(*FirePosName);
@@ -55,7 +51,23 @@ AJHEnemy::AJHEnemy()
 
 	ConstructorHelpers::FClassFinder<AJHBomb> TempBomb(TEXT("/Script/Engine.Blueprint'/Game/Blueprints/BP_JHBomb.BP_JHBomb_C'"));
 	if (TempBomb.Succeeded())
+	{
 		BombFactory = TempBomb.Class;
+	}
+
+	// Missile
+	MessileSkill = CreateDefaultSubobject<UJHMissileSkill>(TEXT("MessileSkill"));
+	MessileSkill->SetupAttachment(CapsuleComp);
+
+	MessilePosition = CreateDefaultSubobject<USceneComponent>(TEXT("Messile Position"));
+	MessilePosition->SetRelativeRotation(FRotator(90, 0, 0));
+	MessilePosition->SetupAttachment(MessileSkill);
+
+	ConstructorHelpers::FClassFinder<AJHMissile> TempMissile(TEXT("/Script/Engine.Blueprint'/Game/Blueprints/BP_JHMissile.BP_JHMissile_C'"));
+	if (TempMissile.Succeeded())
+	{
+		MessileFactory = TempMissile.Class;
+	}
 }
 
 // Called when the game starts or when spawned
