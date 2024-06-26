@@ -3,6 +3,8 @@
 
 #include "JHEnemy.h"
 #include "JHEnemyFSM.h"
+#include "JHBombSkill.h"
+#include "JHBomb.h"
 #include "Components/CapsuleComponent.h"
 
 // Sets default values
@@ -34,6 +36,26 @@ AJHEnemy::AJHEnemy()
 
 	// FSM
 	Fsm = CreateDefaultSubobject<UJHEnemyFSM>(TEXT("EnemyFSM"));
+
+
+	// Bomb
+	BombSkill = CreateDefaultSubobject<UJHBombSkill>(TEXT("BombSkill"));
+	BombSkill->SetupAttachment(CapsuleComp);
+
+	//// 발사 위치
+	for (int32 i = 0; i < BombCount; i++) {
+		FString FirePosName = FString::Printf(TEXT("FirePos_%d"), i);
+		USceneComponent* TempFirePos = CreateDefaultSubobject<USceneComponent>(*FirePosName);
+
+		TempFirePos->SetRelativeRotation(FRotator(50, i * (360 / BombCount), 0));
+		TempFirePos->SetupAttachment(BombSkill);
+
+		FirePositions.Add(TempFirePos);
+	}
+
+	ConstructorHelpers::FClassFinder<AJHBomb> TempBomb(TEXT("/Script/Engine.Blueprint'/Game/Blueprints/BP_JHBomb.BP_JHBomb_C'"));
+	if (TempBomb.Succeeded())
+		BombFactory = TempBomb.Class;
 }
 
 // Called when the game starts or when spawned

@@ -32,4 +32,18 @@ public:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
 	class UJHEnemyFSM* Fsm;
 
+
+
+	UPROPERTY(EditAnywhere)
+	class UJHBombSkill* BombSkill;
+
+	UPROPERTY(EditAnywhere)
+	TSubclassOf<class AJHBomb> BombFactory;
+
+	UPROPERTY(EditAnywhere)
+	TArray<class USceneComponent*> FirePositions;
+
+	UPROPERTY(EditAnywhere)
+	int BombCount = 10;
+
 };

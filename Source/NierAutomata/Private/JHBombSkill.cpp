@@ -12,24 +12,6 @@ UJHBombSkill::UJHBombSkill()
 	// off to improve performance if you don't need them.
 	PrimaryComponentTick.bCanEverTick = true;
 
-	SuperFirePos = CreateDefaultSubobject<USceneComponent>(TEXT("Fire Position"));
-
-
-	// 발사 위치
-	for (int32 i = 0; i < BombCount; i++) {
-		FString FirePosName = FString::Printf(TEXT("FirePos_%d"), i);
-		USceneComponent* TempFirePos = CreateDefaultSubobject<USceneComponent>(*FirePosName);
-
-		TempFirePos->SetRelativeRotation(FRotator(50, i * (360 / BombCount), 0));
-
-		TempFirePos->SetupAttachment(SuperFirePos);
-
-		FirePositions.Add(TempFirePos);
-	}
-
-	ConstructorHelpers::FClassFinder<AJHBomb> tempBomb(TEXT("/Script/Engine.Blueprint'/Game/Blueprints/BP_JHBomb.BP_JHBomb_C'"));
-	if (tempBomb.Succeeded())
-		BombFactory = tempBomb.Class;
 }
 
 
@@ -39,6 +21,10 @@ void UJHBombSkill::BeginPlay()
 	Super::BeginPlay();
 
 	Me = Cast<AJHEnemy>(GetOwner());
+
+	BombFactory = Me->BombFactory;
+	FirePositions = Me->FirePositions;
+
 }
 
 
@@ -53,21 +39,19 @@ void UJHBombSkill::TickComponent(float DeltaTime, ELevelTick TickType, FActorCom
 
 void UJHBombSkill::Attack()
 {
-	//CurrTime += GetWorld()->DeltaTimeSeconds;
+	CurrSkillTime += GetWorld()->DeltaTimeSeconds;
 
-	//if (CurrTime >= SkillTime) {
+	if (CurrSkillTime >= SkillTime) {
 
-	//	CurrTime = 0;
-	//	Fire();
-	//}
-	Fire();
+		CurrSkillTime = 0;
+		Fire();
+	}
 }
 
 void UJHBombSkill::Fire()
 {
 	try
 	{
-		UE_LOG(LogTemp, Warning, TEXT("BombSkill Start!!"));
 
 		if (FirePositions.Num() <= 0) {
 			UE_LOG(LogTemp, Warning, TEXT("FirePositions null!!"));
@@ -88,15 +72,29 @@ void UJHBombSkill::Fire()
 				return;
 			}
 
-			GetWorld()->SpawnActor<AJHBomb>(BombFactory, FirePos->GetComponentLocation(), FirePos->GetComponentRotation());
+			AJHBomb* Bomb = GetWorld()->SpawnActor<AJHBomb>(BombFactory, FirePos->GetComponentTransform());
 
-			UE_LOG(LogTemp, Warning, TEXT("Spawn Bomb!!"));
+			Bomb->SetForce(Forces[ForceIndex]);
+			Bomb->Fire();
+
 		}
 
+		ForceIndex++;
+
+		if (ForceIndex % Forces.Num() == 0) {
+			ForceIndex = 0;
+		}
+
+		UE_LOG(LogTemp, Warning, TEXT("Spawn Bomb!!"));
 	}
 	catch (const std::exception&)
 	{
 		UE_LOG(LogTemp, Warning, TEXT("BombSkill error!!"));
 	}
+}
+
+void UJHBombSkill::SetSkillTime(float Value)
+{
+	SkillTime = Value;
 }
 

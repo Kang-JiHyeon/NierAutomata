@@ -14,7 +14,7 @@ UJHEnemyFSM::UJHEnemyFSM()
 	// off to improve performance if you don't need them.
 	PrimaryComponentTick.bCanEverTick = true;
 
-	BombSkill = CreateDefaultSubobject<UJHBombSkill>(TEXT("BombSkill"));
+	
 }
 
 
@@ -24,6 +24,8 @@ void UJHEnemyFSM::BeginPlay()
 	Super::BeginPlay();
 
 	Me = Cast<AJHEnemy>(GetOwner());
+
+	BombSkill = Me->BombSkill;
 	
 }
 
@@ -65,7 +67,10 @@ void UJHEnemyFSM::IdleState()
 	if (CurrentTime > IdleDelayTime)
 	{
 		CurrentTime = 0;
-		MState = EEnemyState::Move;
+		if (!bIsMove)
+		{
+			MState = EEnemyState::Move;
+		}
 	}
 
 }
@@ -73,14 +78,17 @@ void UJHEnemyFSM::IdleState()
 void UJHEnemyFSM::MoveState()
 {
 	// todo : 이동 위치 지정 필요
+	
 
 	// 중앙으로 이동
 	FVector CurrPos = Me->GetActorLocation();
-	FVector DestPos = FVector::Zero() + FVector::UpVector * CurrPos.Z;
+	//FVector DestPos = FVector::Zero() + FVector::UpVector * CurrPos.Z;
+	FVector DestPos = FVector::RightVector*2000 + FVector::UpVector * CurrPos.Z;
 	FVector Dir = DestPos - CurrPos;
 
 	if (Dir.Size() <= AttackRange) {
 		Me->SetActorLocation(DestPos);
+		bIsMove = true;
 		MState = EEnemyState::Attack;
 	}
 
@@ -99,10 +107,12 @@ void UJHEnemyFSM::AttackState()
 	if (CurrentTime > AttackTime) {
 
 		CurrentTime = 0;
-		BombSkill->Fire();
+		
 
 		MState = EEnemyState::Idle;
 	}
+
+	BombSkill->Attack();
 
 }
 

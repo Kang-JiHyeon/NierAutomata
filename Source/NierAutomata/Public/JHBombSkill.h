@@ -26,29 +26,38 @@ public:
 
 public:
 
-	UPROPERTY(EditAnywhere)
-	class USceneComponent* SuperFirePos;
+	//UPROPERTY(EditAnywhere)
+	//class USceneComponent* SuperFirePos;
 
-	UPROPERTY(EditAnywhere)
+	UPROPERTY()
 	class AJHEnemy* Me;
 
-	UPROPERTY(EditAnywhere)
+	UPROPERTY()
 	TSubclassOf<class AJHBomb> BombFactory;
 
-	UPROPERTY(EditAnywhere)
+	UPROPERTY()
 	TArray<class USceneComponent*> FirePositions;
-
 
 	UPROPERTY(EditAnywhere)
 	int BombCount = 10;
 
-	float SkillTime = 2;
-	float CurrTime = 0;
+	UPROPERTY(EditAnywhere)
+	TArray<float> Forces = {700, 1000, 1200};
+	int32 ForceIndex = 0;
 
-	float Force = 1000;
+	UPROPERTY(EditAnywhere)
+	float SkillTime = 1;
+	float CurrSkillTime = 0;
+
 	int32 MaxFireCount = 3;
 	int32 CurrFireCount = 0;
 
+
+public:
+	UFUNCTION()
 	void Attack();
+	UFUNCTION()
 	void Fire();
+
+	void SetSkillTime(float Value);
 };

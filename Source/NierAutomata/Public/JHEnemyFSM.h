@@ -62,7 +62,11 @@ public:
 	UPROPERTY(EditAnywhere)
 	float AttackRange = 10;
 
+	UPROPERTY()
+	bool bIsMove;
+
 	// АјАн
+	UPROPERTY()
 	class UJHBombSkill* BombSkill;
 	
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
@@ -70,6 +74,9 @@ public:
 
 	UPROPERTY(EditAnywhere)
 	float AttackTime = 5;
+
+
+
 
 
 	void IdleState();

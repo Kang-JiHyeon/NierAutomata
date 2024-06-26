@@ -45,7 +45,7 @@ void AJHBomb::BeginPlay()
 {
 	Super::BeginPlay();
 
-	sphereComp->AddImpulse(GetActorUpVector() * force);
+	//sphereComp->AddImpulse(GetActorUpVector() * force);
 	
 }
 
@@ -65,12 +65,13 @@ void AJHBomb::NotifyActorBeginOverlap(AActor* OtherActor)
 
 void AJHBomb::Fire()
 {
-	sphereComp->AddImpulse(GetActorUpVector() * force);
+	sphereComp->AddImpulse(GetActorUpVector() * Force);
 
 	//UE_LOG(LogTemp, Log, TEXT("ÆøÅº ¹ß»ç"));
 }
 
-//void AJHBomb::SetForce(float NewForce)
-//{
-//	force = NewForce;
-//}
+void AJHBomb::SetForce(float Value)
+{
+	Force = Value;
+}
+
