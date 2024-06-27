@@ -34,6 +34,10 @@ public:
 	class UJHEnemyFSM* Fsm;
 
 	/* Skill */
+	 //Manager
+	UPROPERTY()
+	class UJHBossSkillManager* BossSkillManager;
+
 	// Bomb
 	UPROPERTY(EditAnywhere)
 	class UJHBombSkill* BombSkill;
@@ -54,9 +58,6 @@ public:
 
 	UPROPERTY()
 	TSubclassOf<class AJHMissile> MessileFactory;
-
-	//UPROPERTY(EditAnywhere)
-	//class USceneComponent* MessilePosition;
 
 	UPROPERTY(EditAnywhere)
 	class UArrowComponent* MessileArrow;

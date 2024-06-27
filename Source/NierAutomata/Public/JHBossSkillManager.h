@@ -34,10 +34,13 @@ public:
 
 public:
 
+	UPROPERTY()
+	class AJHEnemy* Me;
+
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	SkillType MSkillType = SkillType::Bomb;
 
-
-
+	UPROPERTY(EditAnywhere)
+	TArray<class IJHAttackInterface*> AttackSkills;
 
 };

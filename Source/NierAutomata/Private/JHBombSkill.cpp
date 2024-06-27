@@ -32,10 +32,7 @@ void UJHBombSkill::BeginPlay()
 void UJHBombSkill::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)
 {
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
-
-
 }
-
 
 void UJHBombSkill::Attack()
 {
@@ -47,6 +44,8 @@ void UJHBombSkill::Attack()
 		Fire();
 	}
 }
+
+
 
 void UJHBombSkill::Fire()
 {

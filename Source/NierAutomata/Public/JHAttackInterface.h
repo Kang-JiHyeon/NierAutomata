@@ -4,11 +4,11 @@
 
 #include "CoreMinimal.h"
 #include "UObject/Interface.h"
-#include "AttackSkill.generated.h"
+#include "JHAttackInterface.generated.h"
 
 // This class does not need to be modified.
 UINTERFACE(MinimalAPI)
-class UAttackSkill : public UInterface
+class UJHAttackInterface : public UInterface
 {
 	GENERATED_BODY()
 };
@@ -16,12 +16,13 @@ class UAttackSkill : public UInterface
 /**
  * 
  */
-class NIERAUTOMATA_API IAttackSkill
+class NIERAUTOMATA_API IJHAttackInterface
 {
 	GENERATED_BODY()
 
 	// Add interface functions to this class. This is the class that will be inherited to implement this interface.
 public:
-
+	UFUNCTION()
 	virtual void Attack();
+
 };

@@ -24,6 +24,7 @@ public:
 	// Called every frame
 	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
 
+
 public:
 
 	//UPROPERTY(EditAnywhere)
@@ -56,8 +57,11 @@ public:
 public:
 	UFUNCTION()
 	void Attack();
+
 	UFUNCTION()
 	void Fire();
 
 	void SetSkillTime(float Value);
+
+
 };
