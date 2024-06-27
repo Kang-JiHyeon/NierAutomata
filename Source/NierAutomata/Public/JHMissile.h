@@ -34,8 +34,11 @@ public:
 	UPROPERTY(VisibleAnywhere)
 	APawn* Target;
 
+	UPROPERTY(VisibleAnywhere)
+	FVector MovePosition;
+
 	UPROPERTY()
-	FVector Direction = FVector::ForwardVector;
+	FVector Direction;
 
 	UPROPERTY(EditAnywhere)
 	float Speed = 1500;

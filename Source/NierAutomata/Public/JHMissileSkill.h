@@ -33,7 +33,7 @@ public:
 	TSubclassOf<class AJHMissile> SkillFactory;
 
 	UPROPERTY()
-	class USceneComponent* SkillPosition;
+	class UArrowComponent* SkillPosition;
 
 	UPROPERTY(EditAnywhere)
 	float CreateTime = 0.25f;

@@ -22,7 +22,6 @@ protected:
 public:	
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
-	
 	// Boss
 	UPROPERTY(EditAnywhere)
 	class UCapsuleComponent* CapsuleComp;
@@ -56,7 +55,10 @@ public:
 	UPROPERTY()
 	TSubclassOf<class AJHMissile> MessileFactory;
 
+	//UPROPERTY(EditAnywhere)
+	//class USceneComponent* MessilePosition;
+
 	UPROPERTY(EditAnywhere)
-	class USceneComponent* MessilePosition;
+	class UArrowComponent* MessileArrow;
 
 };

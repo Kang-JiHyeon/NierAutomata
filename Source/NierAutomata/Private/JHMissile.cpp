@@ -48,7 +48,7 @@ void AJHMissile::BeginPlay()
 	// 플레이어를 찾아 타겟으로 설정한다.
 	Target = UGameplayStatics::GetPlayerPawn(GetWorld(), 0);
 
-	Direction = FVector::ForwardVector;
+	Direction = GetActorForwardVector();
 }
 
 // Called every frame
@@ -57,30 +57,25 @@ void AJHMissile::Tick(float DeltaTime)
 	Super::Tick(DeltaTime);
 
 	// 일정 시간 동안은 앞으로 이동하다가
-
-	if (CurrUpTime <= UpTime) {
-		CurrUpTime += DeltaTime;
-	}
-	else
-	{
-		// 일정 시간동안만 타겟으로 이동
-		if (CurrTraceTime <= TraceTime)
-		{
-			CurrTraceTime += DeltaTime;
-			
-			// todo : pos z 0으로 설정하기!!
-
-			FVector pos = Target->GetActorLocation();
+	if (!bTrace) {
+		if (CurrUpTime > UpTime) {
+			bTrace = true;
 
 			Direction = Target->GetActorLocation() - GetActorLocation();
 			Direction.Normalize();
-			
-			FRotator Rotator = UKismetMathLibrary::FindLookAtRotation(GetActorLocation(), Target->GetActorLocation());
-			SetActorRotation(Rotator);
 		}
+		CurrUpTime += DeltaTime;
+	}
+	else {
+		 // todo : lerp 적용
+		 //UKismetMathLibrary::VLerp(GetActorLocation(), Direction, DeltaTime * 10);
+
+		FRotator Rotator = UKismetMathLibrary::FindLookAtRotation(GetActorLocation(), Target->GetActorLocation());
+		SetActorRotation(Rotator);
 	}
 
 	SetActorLocation(GetActorLocation() + Direction * Speed * DeltaTime);
+	
 }
 
 void AJHMissile::NotifyActorBeginOverlap(AActor* OtherActor)

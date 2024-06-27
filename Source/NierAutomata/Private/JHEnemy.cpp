@@ -7,7 +7,9 @@
 #include "JHBomb.h"
 #include "JHMissileSkill.h"
 #include "JHMissile.h"
+#include "Components/ArrowComponent.h"
 #include "Components/CapsuleComponent.h"
+
 
 // Sets default values
 AJHEnemy::AJHEnemy()
@@ -59,9 +61,16 @@ AJHEnemy::AJHEnemy()
 	MessileSkill = CreateDefaultSubobject<UJHMissileSkill>(TEXT("MessileSkill"));
 	MessileSkill->SetupAttachment(CapsuleComp);
 
-	MessilePosition = CreateDefaultSubobject<USceneComponent>(TEXT("Messile Position"));
-	MessilePosition->SetRelativeRotation(FRotator(90, 0, 0));
-	MessilePosition->SetupAttachment(MessileSkill);
+	//MessilePosition = CreateDefaultSubobject<USceneComponent>(TEXT("Messile Position"));
+	//MessilePosition->SetRelativeRotation(FRotator(90, 0, 0));
+	//MessilePosition->SetupAttachment(MessileSkill);
+
+	MessileArrow = CreateDefaultSubobject<UArrowComponent>(TEXT("Messile Arrow"));
+	MessileArrow->SetupAttachment(MessileSkill);
+	MessileArrow->SetRelativeLocation(FVector(0, 0, 50));
+	MessileArrow->SetRelativeRotation(FRotator(90, 0, 0));
+
+
 
 	ConstructorHelpers::FClassFinder<AJHMissile> TempMissile(TEXT("/Script/Engine.Blueprint'/Game/Blueprints/BP_JHMissile.BP_JHMissile_C'"));
 	if (TempMissile.Succeeded())

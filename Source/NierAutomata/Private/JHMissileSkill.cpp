@@ -4,6 +4,7 @@
 #include "JHMissileSkill.h"
 #include "JHEnemy.h"
 #include "JHMissile.h"
+#include "Components/ArrowComponent.h"
 
 // Sets default values for this component's properties
 UJHMissileSkill::UJHMissileSkill()
@@ -24,7 +25,7 @@ void UJHMissileSkill::BeginPlay()
 	Me = Cast<AJHEnemy>(GetOwner());
 
 	SkillFactory = Me->MessileFactory;
-	SkillPosition = Me->MessilePosition;
+	SkillPosition = Me->MessileArrow;
 
 }
 
@@ -45,6 +46,9 @@ void UJHMissileSkill::Attack()
 	if (CurrTime > CreateTime) {
 		CurrTime = 0;
 
-		AJHMissile* Missile = GetWorld()->SpawnActor<AJHMissile>(SkillFactory, SkillPosition->GetComponentLocation(), SkillPosition->GetComponentRotation());
+		// todo: 랜덤 회전값 부여
+		AJHMissile* Missile = GetWorld()->SpawnActor<AJHMissile>(SkillFactory, SkillPosition->GetComponentLocation(), SkillPosition->GetRelativeRotation());
+	
+	
 	}
 }
