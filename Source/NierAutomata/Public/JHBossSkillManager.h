@@ -7,7 +7,7 @@
 #include "JHBossSkillManager.generated.h"
 
 UENUM(BlueprintType)
-enum class SkillType : uint8
+enum class ESkillType : uint8
 {
 	Bomb,
 	Missile,
@@ -38,7 +38,7 @@ public:
 	class AJHEnemy* Me;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	SkillType MSkillType = SkillType::Bomb;
+	ESkillType MSkillType = ESkillType::Bomb;
 
 	UPROPERTY(EditAnywhere)
 	TArray<class IJHAttackInterface*> AttackSkills;

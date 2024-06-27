@@ -5,7 +5,3 @@
 
 // Add default functionality here for any IJHAttackInterface functions that are not pure virtual.
 
-void IJHAttackInterface::Attack()
-{
-
-}

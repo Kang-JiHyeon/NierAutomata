@@ -4,7 +4,6 @@
 #include "JHMissileSkill.h"
 #include "JHEnemy.h"
 #include "JHMissile.h"
-//#include "JHAttackInterface.h"
 #include "Kismet/KismetMathLibrary.h"
 #include "Components/ArrowComponent.h"
 
@@ -26,8 +25,8 @@ void UJHMissileSkill::BeginPlay()
 	// 일정 시간마다 미사일을 N개 만든다.
 	Me = Cast<AJHEnemy>(GetOwner());
 
-	SkillFactory = Me->MessileFactory;
-	SkillPosition = Me->MessileArrow;
+	SkillFactory = Me->MissileFactory;
+	SkillPosition = Me->MissileArrow;
 
 }
 

@@ -4,10 +4,11 @@
 
 #include "CoreMinimal.h"
 #include "Components/SceneComponent.h"
+#include "JHAttackInterface.h"
 #include "JHMissileSkill.generated.h"
 
 UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
-class NIERAUTOMATA_API UJHMissileSkill : public USceneComponent
+class NIERAUTOMATA_API UJHMissileSkill : public USceneComponent, public IJHAttackInterface
 {
 	GENERATED_BODY()
 
@@ -23,7 +24,7 @@ public:
 	// Called every frame
 	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
 
-	//virtual void Attack() override;
+	virtual void Attack() override;
 
 
 public:
@@ -51,9 +52,7 @@ public:
 
 	UPROPERTY(EditAnywhere)
 	FVector Offset;
-		
-
-
-	void Attack();
+	
+	//void Attack();
 
 };

@@ -2,8 +2,7 @@
 
 
 #include "JHBossSkillManager.h"
-//#include "JHEnemy.h"
-//#include "JHAttackInterface.h"
+#include "JHEnemy.h"
 
 // Sets default values for this component's properties
 UJHBossSkillManager::UJHBossSkillManager()
@@ -20,7 +19,11 @@ void UJHBossSkillManager::BeginPlay()
 {
 	Super::BeginPlay();
 
-	//Me = Cast<AJHEnemy>(GetOwner());
+	Me = Cast<AJHEnemy>(GetOwner());
+
+	if (Me != nullptr) {
+		AttackSkills = Me->AttackSkills;
+	}
 
 }
 
@@ -30,6 +33,6 @@ void UJHBossSkillManager::TickComponent(float DeltaTime, ELevelTick TickType, FA
 {
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
 
-	// ...
+	//switch(s)
 }
 

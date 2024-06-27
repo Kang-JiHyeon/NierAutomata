@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
+#include "JHAttackInterface.h"
 #include "JHEnemy.generated.h"
 
 UCLASS()
@@ -22,6 +23,10 @@ protected:
 public:	
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
+
+
+public:
+
 	// Boss
 	UPROPERTY(EditAnywhere)
 	class UCapsuleComponent* CapsuleComp;
@@ -35,8 +40,11 @@ public:
 
 	/* Skill */
 	 //Manager
-	UPROPERTY()
+	UPROPERTY(EditAnywhere)
 	class UJHBossSkillManager* BossSkillManager;
+
+	UPROPERTY()
+	TArray<class IJHAttackInterface*> AttackSkills;
 
 	// Bomb
 	UPROPERTY(EditAnywhere)
@@ -54,12 +62,12 @@ public:
 
 	// Missile
 	UPROPERTY(EditAnywhere)
-	class UJHMissileSkill* MessileSkill;
+	class UJHMissileSkill* MissileSkill;
 
 	UPROPERTY()
-	TSubclassOf<class AJHMissile> MessileFactory;
+	TSubclassOf<class AJHMissile> MissileFactory;
 
 	UPROPERTY(EditAnywhere)
-	class UArrowComponent* MessileArrow;
+	class UArrowComponent* MissileArrow;
 
 };
