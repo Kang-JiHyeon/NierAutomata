@@ -4,6 +4,7 @@
 #include "JHMissileSkill.h"
 #include "JHEnemy.h"
 #include "JHMissile.h"
+#include "Kismet/KismetMathLibrary.h"
 #include "Components/ArrowComponent.h"
 
 // Sets default values for this component's properties
@@ -47,8 +48,8 @@ void UJHMissileSkill::Attack()
 		CurrTime = 0;
 
 		// todo: 랜덤 회전값 부여
+
 		AJHMissile* Missile = GetWorld()->SpawnActor<AJHMissile>(SkillFactory, SkillPosition->GetComponentLocation(), SkillPosition->GetRelativeRotation());
-	
 	
 	}
 }
