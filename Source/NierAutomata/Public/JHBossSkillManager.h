@@ -14,6 +14,19 @@ enum class ESkillType : uint8
 	LaserBeam
 };
 
+USTRUCT(Atomic)
+struct FSkillProperty
+{
+	GENERATED_USTRUCT_BODY()
+public :
+	UPROPERTY(EditAnywhere)
+	ESkillType SkillType;
+	UPROPERTY(EditAnywhere)
+	float CastTime;
+	UPROPERTY(EditAnywhere)
+	float DelayTime;
+};
+
 UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
 class NIERAUTOMATA_API UJHBossSkillManager : public UActorComponent
 {
@@ -34,13 +47,32 @@ public:
 
 public:
 
-	UPROPERTY()
-	class AJHEnemy* Me;
-
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	ESkillType MSkillType = ESkillType::Bomb;
+	ESkillType CurrSkillType = ESkillType::Bomb;
+
+	UPROPERTY(VisibleAnywhere)
+	class UJHBombSkill* BombSkill;
+
+	UPROPERTY(VisibleAnywhere)
+	class UJHMissileSkill* MissileSkill;
 
 	UPROPERTY(EditAnywhere)
-	TArray<class IJHAttackInterface*> AttackSkills;
+	TArray<FSkillProperty> SkillPattern;
 
+	float MaxCastTime = 0;
+	float CurrCastTime = 0;
+	
+	float MaxDelayTime = 0;
+	float CurrDelayTime = 0;
+
+	int32 PatternIndex = 0;
+	
+	bool bAttacking = false;
+
+	bool bDelay = false;
+
+public:
+	void OnAttack();
+	void SetAttacking(bool value);
+	void OnInitialize();
 };

@@ -20,10 +20,10 @@ void UJHBombSkill::BeginPlay()
 {
 	Super::BeginPlay();
 
-	Me = Cast<AJHEnemy>(GetOwner());
+	//Me = Cast<AJHEnemy>(GetOwner());
 
-	BombFactory = Me->BombFactory;
-	FirePositions = Me->FirePositions;
+	//BombFactory = Me->BombFactory;
+	//FirePositions = Me->FirePositions;
 
 }
 
@@ -32,17 +32,6 @@ void UJHBombSkill::BeginPlay()
 void UJHBombSkill::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)
 {
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
-}
-
-void UJHBombSkill::Attack()
-{
-	CurrSkillTime += GetWorld()->DeltaTimeSeconds;
-
-	if (CurrSkillTime >= SkillTime) {
-
-		CurrSkillTime = 0;
-		Fire();
-	}
 }
 
 
@@ -95,5 +84,23 @@ void UJHBombSkill::Fire()
 void UJHBombSkill::SetSkillTime(float Value)
 {
 	SkillTime = Value;
+}
+
+void UJHBombSkill::OnInitialize()
+{
+	CurrSkillTime = 0;
+	ForceIndex = 0;
+}
+
+
+void UJHBombSkill::OnAttack()
+{
+	CurrSkillTime += GetWorld()->DeltaTimeSeconds;
+
+	if (CurrSkillTime >= SkillTime) {
+
+		CurrSkillTime = 0;
+		Fire();
+	}
 }
 

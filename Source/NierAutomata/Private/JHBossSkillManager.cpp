@@ -3,6 +3,8 @@
 
 #include "JHBossSkillManager.h"
 #include "JHEnemy.h"
+#include "JHMissileSkill.h"
+#include "JHBombSkill.h"
 
 // Sets default values for this component's properties
 UJHBossSkillManager::UJHBossSkillManager()
@@ -19,11 +21,12 @@ void UJHBossSkillManager::BeginPlay()
 {
 	Super::BeginPlay();
 
-	Me = Cast<AJHEnemy>(GetOwner());
-
-	if (Me != nullptr) {
-		AttackSkills = Me->AttackSkills;
-	}
+	CurrSkillType = SkillPattern[PatternIndex].SkillType;
+	
+	MaxCastTime = SkillPattern[PatternIndex].CastTime;
+	MaxDelayTime = SkillPattern[PatternIndex].DelayTime;
+	CurrCastTime = 0;
+	CurrCastTime = 0;
 
 }
 
@@ -33,6 +36,77 @@ void UJHBossSkillManager::TickComponent(float DeltaTime, ELevelTick TickType, FA
 {
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
 
-	//switch(s)
+}
+
+void UJHBossSkillManager::OnAttack()
+{
+	// 스킬 패턴이 없을 경우 종료
+	if (SkillPattern.Num() <= 0) {
+		UE_LOG(LogTemp, Warning, TEXT("SkillPattern Null!"));	
+		return;
+	}
+
+
+
+	if (CurrCastTime > MaxCastTime)
+	{
+		CurrDelayTime += GetWorld()->DeltaTimeSeconds;
+
+		if(!bDelay)
+			bDelay = true;
+
+		if (CurrDelayTime > MaxDelayTime)
+		{	
+			OnInitialize();
+			
+			PatternIndex = (++PatternIndex) % SkillPattern.Num();
+
+			CurrSkillType = SkillPattern[PatternIndex].SkillType;
+			MaxCastTime = SkillPattern[PatternIndex].CastTime;
+			MaxDelayTime = SkillPattern[PatternIndex].DelayTime;
+
+			CurrCastTime = 0;
+			CurrDelayTime = 0;
+
+			bDelay = false;
+		}
+	}
+	else {
+		CurrCastTime += GetWorld()->DeltaTimeSeconds;
+	}
+
+	if (!bDelay) {
+		switch (CurrSkillType)
+		{
+		case ESkillType::Bomb:
+			BombSkill->OnAttack();
+			break;
+		case ESkillType::Missile:
+			MissileSkill->OnAttack();
+			break;
+		case ESkillType::LaserBeam:
+			break;
+		default:
+			break;
+		}
+	}
+}
+
+
+void UJHBossSkillManager::OnInitialize()
+{
+	switch (CurrSkillType)
+	{
+	case ESkillType::Bomb:
+		BombSkill->OnInitialize();
+		break;
+	case ESkillType::Missile:
+		MissileSkill->OnInitialize();
+		break;
+	case ESkillType::LaserBeam:
+		break;
+	default:
+		break;
+	}
 }
 

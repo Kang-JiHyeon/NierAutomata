@@ -5,6 +5,7 @@
 #include "JHBombSkill.h"
 #include "JHMissileSkill.h"
 #include "JHEnemy.h"
+#include "JHBossSkillManager.h"
 #include <Kismet/GameplayStatics.h>
 #include <Kismet/KismetMathLibrary.h>
 
@@ -26,8 +27,8 @@ void UJHEnemyFSM::BeginPlay()
 
 	Me = Cast<AJHEnemy>(GetOwner());
 
-	BombSkill = Me->BombSkill;
-	MessileSkill = Me->MissileSkill;
+	//BombSkill = Me->BombSkill;
+	//MissileSkill = Me->MissileSkill;
 	
 }
 
@@ -114,8 +115,10 @@ void UJHEnemyFSM::AttackState()
 		MState = EEnemyState::Idle;
 	}
 
-	//BombSkill->Attack();
-	MessileSkill->Attack();
+	//BombSkill->OnAttack();
+	//MissileSkill->OnAttack();
+
+	SkillManager->OnAttack();
 
 }
 

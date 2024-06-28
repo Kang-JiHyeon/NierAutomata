@@ -34,57 +34,58 @@ AJHEnemy::AJHEnemy()
 		MeshComp->SetStaticMesh(TempMesh.Object);
 	MeshComp->SetRelativeLocation(FVector(0, 0, -50));
 
-	// FSM
-	Fsm = CreateDefaultSubobject<UJHEnemyFSM>(TEXT("EnemyFSM"));
-
 	// BossSkillManager
 	BossSkillManager = CreateDefaultSubobject<UJHBossSkillManager>(TEXT("BossSkillManager"));
 
-	// todo : 부모 설정?
+	// FSM
+	Fsm = CreateDefaultSubobject<UJHEnemyFSM>(TEXT("EnemyFSM"));
+	Fsm->SkillManager = BossSkillManager;
+
+	 //todo : 부모 설정?
 
 	// Bomb
-	BombSkill = CreateDefaultSubobject<UJHBombSkill>(TEXT("BombSkill"));
+	UJHBombSkill* BombSkill = CreateDefaultSubobject<UJHBombSkill>(TEXT("BombSkill"));
 	BombSkill->SetupAttachment(CapsuleComp);
-	
-	AttackSkills.Add(BombSkill);
 
 	
-	for (int32 i = 0; i < BombCount; i++) {
+	for (int32 i = 0; i < BombSkill->BombCount; i++) {
 		FString FirePosName = FString::Printf(TEXT("FirePos_%d"), i);
 		USceneComponent* TempFirePos = CreateDefaultSubobject<USceneComponent>(*FirePosName);
 
-		TempFirePos->SetRelativeRotation(FRotator(50, i * (360 / BombCount), 0));
+		TempFirePos->SetRelativeRotation(FRotator(50, i * (360 / BombSkill->BombCount), 0));
 		TempFirePos->SetupAttachment(BombSkill);
 
-		FirePositions.Add(TempFirePos);
+		BombSkill->FirePositions.Add(TempFirePos);
 	}
 
+	
 	ConstructorHelpers::FClassFinder<AJHBomb> TempBomb(TEXT("/Script/Engine.Blueprint'/Game/Blueprints/BP_JHBomb.BP_JHBomb_C'"));
 	if (TempBomb.Succeeded())
 	{
-		BombFactory = TempBomb.Class;
+		BombSkill->BombFactory = TempBomb.Class;
 	}
 
 	// Missile
-	MissileSkill = CreateDefaultSubobject<UJHMissileSkill>(TEXT("MessileSkill"));
+	UJHMissileSkill* MissileSkill = CreateDefaultSubobject<UJHMissileSkill>(TEXT("MessileSkill"));
 	MissileSkill->SetupAttachment(CapsuleComp);
 
-	MissileArrow = CreateDefaultSubobject<UArrowComponent>(TEXT("Messile Arrow"));
+	UArrowComponent* MissileArrow = CreateDefaultSubobject<UArrowComponent>(TEXT("Messile Arrow"));
 	MissileArrow->SetupAttachment(MissileSkill);
 	MissileArrow->SetRelativeLocation(FVector(0, 0, 50));
 	MissileArrow->SetRelativeRotation(FRotator(90, 0, 0));
 
+	MissileSkill->SkillPosition = MissileArrow;
+
 	ConstructorHelpers::FClassFinder<AJHMissile> TempMissile(TEXT("/Script/Engine.Blueprint'/Game/Blueprints/BP_JHMissile.BP_JHMissile_C'"));
 	if (TempMissile.Succeeded())
 	{
-		MissileFactory = TempMissile.Class;
+		MissileSkill->SkillFactory = TempMissile.Class;
 	}
 
 
-	// AttackSkill
-	AttackSkills.Add(BombSkill);
-	AttackSkills.Add(MissileSkill);
-
+	// BossSkillManager
+	BossSkillManager->BombSkill = BombSkill;
+	BossSkillManager->MissileSkill = MissileSkill;
 
 
 }

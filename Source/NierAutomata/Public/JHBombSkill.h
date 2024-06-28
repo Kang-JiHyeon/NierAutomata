@@ -25,17 +25,13 @@ public:
 	// Called every frame
 	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
 	
-	virtual void Attack() override;
+	virtual void OnInitialize() override;
+
+	virtual void OnAttack() override;
 
 public:
 
-	//UPROPERTY(EditAnywhere)
-	//class USceneComponent* SuperFirePos;
-
-	UPROPERTY()
-	class AJHEnemy* Me;
-
-	UPROPERTY()
+	UPROPERTY(EditDefaultsOnly)
 	TSubclassOf<class AJHBomb> BombFactory;
 
 	UPROPERTY()
@@ -57,13 +53,9 @@ public:
 
 
 public:
-	//UFUNCTION()
-	//void Attack();
 
-	UFUNCTION()
 	void Fire();
 
 	void SetSkillTime(float Value);
-
 
 };

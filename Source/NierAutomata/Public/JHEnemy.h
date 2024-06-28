@@ -38,36 +38,7 @@ public:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
 	class UJHEnemyFSM* Fsm;
 
-	/* Skill */
 	 //Manager
 	UPROPERTY(EditAnywhere)
 	class UJHBossSkillManager* BossSkillManager;
-
-	UPROPERTY()
-	TArray<class IJHAttackInterface*> AttackSkills;
-
-	// Bomb
-	UPROPERTY(EditAnywhere)
-	class UJHBombSkill* BombSkill;
-
-	UPROPERTY(EditAnywhere)
-	TSubclassOf<class AJHBomb> BombFactory;
-
-	UPROPERTY(EditAnywhere)
-	TArray<class USceneComponent*> FirePositions;
-
-	UPROPERTY(EditAnywhere)
-	int BombCount = 10;
-
-
-	// Missile
-	UPROPERTY(EditAnywhere)
-	class UJHMissileSkill* MissileSkill;
-
-	UPROPERTY()
-	TSubclassOf<class AJHMissile> MissileFactory;
-
-	UPROPERTY(EditAnywhere)
-	class UArrowComponent* MissileArrow;
-
 };
