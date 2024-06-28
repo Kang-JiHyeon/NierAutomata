@@ -4,6 +4,7 @@
 #include "JHMissileSkill.h"
 #include "JHEnemy.h"
 #include "JHMissile.h"
+#include "Kismet/KismetMathLibrary.h"
 #include "Components/ArrowComponent.h"
 
 // Sets default values for this component's properties
@@ -24,8 +25,8 @@ void UJHMissileSkill::BeginPlay()
 	// 일정 시간마다 미사일을 N개 만든다.
 	Me = Cast<AJHEnemy>(GetOwner());
 
-	SkillFactory = Me->MessileFactory;
-	SkillPosition = Me->MessileArrow;
+	SkillFactory = Me->MissileFactory;
+	SkillPosition = Me->MissileArrow;
 
 }
 
@@ -47,8 +48,8 @@ void UJHMissileSkill::Attack()
 		CurrTime = 0;
 
 		// todo: 랜덤 회전값 부여
+
 		AJHMissile* Missile = GetWorld()->SpawnActor<AJHMissile>(SkillFactory, SkillPosition->GetComponentLocation(), SkillPosition->GetRelativeRotation());
-	
 	
 	}
 }

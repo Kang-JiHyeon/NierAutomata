@@ -4,11 +4,12 @@
 
 #include "CoreMinimal.h"
 #include "Components/SceneComponent.h"
+#include "JHAttackInterface.h"
 #include "JHBombSkill.generated.h"
 
 
 UCLASS(ClassGroup = (Custom), meta = (BlueprintSpawnableComponent))
-class NIERAUTOMATA_API UJHBombSkill : public USceneComponent
+class NIERAUTOMATA_API UJHBombSkill : public USceneComponent, public IJHAttackInterface
 {
 	GENERATED_BODY()
 
@@ -23,6 +24,8 @@ protected:
 public:
 	// Called every frame
 	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
+	
+	virtual void Attack() override;
 
 public:
 
@@ -54,10 +57,13 @@ public:
 
 
 public:
-	UFUNCTION()
-	void Attack();
+	//UFUNCTION()
+	//void Attack();
+
 	UFUNCTION()
 	void Fire();
 
 	void SetSkillTime(float Value);
+
+
 };

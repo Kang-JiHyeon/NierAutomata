@@ -7,6 +7,7 @@
 #include "JHBomb.h"
 #include "JHMissileSkill.h"
 #include "JHMissile.h"
+#include "JHBossSkillManager.h"
 #include "Components/ArrowComponent.h"
 #include "Components/CapsuleComponent.h"
 
@@ -36,9 +37,16 @@ AJHEnemy::AJHEnemy()
 	// FSM
 	Fsm = CreateDefaultSubobject<UJHEnemyFSM>(TEXT("EnemyFSM"));
 
+	// BossSkillManager
+	BossSkillManager = CreateDefaultSubobject<UJHBossSkillManager>(TEXT("BossSkillManager"));
+
+	// todo : 부모 설정?
+
 	// Bomb
 	BombSkill = CreateDefaultSubobject<UJHBombSkill>(TEXT("BombSkill"));
 	BombSkill->SetupAttachment(CapsuleComp);
+	
+	AttackSkills.Add(BombSkill);
 
 	
 	for (int32 i = 0; i < BombCount; i++) {
@@ -58,31 +66,35 @@ AJHEnemy::AJHEnemy()
 	}
 
 	// Missile
-	MessileSkill = CreateDefaultSubobject<UJHMissileSkill>(TEXT("MessileSkill"));
-	MessileSkill->SetupAttachment(CapsuleComp);
+	MissileSkill = CreateDefaultSubobject<UJHMissileSkill>(TEXT("MessileSkill"));
+	MissileSkill->SetupAttachment(CapsuleComp);
 
-	//MessilePosition = CreateDefaultSubobject<USceneComponent>(TEXT("Messile Position"));
-	//MessilePosition->SetRelativeRotation(FRotator(90, 0, 0));
-	//MessilePosition->SetupAttachment(MessileSkill);
-
-	MessileArrow = CreateDefaultSubobject<UArrowComponent>(TEXT("Messile Arrow"));
-	MessileArrow->SetupAttachment(MessileSkill);
-	MessileArrow->SetRelativeLocation(FVector(0, 0, 50));
-	MessileArrow->SetRelativeRotation(FRotator(90, 0, 0));
-
-
+	MissileArrow = CreateDefaultSubobject<UArrowComponent>(TEXT("Messile Arrow"));
+	MissileArrow->SetupAttachment(MissileSkill);
+	MissileArrow->SetRelativeLocation(FVector(0, 0, 50));
+	MissileArrow->SetRelativeRotation(FRotator(90, 0, 0));
 
 	ConstructorHelpers::FClassFinder<AJHMissile> TempMissile(TEXT("/Script/Engine.Blueprint'/Game/Blueprints/BP_JHMissile.BP_JHMissile_C'"));
 	if (TempMissile.Succeeded())
 	{
-		MessileFactory = TempMissile.Class;
+		MissileFactory = TempMissile.Class;
 	}
+
+
+	// AttackSkill
+	AttackSkills.Add(BombSkill);
+	AttackSkills.Add(MissileSkill);
+
+
+
 }
 
 // Called when the game starts or when spawned
 void AJHEnemy::BeginPlay()
 {
 	Super::BeginPlay();
+
+
 	
 }
 

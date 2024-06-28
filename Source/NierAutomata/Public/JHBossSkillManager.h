@@ -3,18 +3,25 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "Components/SceneComponent.h"
-#include "JHAttackInterface.h"
-#include "JHMissileSkill.generated.h"
+#include "Components/ActorComponent.h"
+#include "JHBossSkillManager.generated.h"
+
+UENUM(BlueprintType)
+enum class ESkillType : uint8
+{
+	Bomb,
+	Missile,
+	LaserBeam
+};
 
 UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
-class NIERAUTOMATA_API UJHMissileSkill : public USceneComponent, public IJHAttackInterface
+class NIERAUTOMATA_API UJHBossSkillManager : public UActorComponent
 {
 	GENERATED_BODY()
 
 public:	
 	// Sets default values for this component's properties
-	UJHMissileSkill();
+	UJHBossSkillManager();
 
 protected:
 	// Called when the game starts
@@ -24,35 +31,16 @@ public:
 	// Called every frame
 	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
 
-	virtual void Attack() override;
-
 
 public:
 
 	UPROPERTY()
 	class AJHEnemy* Me;
 
-	UPROPERTY()
-	TSubclassOf<class AJHMissile> SkillFactory;
-
-	UPROPERTY()
-	class UArrowComponent* SkillPosition;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	ESkillType MSkillType = ESkillType::Bomb;
 
 	UPROPERTY(EditAnywhere)
-	float CreateTime = 0.25f;
-	
-	UPROPERTY(EditAnywhere)
-	int32 CreateCount = 10;
-
-	UPROPERTY()
-	int32 CurrCreateCount;
-
-	UPROPERTY()
-	float CurrTime;
-
-	UPROPERTY(EditAnywhere)
-	FVector Offset;
-	
-	//void Attack();
+	TArray<class IJHAttackInterface*> AttackSkills;
 
 };
