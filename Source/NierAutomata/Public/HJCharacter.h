@@ -47,5 +47,8 @@ public:
 	// 카메라 회전 구현 
 	void InputTurn(float value);
 	void InputLookup(float value);
+	// 무기 장착 
+	UPROPERTY(EditAnywhere)
+	UStaticMeshComponent* Weapon;
 
 };

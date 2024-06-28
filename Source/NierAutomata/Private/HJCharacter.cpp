@@ -20,10 +20,16 @@ AHJCharacter::AHJCharacter()
 	SpringArm->SetRelativeRotation(FRotator(-30.0f, 0.0f, 0.0f));
 	SpringArm->TargetArmLength = 800;
 	SpringArm->bUsePawnControlRotation = true;
+	// 카메라 회전 부여 
+	/*SpringArm->bInheritPitch = true;
+	SpringArm->bInheritRoll = true;
+	SpringArm->bInheritYaw = true;*/
+	bUseControllerRotationYaw = true;
+	// 카메라 컴포넌트 부착 
 	Camera->SetupAttachment(SpringArm);
 	// 스케레탈 메시 객체 부여 
 	ConstructorHelpers::FObjectFinder<USkeletalMesh>
-		tempMesh(TEXT("/Script/Engine.SkeletalMesh'/Game/ControlRig/Characters/Mannequins/Meshes/SKM_Manny.SKM_Manny'"));
+		tempMesh(TEXT("/Script/Engine.SkeletalMesh'/Game/ControlRig/Characters/Mannequins/Meshes/SKM_Quinn.SKM_Quinn'"));
 
 	if (tempMesh.Succeeded())
 	{
@@ -34,6 +40,22 @@ AHJCharacter::AHJCharacter()
 	// 점프 
 	JumpMaxCount = 2;
 	GetCharacterMovement()->JumpZVelocity = 800.0f;
+
+	// 무기 추가 
+	FName WeaponSocket(TEXT("hand_rSocket"));
+	if (GetMesh()->DoesSocketExist(WeaponSocket))
+	{
+		Weapon = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("WEAPON"));
+
+		ConstructorHelpers::FObjectFinder<UStaticMesh>
+			tempWeapon(TEXT("/Script/Engine.StaticMesh'/Game/StarterContent/Shapes/Shape_Pipe.Shape_Pipe'"));
+
+		if (tempWeapon.Succeeded())
+		{
+			Weapon->SetStaticMesh(tempWeapon.Object);
+		}
+		Weapon->SetupAttachment(GetMesh(), WeaponSocket);
+	}
 }
 
 // Called when the game starts or when spawned
@@ -42,13 +64,7 @@ void AHJCharacter::BeginPlay()
 	Super::BeginPlay();
 	// 대시 구현 (기본속도) 
 	GetCharacterMovement()->MaxWalkSpeed = 700.0f;
-	// 무기 추가 
-	FName WeaponSocket(TEXT("middle_01_r"));
-	auto CurWeapon = GetWorld()->SpawnActor<AHJWeapon>(FVector::ZeroVector, FRotator::ZeroRotator);
-	if (nullptr != CurWeapon)
-	{
-		CurWeapon->AttachToComponent(GetMesh(), FAttachmentTransformRules::SnapToTargetNotIncludingScale, WeaponSocket);
-	}
+	
 }
 
 // Called every frame
@@ -65,6 +81,9 @@ void AHJCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCompone
 	// 앞뒤좌우 이동 
 	PlayerInputComponent->BindAxis(TEXT("Horizontal"), this, &AHJCharacter::InputHorizontal);
 	PlayerInputComponent->BindAxis(TEXT("Vertical"), this, &AHJCharacter::InputVertical);
+	// 카메라 회전무빙 
+	PlayerInputComponent->BindAxis(TEXT("Turn"), this, &AHJCharacter::InputTurn);
+	PlayerInputComponent->BindAxis(TEXT("Lookup"), this, &AHJCharacter::InputLookup);
 	// 대시 구현 
 	PlayerInputComponent->BindAction(TEXT("Dash"), IE_Pressed, this, &AHJCharacter::StartDash);
 	PlayerInputComponent->BindAction(TEXT("Dash"), IE_Released, this, &AHJCharacter::EndDash);
