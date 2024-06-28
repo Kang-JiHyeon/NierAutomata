@@ -27,7 +27,7 @@ void UJHEnemyFSM::BeginPlay()
 	Me = Cast<AJHEnemy>(GetOwner());
 
 	BombSkill = Me->BombSkill;
-	MessileSkill = Me->MessileSkill;
+	MessileSkill = Me->MissileSkill;
 	
 }
 
