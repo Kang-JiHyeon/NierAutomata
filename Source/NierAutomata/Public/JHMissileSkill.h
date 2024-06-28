@@ -24,13 +24,14 @@ public:
 	// Called every frame
 	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
 
-	virtual void Attack() override;
+	virtual void OnInitialize() override;
 
+	virtual void OnAttack() override;
 
 public:
 
-	UPROPERTY()
-	class AJHEnemy* Me;
+	//UPROPERTY()
+	//class AJHEnemy* Me;
 
 	UPROPERTY()
 	TSubclassOf<class AJHMissile> SkillFactory;
@@ -52,7 +53,6 @@ public:
 
 	UPROPERTY(EditAnywhere)
 	FVector Offset;
-	
-	//void Attack();
+
 
 };

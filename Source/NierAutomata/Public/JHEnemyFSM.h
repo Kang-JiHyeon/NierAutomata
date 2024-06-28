@@ -67,10 +67,13 @@ public:
 
 	// АјАн
 	UPROPERTY()
+	class UJHBossSkillManager* SkillManager;
+
+	UPROPERTY()
 	class UJHBombSkill* BombSkill;
 	
 	UPROPERTY()
-	class UJHMissileSkill* MessileSkill;
+	class UJHMissileSkill* MissileSkill;
 	
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	EAttackSkillState SkillState = EAttackSkillState::Bomb;
