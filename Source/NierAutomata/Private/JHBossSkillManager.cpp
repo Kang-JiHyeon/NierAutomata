@@ -3,8 +3,9 @@
 
 #include "JHBossSkillManager.h"
 #include "JHEnemy.h"
-#include "JHMissileSkill.h"
 #include "JHBombSkill.h"
+#include "JHMissileSkill.h"
+#include "JHLaserBeamSkill.h"
 
 // Sets default values for this component's properties
 UJHBossSkillManager::UJHBossSkillManager()

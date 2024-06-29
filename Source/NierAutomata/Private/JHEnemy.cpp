@@ -7,7 +7,11 @@
 #include "JHBomb.h"
 #include "JHMissileSkill.h"
 #include "JHMissile.h"
+#include "JHLaserBeamSkill.h"
 #include "JHBossSkillManager.h"
+
+#include "Components/SplineComponent.h"
+#include "Components/SplineMeshComponent.h"
 #include "Components/ArrowComponent.h"
 #include "Components/CapsuleComponent.h"
 
@@ -18,21 +22,21 @@ AJHEnemy::AJHEnemy()
  	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
 
-	CapsuleComp = CreateDefaultSubobject<UCapsuleComponent>(TEXT("Capsule"));
-	SetRootComponent(CapsuleComp);
+	RootCapsuleComp = CreateDefaultSubobject<UCapsuleComponent>(TEXT("Capsule"));
+	SetRootComponent(RootCapsuleComp);
 	// 크기
-	CapsuleComp->SetCapsuleHalfHeight(50);
-	CapsuleComp->SetCapsuleRadius(25);
-	CapsuleComp->SetWorldScale3D(FVector(5, 5, 5));
+	RootCapsuleComp->SetCapsuleHalfHeight(50);
+	RootCapsuleComp->SetCapsuleRadius(25);
+	RootCapsuleComp->SetWorldScale3D(FVector(5, 5, 5));
 
 	// todo : 캡슐 충돌체 설정
 	MeshComp = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("Mesh"));
-	MeshComp->SetupAttachment(CapsuleComp);
+	MeshComp->SetupAttachment(RootCapsuleComp);
 	MeshComp->SetCollisionProfileName(TEXT("NoCollision"));
 
-	ConstructorHelpers::FObjectFinder<UStaticMesh> TempMesh(TEXT("/Script/Engine.StaticMesh'/Game/StarterContent/Shapes/Shape_NarrowCapsule.Shape_NarrowCapsule'"));
-	if (TempMesh.Succeeded())
-		MeshComp->SetStaticMesh(TempMesh.Object);
+	ConstructorHelpers::FObjectFinder<UStaticMesh> MeshFinder(TEXT("/Script/Engine.StaticMesh'/Game/StarterContent/Shapes/Shape_NarrowCapsule.Shape_NarrowCapsule'"));
+	if (MeshFinder.Succeeded())
+		MeshComp->SetStaticMesh(MeshFinder.Object);
 	MeshComp->SetRelativeLocation(FVector(0, 0, -50));
 
 	// BossSkillManager
@@ -46,7 +50,7 @@ AJHEnemy::AJHEnemy()
 
 	// Bomb
 	UJHBombSkill* BombSkill = CreateDefaultSubobject<UJHBombSkill>(TEXT("BombSkill"));
-	BombSkill->SetupAttachment(CapsuleComp);
+	BombSkill->SetupAttachment(RootCapsuleComp);
 
 	
 	for (int32 i = 0; i < BombSkill->BombCount; i++) {
@@ -60,15 +64,15 @@ AJHEnemy::AJHEnemy()
 	}
 
 	
-	ConstructorHelpers::FClassFinder<AJHBomb> TempBomb(TEXT("/Script/Engine.Blueprint'/Game/Blueprints/Kang/BP_JHBomb.BP_JHBomb_C'"));
-	if (TempBomb.Succeeded())
+	ConstructorHelpers::FClassFinder<AJHBomb> BombFinder(TEXT("/Script/Engine.Blueprint'/Game/Blueprints/Kang/BP_JHBomb.BP_JHBomb_C'"));
+	if (BombFinder.Succeeded())
 	{
-		BombSkill->BombFactory = TempBomb.Class;
+		BombSkill->BombFactory = BombFinder.Class;
 	}
 
 	// Missile
 	UJHMissileSkill* MissileSkill = CreateDefaultSubobject<UJHMissileSkill>(TEXT("MissileSkill"));
-	MissileSkill->SetupAttachment(CapsuleComp);
+	MissileSkill->SetupAttachment(RootCapsuleComp);
 
 	UArrowComponent* MissileArrow = CreateDefaultSubobject<UArrowComponent>(TEXT("Missile Arrow"));
 	MissileArrow->SetupAttachment(MissileSkill);
@@ -77,16 +81,38 @@ AJHEnemy::AJHEnemy()
 
 	MissileSkill->SkillPosition = MissileArrow;
 
-	ConstructorHelpers::FClassFinder<AJHMissile> TempMissile(TEXT("/Script/Engine.Blueprint'/Game/Blueprints/Kang/BP_JHMissile.BP_JHMissile_C'"));
-	if (TempMissile.Succeeded())
+	ConstructorHelpers::FClassFinder<AJHMissile> MissileFinder(TEXT("/Script/Engine.Blueprint'/Game/Blueprints/Kang/BP_JHMissile.BP_JHMissile_C'"));
+	if (MissileFinder.Succeeded())
 	{
-		MissileSkill->SkillFactory = TempMissile.Class;
+		MissileSkill->SkillFactory = MissileFinder.Class;
+	}
+
+	// LaserBeam
+	UJHLaserBeamSkill* LaserBeamSkill = CreateDefaultSubobject<UJHLaserBeamSkill>(TEXT("LaserBeamSkill"));
+	LaserBeamSkill->SetupAttachment(RootCapsuleComp);
+
+	USplineComponent* SplineComponent = CreateDefaultSubobject<USplineComponent>(TEXT("SplineComponent"));
+	SplineComponent->SetupAttachment(LaserBeamSkill);
+	LaserBeamSkill->SplineComponent = SplineComponent;
+
+
+	ConstructorHelpers::FObjectFinder<UStaticMesh> LineMeshFinder(TEXT("/Script/Engine.StaticMesh'/Game/StarterContent/Shapes/Shape_Cylinder.Shape_Cylinder'"));
+	if (LineMeshFinder.Succeeded())
+	{
+		LaserBeamSkill->LineMesh = LineMeshFinder.Object;
+	}
+
+	ConstructorHelpers::FObjectFinder<UMaterial> LineMaterialFinder(TEXT("/Script/Engine.Material'/Game/StarterContent/Materials/M_Water_Ocean.M_Water_Ocean'"));
+	if (LineMaterialFinder.Succeeded())
+	{
+		LaserBeamSkill->LineMaterial = LineMaterialFinder.Object;
 	}
 
 
 	// BossSkillManager
 	BossSkillManager->BombSkill = BombSkill;
 	BossSkillManager->MissileSkill = MissileSkill;
+	BossSkillManager->LaserBeamSkill = LaserBeamSkill;
 
 }
 
@@ -94,8 +120,6 @@ AJHEnemy::AJHEnemy()
 void AJHEnemy::BeginPlay()
 {
 	Super::BeginPlay();
-
-
 	
 }
 

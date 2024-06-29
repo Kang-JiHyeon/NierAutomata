@@ -56,6 +56,9 @@ public:
 	UPROPERTY(VisibleAnywhere)
 	class UJHMissileSkill* MissileSkill;
 
+	UPROPERTY(VisibleAnywhere)
+	class UJHLaserBeamSkill* LaserBeamSkill;
+
 	UPROPERTY(EditAnywhere)
 	TArray<FSkillProperty> SkillPattern;
 
@@ -72,7 +75,6 @@ public:
 	bool bDelay = false;
 
 public:
-	void OnAttack();
-	void SetAttacking(bool value);
 	void OnInitialize();
+	void OnAttack();
 };

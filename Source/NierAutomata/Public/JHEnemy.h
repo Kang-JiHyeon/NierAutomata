@@ -28,7 +28,7 @@ public:
 
 	// Boss
 	UPROPERTY(EditAnywhere)
-	class UCapsuleComponent* CapsuleComp;
+	class UCapsuleComponent* RootCapsuleComp;
 
 	UPROPERTY(EditAnywhere)
 	class UStaticMeshComponent* MeshComp;
