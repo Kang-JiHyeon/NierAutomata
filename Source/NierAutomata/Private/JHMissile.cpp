@@ -1,4 +1,4 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+ï»¿// Fill out your copyright notice in the Description page of Project Settings.
 
 
 #include "JHMissile.h"
@@ -14,15 +14,14 @@ AJHMissile::AJHMissile()
 
 	BoxComp = CreateDefaultSubobject<UBoxComponent>(TEXT("Box"));
 	SetRootComponent(BoxComp);
-	// Å©±â
+	// í¬ê¸°
 	BoxComp->SetBoxExtent(FVector(50, 50, 50));
 	BoxComp->SetRelativeScale3D(FVector(1.0f, 0.25f, 0.25f));
 
-	// Ãæµ¹Ã¼
-	BoxComp->SetCollisionResponseToAllChannels(ECR_Ignore);
-	//BoxComp->SetCollisionResponseToChannel(ECC_GameTraceChannel1, ECR_Ignore);	// EnemySkill
+	// ì¶©ëŒì²´
+	BoxComp->SetCollisionProfileName(TEXT("EnemySkill"));
 
-	// ¸Å½¬
+	// ë§¤ì‰¬
 	MeshComp = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("Mesh"));
 	MeshComp->SetupAttachment(BoxComp);
 	MeshComp->SetCollisionProfileName(TEXT("NoCollision"));
@@ -45,7 +44,7 @@ void AJHMissile::BeginPlay()
 {
 	Super::BeginPlay();
 	
-	// ÇÃ·¹ÀÌ¾î¸¦ Ã£¾Æ Å¸°ÙÀ¸·Î ¼³Á¤ÇÑ´Ù.
+	// í”Œë ˆì´ì–´ë¥¼ ì°¾ì•„ íƒ€ê²Ÿìœ¼ë¡œ ì„¤ì •í•œë‹¤.
 	Target = UGameplayStatics::GetPlayerPawn(GetWorld(), 0);
 
 	Direction = GetActorForwardVector();
@@ -56,7 +55,7 @@ void AJHMissile::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
-	// ÀÏÁ¤ ½Ã°£ µ¿¾ÈÀº ¾ÕÀ¸·Î ÀÌµ¿ÇÏ´Ù°¡
+	// ì¼ì • ì‹œê°„ ë™ì•ˆì€ ì•žìœ¼ë¡œ ì´ë™í•˜ë‹¤ê°€
 	if (!bTrace) {
 		if (CurrUpTime > UpTime) {
 			bTrace = true;
@@ -67,7 +66,7 @@ void AJHMissile::Tick(float DeltaTime)
 		CurrUpTime += DeltaTime;
 	}
 	else {
-		 // todo : lerp Àû¿ë
+		 // todo : lerp ì ìš©
 		 //UKismetMathLibrary::VLerp(GetActorLocation(), Direction, DeltaTime * 10);
 
 		FRotator Rotator = UKismetMathLibrary::FindLookAtRotation(GetActorLocation(), Target->GetActorLocation());
@@ -82,7 +81,14 @@ void AJHMissile::NotifyActorBeginOverlap(AActor* OtherActor)
 {
 	Super::NotifyActorBeginOverlap(OtherActor);
 
+	if (OtherActor->GetName().Contains(TEXT("Player")))
+	{
+		UE_LOG(LogTemp, Warning, TEXT("Bomb ê³¼ í”Œë ˆì´ì–´ê°€ ì¶©ëŒí–ˆìŠµë‹ˆë‹¤! "));
 
-	// todo : ¹Ì»çÀÏ Ãæµ¿ Ã³¸® ÇÊ¿ä!!
+	}
+
+	//// todo : ë¯¸ì‚¬ì¼ ì¶©ëŒ ì²˜ë¦¬ í•„ìš”!!
+	//UE_LOG(LogTemp, Warning, TEXT("ë¯¸ì‚¬ì¼ê³¼ì˜ ì¶©ëŒ ëŒ€ìƒ : %s"), *OtherActor->GetName())
+
 	Destroy();
 }

@@ -1,4 +1,4 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+Ôªø// Fill out your copyright notice in the Description page of Project Settings.
 
 
 #include "JHEnemy.h"
@@ -20,12 +20,12 @@ AJHEnemy::AJHEnemy()
 
 	CapsuleComp = CreateDefaultSubobject<UCapsuleComponent>(TEXT("Capsule"));
 	SetRootComponent(CapsuleComp);
-	// ≈©±‚
+	// ÌÅ¨Í∏∞
 	CapsuleComp->SetCapsuleHalfHeight(50);
 	CapsuleComp->SetCapsuleRadius(25);
 	CapsuleComp->SetWorldScale3D(FVector(5, 5, 5));
 
-	// todo : ƒ∏Ω∂ √Êµπ√º º≥¡§
+	// todo : Ï∫°Ïäê Ï∂©ÎèåÏ≤¥ ÏÑ§Ï†ï
 	MeshComp = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("Mesh"));
 	MeshComp->SetupAttachment(CapsuleComp);
 	MeshComp->SetCollisionProfileName(TEXT("NoCollision"));
@@ -42,7 +42,7 @@ AJHEnemy::AJHEnemy()
 	Fsm = CreateDefaultSubobject<UJHEnemyFSM>(TEXT("EnemyFSM"));
 	Fsm->SkillManager = BossSkillManager;
 
-	 //todo : ∫Œ∏ º≥¡§?
+	 //todo : Î∂ÄÎ™® ÏÑ§Ï†ï?
 
 	// Bomb
 	UJHBombSkill* BombSkill = CreateDefaultSubobject<UJHBombSkill>(TEXT("BombSkill"));

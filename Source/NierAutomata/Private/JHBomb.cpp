@@ -1,4 +1,4 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+﻿// Fill out your copyright notice in the Description page of Project Settings.
 
 
 #include "JHBomb.h"
@@ -12,18 +12,20 @@ AJHBomb::AJHBomb()
 
 	SphereComp = CreateDefaultSubobject<USphereComponent>(TEXT("Sphere"));
 	SetRootComponent(SphereComp);
-	// ũ��
+	// 크기
 	SphereComp->SetSphereRadius(50);
-	// ����
+	// 물리
 	SphereComp->SetSimulatePhysics(true);
 	SphereComp->SetEnableGravity(true);
 	SphereComp->SetMassOverrideInKg(NAME_None, 1);
-	// �浹ü
+	// 충돌체
+	//SphereComp->SetCollisionProfileName(TEXT("EnemySkill"));
 	SphereComp->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);
 	SphereComp->SetCollisionResponseToAllChannels(ECR_Overlap);
 	SphereComp->SetCollisionResponseToChannel(ECC_GameTraceChannel1, ECR_Ignore);	// EnemySkill
+	SphereComp->SetCollisionResponseToChannel(ECC_GameTraceChannel2, ECR_Ignore);	// Enemy
 
-	// �Ž�
+	// 매쉬
 	MeshComp = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("Mesh"));
 	MeshComp->SetupAttachment(SphereComp);
 	MeshComp->SetCollisionProfileName(TEXT("NoCollision"));
@@ -45,30 +47,17 @@ AJHBomb::AJHBomb()
 void AJHBomb::BeginPlay()
 {
 	Super::BeginPlay();
-
-	//sphereComp->AddImpulse(GetActorUpVector() * force);
-	
 }
 
 // Called every frame
 void AJHBomb::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
-
-}
-
-void AJHBomb::NotifyActorBeginOverlap(AActor* OtherActor)
-{
-	Super::NotifyActorBeginOverlap(OtherActor);
-	
-	Destroy();
 }
 
 void AJHBomb::Fire()
 {
 	SphereComp->AddImpulse(GetActorUpVector() * Force);
-
-	//UE_LOG(LogTemp, Log, TEXT("��ź �߻�"));
 }
 
 void AJHBomb::SetForce(float Value)
@@ -76,3 +65,17 @@ void AJHBomb::SetForce(float Value)
 	Force = Value;
 }
 
+
+void AJHBomb::NotifyActorBeginOverlap(AActor* OtherActor)
+{
+	Super::NotifyActorBeginOverlap(OtherActor);
+
+
+	if (OtherActor->GetName().Contains(TEXT("Player")))
+	{
+		UE_LOG(LogTemp, Warning, TEXT("Bomb과 플레이어가 충돌했습니다! "));
+
+	}
+
+	Destroy();
+}

@@ -24,6 +24,8 @@ public:
 	virtual void Tick(float DeltaTime) override;
 	virtual void NotifyActorBeginOverlap(AActor* OtherActor) override;
 
+public:
+
 	UPROPERTY(EditAnywhere)
 	class USphereComponent* SphereComp;
 	UPROPERTY(EditAnywhere)
