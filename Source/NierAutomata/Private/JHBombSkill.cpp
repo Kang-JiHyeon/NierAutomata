@@ -19,12 +19,6 @@ UJHBombSkill::UJHBombSkill()
 void UJHBombSkill::BeginPlay()
 {
 	Super::BeginPlay();
-
-	//Me = Cast<AJHEnemy>(GetOwner());
-
-	//BombFactory = Me->BombFactory;
-	//FirePositions = Me->FirePositions;
-
 }
 
 
@@ -60,18 +54,20 @@ void UJHBombSkill::Fire()
 				return;
 			}
 
-			AJHBomb* Bomb = GetWorld()->SpawnActor<AJHBomb>(BombFactory, FirePos->GetComponentTransform());
+			AJHBomb* Bomb = GetWorld()->SpawnActor<AJHBomb>(BombFactory, FirePos->GetComponentLocation(), FirePos->GetComponentRotation());
 
 			Bomb->SetForce(Forces[ForceIndex]);
 			Bomb->Fire();
-
 		}
 
-		ForceIndex++;
+		//ForceIndex++;
 
-		if (ForceIndex % Forces.Num() == 0) {
-			ForceIndex = 0;
-		}
+		ForceIndex = ++ForceIndex % Forces.Num();
+
+		//if (ForceIndex % Forces.Num() == 0)
+		//{
+		//	ForceIndex = 0;
+		//}
 
 		UE_LOG(LogTemp, Warning, TEXT("Spawn Bomb!!"));
 	}

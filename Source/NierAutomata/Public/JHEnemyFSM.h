@@ -55,33 +55,23 @@ public:
 	UPROPERTY(VisibleAnywhere)
 	class AActor* Target;
 
-	UPROPERTY()
+	UPROPERTY(VisibleAnywhere)
 	class AJHEnemy* Me;
 	UPROPERTY(EditAnywhere)
 	float MoveSpeed = 500;
 	UPROPERTY(EditAnywhere)
 	float AttackRange = 10;
 
-	UPROPERTY()
 	bool bIsMove;
 
 	// АјАн
 	UPROPERTY()
 	class UJHBossSkillManager* SkillManager;
 
-	UPROPERTY()
-	class UJHBombSkill* BombSkill;
-	
-	UPROPERTY()
-	class UJHMissileSkill* MissileSkill;
-	
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	EAttackSkillState SkillState = EAttackSkillState::Bomb;
-
 	UPROPERTY(EditAnywhere)
-	float AttackTime = 5;
+	float AttackTime = 20;
 
-
+private:
 	void IdleState();
 	void MoveState();
 	void AttackState();

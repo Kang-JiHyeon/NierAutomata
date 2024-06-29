@@ -23,6 +23,7 @@ AJHEnemy::AJHEnemy()
 	// Å©±â
 	CapsuleComp->SetCapsuleHalfHeight(50);
 	CapsuleComp->SetCapsuleRadius(25);
+	CapsuleComp->SetWorldScale3D(FVector(5, 5, 5));
 
 	// todo : Ä¸½¶ Ãæµ¹Ã¼ ¼³Á¤
 	MeshComp = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("Mesh"));
@@ -59,24 +60,24 @@ AJHEnemy::AJHEnemy()
 	}
 
 	
-	ConstructorHelpers::FClassFinder<AJHBomb> TempBomb(TEXT("/Script/Engine.Blueprint'/Game/Blueprints/BP_JHBomb.BP_JHBomb_C'"));
+	ConstructorHelpers::FClassFinder<AJHBomb> TempBomb(TEXT("/Script/Engine.Blueprint'/Game/Blueprints/Kang/BP_JHBomb.BP_JHBomb_C'"));
 	if (TempBomb.Succeeded())
 	{
 		BombSkill->BombFactory = TempBomb.Class;
 	}
 
 	// Missile
-	UJHMissileSkill* MissileSkill = CreateDefaultSubobject<UJHMissileSkill>(TEXT("MessileSkill"));
+	UJHMissileSkill* MissileSkill = CreateDefaultSubobject<UJHMissileSkill>(TEXT("MissileSkill"));
 	MissileSkill->SetupAttachment(CapsuleComp);
 
-	UArrowComponent* MissileArrow = CreateDefaultSubobject<UArrowComponent>(TEXT("Messile Arrow"));
+	UArrowComponent* MissileArrow = CreateDefaultSubobject<UArrowComponent>(TEXT("Missile Arrow"));
 	MissileArrow->SetupAttachment(MissileSkill);
 	MissileArrow->SetRelativeLocation(FVector(0, 0, 50));
 	MissileArrow->SetRelativeRotation(FRotator(90, 0, 0));
 
 	MissileSkill->SkillPosition = MissileArrow;
 
-	ConstructorHelpers::FClassFinder<AJHMissile> TempMissile(TEXT("/Script/Engine.Blueprint'/Game/Blueprints/BP_JHMissile.BP_JHMissile_C'"));
+	ConstructorHelpers::FClassFinder<AJHMissile> TempMissile(TEXT("/Script/Engine.Blueprint'/Game/Blueprints/Kang/BP_JHMissile.BP_JHMissile_C'"));
 	if (TempMissile.Succeeded())
 	{
 		MissileSkill->SkillFactory = TempMissile.Class;
@@ -86,7 +87,6 @@ AJHEnemy::AJHEnemy()
 	// BossSkillManager
 	BossSkillManager->BombSkill = BombSkill;
 	BossSkillManager->MissileSkill = MissileSkill;
-
 
 }
 

@@ -22,12 +22,6 @@ void UJHMissileSkill::BeginPlay()
 {
 	Super::BeginPlay();
 
-	// 일정 시간마다 미사일을 N개 만든다.
-	//Me = Cast<AJHEnemy>(GetOwner());
-
-	//SkillFactory = Me->MissileFactory;
-	//SkillPosition = Me->MissileArrow;
-
 }
 
 
@@ -36,10 +30,13 @@ void UJHMissileSkill::TickComponent(float DeltaTime, ELevelTick TickType, FActor
 {
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
 
-
-
 }
 
+
+void UJHMissileSkill::OnInitialize()
+{
+	CurrTime = 0;
+}
 
 void UJHMissileSkill::OnAttack()
 {
@@ -50,12 +47,8 @@ void UJHMissileSkill::OnAttack()
 
 		// todo: 랜덤 회전값 부여
 
-		AJHMissile* Missile = GetWorld()->SpawnActor<AJHMissile>(SkillFactory, SkillPosition->GetComponentLocation(), SkillPosition->GetRelativeRotation());
-
+		// 미사일 생성
+		//AJHMissile* Missile = GetWorld()->SpawnActor<AJHMissile>(SkillFactory, SkillPosition->GetComponentLocation(), SkillPosition->GetRelativeRotation());
+		AJHMissile* Missile = GetWorld()->SpawnActor<AJHMissile>(SkillFactory, SkillPosition->GetComponentLocation(), SkillPosition->GetComponentRotation());
 	}
-}
-
-void UJHMissileSkill::OnInitialize()
-{
-	CurrTime = 0;
 }

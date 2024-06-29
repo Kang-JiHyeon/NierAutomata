@@ -26,9 +26,6 @@ void UJHEnemyFSM::BeginPlay()
 	Super::BeginPlay();
 
 	Me = Cast<AJHEnemy>(GetOwner());
-
-	//BombSkill = Me->BombSkill;
-	//MissileSkill = Me->MissileSkill;
 	
 }
 
@@ -80,9 +77,8 @@ void UJHEnemyFSM::IdleState()
 
 void UJHEnemyFSM::MoveState()
 {
-	// todo : 이동 위치 지정 필요
+	// todo : 이동 위치 재지정 필요
 	
-
 	// 중앙으로 이동
 	FVector CurrPos = Me->GetActorLocation();
 	//FVector DestPos = FVector::Zero() + FVector::UpVector * CurrPos.Z;
@@ -111,15 +107,10 @@ void UJHEnemyFSM::AttackState()
 
 		CurrentTime = 0;
 		
-
 		MState = EEnemyState::Idle;
 	}
 
-	//BombSkill->OnAttack();
-	//MissileSkill->OnAttack();
-
 	SkillManager->OnAttack();
-
 }
 
 void UJHEnemyFSM::DamageState()

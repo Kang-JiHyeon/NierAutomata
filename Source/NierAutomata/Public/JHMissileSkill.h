@@ -30,13 +30,10 @@ public:
 
 public:
 
-	//UPROPERTY()
-	//class AJHEnemy* Me;
-
-	UPROPERTY()
+	UPROPERTY(EditAnywhere)
 	TSubclassOf<class AJHMissile> SkillFactory;
 
-	UPROPERTY()
+	UPROPERTY(EditAnywhere)
 	class UArrowComponent* SkillPosition;
 
 	UPROPERTY(EditAnywhere)
@@ -45,14 +42,7 @@ public:
 	UPROPERTY(EditAnywhere)
 	int32 CreateCount = 10;
 
-	UPROPERTY()
 	int32 CurrCreateCount;
-
-	UPROPERTY()
 	float CurrTime;
-
-	UPROPERTY(EditAnywhere)
-	FVector Offset;
-
 
 };

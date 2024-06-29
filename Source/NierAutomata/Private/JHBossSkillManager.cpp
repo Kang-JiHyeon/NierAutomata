@@ -21,6 +21,12 @@ void UJHBossSkillManager::BeginPlay()
 {
 	Super::BeginPlay();
 
+	if (SkillPattern.Num() <= 0)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("SkillPattern Null!"));
+		return;
+	}
+
 	CurrSkillType = SkillPattern[PatternIndex].SkillType;
 	
 	MaxCastTime = SkillPattern[PatternIndex].CastTime;
