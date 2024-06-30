@@ -41,7 +41,14 @@ public:
 	int32 MaxCount = 10; 
 
 	UPROPERTY(EditAnywhere)
-	float RotSpeed = 100;
+	float RotSpeed = 20;
+
+	UPROPERTY(EditAnywhere)
+	float IdleTime = 3;
+
+	float CurrIdleTime;
+
+	float CurrRotZ;
 
 	TArray<AJHLaserBeam*> LaserBeams;
 

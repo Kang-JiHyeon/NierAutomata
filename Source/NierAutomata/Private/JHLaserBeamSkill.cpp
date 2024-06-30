@@ -25,10 +25,6 @@ void UJHLaserBeamSkill::BeginPlay()
 
 	for (int32 i = 0; i < MaxCount; i++)
 	{
-		// 위치
-		//FVector Location = GetPositionOnCircle(Radius, i * (360 / MaxCount), GetComponentLocation());
-		//// 회전
-		//FVector TargetDirection = Location - GetComponentLocation();
 		FRotator Rotation = FRotator(0, i * (360 / MaxCount), 0);
 
 		// LaserBeam 생성
@@ -53,13 +49,13 @@ void UJHLaserBeamSkill::TickComponent(float DeltaTime, ELevelTick TickType, FAct
 {
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
 
-	
 }
 
 void UJHLaserBeamSkill::OnInitialize()
 {
 	if (LaserBeams.Num() <= 0) return;
 
+	CurrIdleTime = 0;
 	bEnable = false;
 	ToggleEnableActor();
 }
@@ -73,7 +69,14 @@ void UJHLaserBeamSkill::OnAttack()
 	}
 	else
 	{
-
+		if (CurrIdleTime <= IdleTime) {
+			CurrIdleTime += GetWorld()->DeltaTimeSeconds;
+		}
+		else
+		{
+			CurrRotZ += RotSpeed * GetWorld()->DeltaTimeSeconds;
+			SetRelativeRotation(FRotator(0, -CurrRotZ, 0));
+		}
 	}
 }
 
