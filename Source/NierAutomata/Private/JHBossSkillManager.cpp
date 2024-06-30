@@ -45,6 +45,31 @@ void UJHBossSkillManager::TickComponent(float DeltaTime, ELevelTick TickType, FA
 
 }
 
+
+void UJHBossSkillManager::OnInitialize()
+{
+	//switch (CurrSkillType)
+	//{
+	//case ESkillType::Bomb:
+	//	BombSkill->OnInitialize();
+	//	break;
+	//case ESkillType::Missile:
+	//	MissileSkill->OnInitialize();
+	//	break;
+	//case ESkillType::LaserBeam:
+	//	LaserBeamSkill ->OnInitialize();
+	//	break;
+	//default:
+	//	break;
+	//}
+
+
+	BombSkill->OnInitialize();
+	MissileSkill->OnInitialize();
+	LaserBeamSkill->OnInitialize();
+}
+
+
 void UJHBossSkillManager::OnAttack()
 {
 	// 스킬 패턴이 없을 경우 종료
@@ -52,8 +77,6 @@ void UJHBossSkillManager::OnAttack()
 		UE_LOG(LogTemp, Warning, TEXT("SkillPattern Null!"));	
 		return;
 	}
-
-
 
 	if (CurrCastTime > MaxCastTime)
 	{
@@ -92,6 +115,7 @@ void UJHBossSkillManager::OnAttack()
 			MissileSkill->OnAttack();
 			break;
 		case ESkillType::LaserBeam:
+			LaserBeamSkill->OnAttack();
 			break;
 		default:
 			break;
@@ -99,21 +123,4 @@ void UJHBossSkillManager::OnAttack()
 	}
 }
 
-
-void UJHBossSkillManager::OnInitialize()
-{
-	switch (CurrSkillType)
-	{
-	case ESkillType::Bomb:
-		BombSkill->OnInitialize();
-		break;
-	case ESkillType::Missile:
-		MissileSkill->OnInitialize();
-		break;
-	case ESkillType::LaserBeam:
-		break;
-	default:
-		break;
-	}
-}
 

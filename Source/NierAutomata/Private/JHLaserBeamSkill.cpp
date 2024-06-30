@@ -2,6 +2,7 @@
 
 
 #include "JHLaserBeamSkill.h"
+#include "JHLaserBeam.h"
 #include "Components/SplineComponent.h"
 #include "Components/SplineMeshComponent.h"
 #include "Kismet/KismetMathLibrary.h"
@@ -22,12 +23,28 @@ void UJHLaserBeamSkill::BeginPlay()
 {
 	Super::BeginPlay();
 
-	Params.AddIgnoredActor(GetOwner());
-	
-	ObjectParams.AddObjectTypesToQuery(ECollisionChannel::ECC_PhysicsBody);
-	ObjectParams.AddObjectTypesToQuery(ECollisionChannel::ECC_WorldDynamic);
-	ObjectParams.AddObjectTypesToQuery(ECollisionChannel::ECC_WorldStatic);
-	
+	for (int32 i = 0; i < MaxCount; i++)
+	{
+		// 위치
+		//FVector Location = GetPositionOnCircle(Radius, i * (360 / MaxCount), GetComponentLocation());
+		//// 회전
+		//FVector TargetDirection = Location - GetComponentLocation();
+		FRotator Rotation = FRotator(0, i * (360 / MaxCount), 0);
+
+		// LaserBeam 생성
+		AJHLaserBeam* LaserBeam = GetWorld()->SpawnActor<AJHLaserBeam>(SkillFactory);
+
+		USceneComponent* Root = LaserBeam->GetRootComponent();
+		Root->SetupAttachment(this);
+		Root->AttachToComponent(this, FAttachmentTransformRules::KeepWorldTransform);
+		LaserBeam->SetActorRelativeRotation(Rotation);
+		LaserBeam->SetActorRelativeLocation(LaserBeam->GetActorForwardVector() * Radius);
+
+		LaserBeams.Add(LaserBeam);
+	}
+
+	ToggleEnableActor();
+
 }
 
 
@@ -36,82 +53,53 @@ void UJHLaserBeamSkill::TickComponent(float DeltaTime, ELevelTick TickType, FAct
 {
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
 
-	OnAttack();
-
 	
 }
 
 void UJHLaserBeamSkill::OnInitialize()
 {
+	if (LaserBeams.Num() <= 0) return;
+
+	bEnable = false;
+	ToggleEnableActor();
 }
 
 void UJHLaserBeamSkill::OnAttack()
 {
-	// Laycast로 Hit한 대상까지 발사하고 싶다.
-	StartPos = GetComponentLocation();
-
-	for (int32 i = 0; i < MaxCount; i++)
+	if (!bEnable)
 	{
-		EndPos = StartPos + GetPositionOnCircle(Distance, i * (360 / MaxCount), StartPos);
+		bEnable = true;
+		ToggleEnableActor();
+	}
+	else
+	{
 
-		// Hit 대상이 있을 경우
-		if (GetWorld()->LineTraceSingleByObjectType(Hit, StartPos, EndPos, ObjectParams, Params))
-		{
-			// todo : 플레이어 감지 처리
-
-			DrawDebugLine(GetWorld(), StartPos, EndPos, FColor::Green, false, 0.01f, 0, 5.0f);
-		}
-		// Hit 대상이 없을 경우
-		else
-		{
-			DrawDebugLine(GetWorld(), StartPos, EndPos, FColor::Red, false, 0.01f, 0, 5.0f);
-		}
-
-		CreateLine();
 	}
 }
 
-FVector UJHLaserBeamSkill::GetPositionOnCircle(float Radius, float Degree, FVector CenterPos)
+void UJHLaserBeamSkill::ToggleEnableActor()
 {
-	float Radian = FMath::DegreesToRadians(Degree);
-	float X = CenterPos.X + Radius * FMath::Cos(Radian);
-	float Y = CenterPos.Y + Radius * FMath::Sin(Radian);
+	for (auto LaserBeam : LaserBeams)
+	{
+		// 액터의 노출
+		LaserBeam->SetActorHiddenInGame(!bEnable);
+
+		// 액터의 충돌
+		LaserBeam->SetActorEnableCollision(bEnable);
+
+		// 액터의 틱
+		LaserBeam->SetActorTickEnabled(bEnable);
+
+		if(!bEnable)
+			LaserBeam->SetCurrIdleTime(0);
+	}
+}
+
+FVector UJHLaserBeamSkill::GetPositionOnCircle(float TargetRadius, float TargetDegree, FVector CenterPos)
+{
+	float Radian = FMath::DegreesToRadians(TargetDegree);
+	float X = CenterPos.X + TargetRadius * FMath::Cos(Radian);
+	float Y = CenterPos.Y + TargetRadius * FMath::Sin(Radian);
 
 	return FVector(X, Y, CenterPos.Z);
 }
-
-void UJHLaserBeamSkill::CreateLine()
-{
-	if (!LineMesh || !LineMaterial) return;
-
-	//for (int32 i = 0; i < SplineComponent->GetNumberOfSplinePoints() - 1; i++)
-	//{
-
-	//	FVector StartTangent, EndTangent;
-	//	SplineComponent->GetLocationAndTangentAtSplinePoint(i, StartPos, StartTangent, ESplineCoordinateSpace::Local);
-	//	SplineComponent->GetLocationAndTangentAtSplinePoint(i + 1, EndPos, EndTangent, ESplineCoordinateSpace::Local);
-
-	//	SplineMeshComponent->SetStartAndEnd(StartPos, StartTangent, EndPos, EndTangent);
-	//	SplineMeshComponent->AttachToComponent(SplineComponent, FAttachmentTransformRules::KeepRelativeTransform);
-	//	SplineMeshComponent->RegisterComponent();
-
-	//}
-
-
-	FVector Start = SplineComponent->GetLocationAtSplinePoint(0, ESplineCoordinateSpace::Local);
-	FVector StartTangent = SplineComponent->GetTangentAtSplinePoint(0, ESplineCoordinateSpace::Local);
-	FVector End = SplineComponent->GetLocationAtSplinePoint(1, ESplineCoordinateSpace::Local);
-	FVector EndTangent = SplineComponent->GetTangentAtSplinePoint(1, ESplineCoordinateSpace::Local);
-
-	USplineMeshComponent* SplineMeshComponent = NewObject<USplineMeshComponent>(this);
-	SplineMeshComponent->SetStaticMesh(LineMesh);
-	SplineMeshComponent->SetMaterial(0, LineMaterial);
-
-
-	SplineMeshComponent->SetStartAndEnd(StartPos, StartTangent, EndPos, EndTangent, true);
-
-	UE_LOG(LogTemp, Warning, TEXT("Create Line!"));
-}
-
-
-

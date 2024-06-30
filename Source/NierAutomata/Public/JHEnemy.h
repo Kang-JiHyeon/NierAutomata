@@ -40,4 +40,13 @@ public:
 	 //Manager
 	UPROPERTY(EditAnywhere)
 	class UJHBossSkillManager* BossSkillManager;
+	
+	UPROPERTY(EditAnywhere)
+	class UJHBombSkill* BombSkill;
+
+	UPROPERTY(EditAnywhere)
+	class UJHMissileSkill* MissileSkill;
+
+	UPROPERTY(EditAnywhere)
+	class UJHLaserBeamSkill* LaserBeamSkill;
 };

@@ -31,33 +31,23 @@ public:
 
 public:
 
-	// Line
 	UPROPERTY(EditAnywhere)
-	class USplineComponent* SplineComponent;
+	TSubclassOf<class AJHLaserBeam> SkillFactory;
 
 	UPROPERTY(EditAnywhere)
-	class UStaticMesh* LineMesh;
-
-	UPROPERTY(EditAnywhere)
-	class UMaterial* LineMaterial;
+	float Radius = 1000;
 
 	UPROPERTY(EditAnywhere)
 	int32 MaxCount = 10; 
 
 	UPROPERTY(EditAnywhere)
-	float Distance = 5000;
+	float RotSpeed = 100;
 
+	TArray<AJHLaserBeam*> LaserBeams;
 
-	FVector StartPos;
-	FVector EndPos;
-	FVector Forward;
-
-	FHitResult Hit;
-	FCollisionQueryParams Params;
-	FCollisionObjectQueryParams ObjectParams;
+	bool bEnable;
 
 private:
+	void ToggleEnableActor();
 	FVector GetPositionOnCircle(float Radius, float Angle, FVector CenterPos);
-
-	void CreateLine();
 };

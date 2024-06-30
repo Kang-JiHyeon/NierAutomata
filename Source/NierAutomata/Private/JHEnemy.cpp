@@ -8,8 +8,8 @@
 #include "JHMissileSkill.h"
 #include "JHMissile.h"
 #include "JHLaserBeamSkill.h"
+#include "JHLaserBeam.h"
 #include "JHBossSkillManager.h"
-
 #include "Components/SplineComponent.h"
 #include "Components/SplineMeshComponent.h"
 #include "Components/ArrowComponent.h"
@@ -49,7 +49,7 @@ AJHEnemy::AJHEnemy()
 	 //todo : 부모 설정?
 
 	// Bomb
-	UJHBombSkill* BombSkill = CreateDefaultSubobject<UJHBombSkill>(TEXT("BombSkill"));
+	BombSkill = CreateDefaultSubobject<UJHBombSkill>(TEXT("BombSkill"));
 	BombSkill->SetupAttachment(RootCapsuleComp);
 
 	
@@ -63,15 +63,14 @@ AJHEnemy::AJHEnemy()
 		BombSkill->FirePositions.Add(TempFirePos);
 	}
 
-	
 	ConstructorHelpers::FClassFinder<AJHBomb> BombFinder(TEXT("/Script/Engine.Blueprint'/Game/Blueprints/Kang/BP_JHBomb.BP_JHBomb_C'"));
 	if (BombFinder.Succeeded())
 	{
-		BombSkill->BombFactory = BombFinder.Class;
+		BombSkill->SkillFactory = BombFinder.Class;
 	}
 
 	// Missile
-	UJHMissileSkill* MissileSkill = CreateDefaultSubobject<UJHMissileSkill>(TEXT("MissileSkill"));
+	MissileSkill = CreateDefaultSubobject<UJHMissileSkill>(TEXT("MissileSkill"));
 	MissileSkill->SetupAttachment(RootCapsuleComp);
 
 	UArrowComponent* MissileArrow = CreateDefaultSubobject<UArrowComponent>(TEXT("Missile Arrow"));
@@ -88,32 +87,19 @@ AJHEnemy::AJHEnemy()
 	}
 
 	// LaserBeam
-	UJHLaserBeamSkill* LaserBeamSkill = CreateDefaultSubobject<UJHLaserBeamSkill>(TEXT("LaserBeamSkill"));
+	LaserBeamSkill = CreateDefaultSubobject<UJHLaserBeamSkill>(TEXT("LaserBeamSkill"));
 	LaserBeamSkill->SetupAttachment(RootCapsuleComp);
 
-	USplineComponent* SplineComponent = CreateDefaultSubobject<USplineComponent>(TEXT("SplineComponent"));
-	SplineComponent->SetupAttachment(LaserBeamSkill);
-	LaserBeamSkill->SplineComponent = SplineComponent;
-
-
-	ConstructorHelpers::FObjectFinder<UStaticMesh> LineMeshFinder(TEXT("/Script/Engine.StaticMesh'/Game/StarterContent/Shapes/Shape_Cylinder.Shape_Cylinder'"));
-	if (LineMeshFinder.Succeeded())
+	ConstructorHelpers::FClassFinder<AJHLaserBeam> LaserBeamFinder(TEXT("/Script/Engine.Blueprint'/Game/Blueprints/Kang/BP_JHLaserBeam.BP_JHLaserBeam_C'"));
+	if (LaserBeamFinder.Succeeded())
 	{
-		LaserBeamSkill->LineMesh = LineMeshFinder.Object;
+		LaserBeamSkill->SkillFactory = LaserBeamFinder.Class;
 	}
-
-	ConstructorHelpers::FObjectFinder<UMaterial> LineMaterialFinder(TEXT("/Script/Engine.Material'/Game/StarterContent/Materials/M_Water_Ocean.M_Water_Ocean'"));
-	if (LineMaterialFinder.Succeeded())
-	{
-		LaserBeamSkill->LineMaterial = LineMaterialFinder.Object;
-	}
-
 
 	// BossSkillManager
 	BossSkillManager->BombSkill = BombSkill;
 	BossSkillManager->MissileSkill = MissileSkill;
 	BossSkillManager->LaserBeamSkill = LaserBeamSkill;
-
 }
 
 // Called when the game starts or when spawned

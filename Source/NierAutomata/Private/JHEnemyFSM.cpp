@@ -88,6 +88,9 @@ void UJHEnemyFSM::MoveState()
 	if (Dir.Size() <= AttackRange) {
 		Me->SetActorLocation(DestPos);
 		bIsMove = true;
+
+		//SkillManager->OnInitialize();
+
 		MState = EEnemyState::Attack;
 	}
 
@@ -107,6 +110,7 @@ void UJHEnemyFSM::AttackState()
 
 		CurrentTime = 0;
 		
+		//SkillManager->OnInitialize();
 		MState = EEnemyState::Idle;
 	}
 

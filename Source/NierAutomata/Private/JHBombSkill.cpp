@@ -40,7 +40,7 @@ void UJHBombSkill::Fire()
 			return;
 		}
 
-		if (BombFactory == nullptr) {
+		if (SkillFactory == nullptr) {
 
 			UE_LOG(LogTemp, Warning, TEXT("BombFactory null!!"));
 			return;
@@ -54,7 +54,7 @@ void UJHBombSkill::Fire()
 				return;
 			}
 
-			AJHBomb* Bomb = GetWorld()->SpawnActor<AJHBomb>(BombFactory, FirePos->GetComponentLocation(), FirePos->GetComponentRotation());
+			AJHBomb* Bomb = GetWorld()->SpawnActor<AJHBomb>(SkillFactory, FirePos->GetComponentLocation(), FirePos->GetComponentRotation());
 
 			Bomb->SetForce(Forces[ForceIndex]);
 			Bomb->Fire();

@@ -32,7 +32,7 @@ public:
 public:
 
 	UPROPERTY(EditDefaultsOnly)
-	TSubclassOf<class AJHBomb> BombFactory;
+	TSubclassOf<class AJHBomb> SkillFactory;
 
 	UPROPERTY()
 	TArray<class USceneComponent*> FirePositions;
