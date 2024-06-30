@@ -82,12 +82,13 @@ void UJHBossSkillManager::OnAttack()
 	{
 		CurrDelayTime += GetWorld()->DeltaTimeSeconds;
 
-		if(!bDelay)
+		if (!bDelay) {
+			OnInitialize();
 			bDelay = true;
+		}
 
 		if (CurrDelayTime > MaxDelayTime)
 		{	
-			OnInitialize();
 			
 			PatternIndex = (++PatternIndex) % SkillPattern.Num();
 

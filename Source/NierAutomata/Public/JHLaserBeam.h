@@ -6,6 +6,14 @@
 #include "GameFramework/Actor.h"
 #include "JHLaserBeam.generated.h"
 
+UENUM(BlueprintType)
+enum class ELaserBeamState : uint8
+{
+	None,
+	Idle,
+	Attack,
+};
+
 USTRUCT(Atomic)
 struct FLaserBeamStyle
 {
@@ -38,6 +46,9 @@ public:
 
 public:
 
+	UPROPERTY(VisibleAnywhere)
+	ELaserBeamState CurLaserBeamStyle = ELaserBeamState::None;
+
 	UPROPERTY(EditAnywhere)
 	class USplineMeshComponent* SplineMesh;
 
@@ -52,7 +63,7 @@ public:
 
 private:
 	UPROPERTY(EditAnywhere)
-	float IdleDelayTime = 3;
+	float IdleTime = 3;
 
 	float CurrIdleTime = 0;
 
@@ -64,11 +75,13 @@ private:
 	FCollisionObjectQueryParams ObjectParams;
 
 public :
-	void SetIdleDelayTime(float Value);
+	void SetIdleTime(float Value);
 	void SetCurrIdleTime(float Value);
+	void SetLaserBeamState(ELaserBeamState State);
 
 private:
 
-	void AttackState();
-	void UpdateBeamStyle(FLaserBeamStyle* Style);
+	void OnAttack();
+	void SetStyle(FLaserBeamStyle* Style);
+
 };

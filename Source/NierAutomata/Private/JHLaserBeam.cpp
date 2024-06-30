@@ -41,10 +41,7 @@ void AJHLaserBeam::BeginPlay()
 	Super::BeginPlay();
 	
 	// Spline Mesh
-	UpdateBeamStyle(&IdleStyle);
-	
-	//SplineMesh->SetStaticMesh(InitMesh);
-	//SplineMesh->SetMaterial(0, InitMat);
+	SetLaserBeamState(ELaserBeamState::Idle);
 
 	// ray
 	Params.AddIgnoredActor(GetOwner());
@@ -61,26 +58,16 @@ void AJHLaserBeam::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
-	if (CurrIdleTime <= IdleDelayTime) {
+	if (CurrIdleTime <= IdleTime) {
 		CurrIdleTime += DeltaTime;
 	}
 	else {
-		UpdateBeamStyle(&AttackStyle);
-		AttackState();
+		SetLaserBeamState(ELaserBeamState::Attack);
+		OnAttack();
 	}
 }
 
-void AJHLaserBeam::SetIdleDelayTime(float Value)
-{
-	IdleDelayTime = Value;
-}
-
-void AJHLaserBeam::SetCurrIdleTime(float Value)
-{
-	CurrIdleTime = Value;
-}
-
-void AJHLaserBeam::AttackState()
+void AJHLaserBeam::OnAttack()
 {
 	// Laycast로 Hit한 대상까지 발사하고 싶다.
 	StartPos = GetActorLocation();
@@ -107,13 +94,38 @@ void AJHLaserBeam::AttackState()
 	}
 }
 
-void AJHLaserBeam::UpdateBeamStyle(FLaserBeamStyle* Style)
+void AJHLaserBeam::SetIdleTime(float Value)
+{
+	IdleTime = Value;
+}
+
+void AJHLaserBeam::SetCurrIdleTime(float Value)
+{
+	CurrIdleTime = Value;
+}
+
+void AJHLaserBeam::SetLaserBeamState(ELaserBeamState State)
+{
+	if (CurLaserBeamStyle == State) return;
+
+	if (State == ELaserBeamState::Idle)
+	{
+		SetStyle(&IdleStyle);
+		CurrIdleTime = 0;
+	}
+	else
+	{
+		SetStyle(&AttackStyle);
+	}
+}
+
+void AJHLaserBeam::SetStyle(FLaserBeamStyle* Style)
 {
 	SplineMesh->SetStaticMesh(Style->StaticMesh);
 	SplineMesh->SetMaterial(0, Style->Material);
 
 	SplineMesh->SetStartAndEnd(FVector::ZeroVector, FVector(100, 0, 0), FVector::ForwardVector * Distance, FVector(100, 0, 0), true);
-	
+
 	FVector2D TargetScale = FVector2D(Style->Scale.Y, Style->Scale.Z);
 
 	SplineMesh->SetStartScale(TargetScale);

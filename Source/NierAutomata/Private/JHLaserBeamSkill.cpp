@@ -35,12 +35,13 @@ void UJHLaserBeamSkill::BeginPlay()
 		Root->AttachToComponent(this, FAttachmentTransformRules::KeepWorldTransform);
 		LaserBeam->SetActorRelativeRotation(Rotation);
 		LaserBeam->SetActorRelativeLocation(LaserBeam->GetActorForwardVector() * Radius);
+		LaserBeam->SetIdleTime(IdleTime);
 
 		LaserBeams.Add(LaserBeam);
 	}
 
 	ToggleEnableActor();
-
+	ToggleLaserBeamState(false);
 }
 
 
@@ -58,6 +59,7 @@ void UJHLaserBeamSkill::OnInitialize()
 	CurrIdleTime = 0;
 	bEnable = false;
 	ToggleEnableActor();
+	ToggleLaserBeamState(false);
 }
 
 void UJHLaserBeamSkill::OnAttack()
@@ -66,6 +68,9 @@ void UJHLaserBeamSkill::OnAttack()
 	{
 		bEnable = true;
 		ToggleEnableActor();
+
+		bAttack = false;
+		
 	}
 	else
 	{
@@ -74,10 +79,23 @@ void UJHLaserBeamSkill::OnAttack()
 		}
 		else
 		{
+			//ToggleLaserBeamState(true);
+			bAttack = true;
+
 			CurrRotZ += RotSpeed * GetWorld()->DeltaTimeSeconds;
 			SetRelativeRotation(FRotator(0, -CurrRotZ, 0));
 		}
 	}
+
+	if (bEnable && bAttack)
+	{
+		ToggleLaserBeamState(true);
+	}
+	else
+	{
+		ToggleLaserBeamState(false);
+	}
+
 }
 
 void UJHLaserBeamSkill::ToggleEnableActor()
@@ -92,9 +110,19 @@ void UJHLaserBeamSkill::ToggleEnableActor()
 
 		// 액터의 틱
 		LaserBeam->SetActorTickEnabled(bEnable);
+	}
+}
 
-		if(!bEnable)
-			LaserBeam->SetCurrIdleTime(0);
+void UJHLaserBeamSkill::ToggleLaserBeamState(bool bValue)
+{
+	if (bAttack == bValue) return;
+
+	for (auto LaserBeam : LaserBeams)
+	{
+		if (bValue)
+			LaserBeam->SetLaserBeamState(ELaserBeamState::Attack);
+		else
+			LaserBeam->SetLaserBeamState(ELaserBeamState::Idle);
 	}
 }
 

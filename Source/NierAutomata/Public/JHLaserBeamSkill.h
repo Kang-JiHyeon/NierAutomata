@@ -53,8 +53,10 @@ public:
 	TArray<AJHLaserBeam*> LaserBeams;
 
 	bool bEnable;
+	bool bAttack;
 
 private:
 	void ToggleEnableActor();
+	void ToggleLaserBeamState(bool bEnable);
 	FVector GetPositionOnCircle(float Radius, float Angle, FVector CenterPos);
 };
