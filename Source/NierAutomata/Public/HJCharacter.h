@@ -39,13 +39,25 @@ public:
 	// 앞뒤좌우 이동 
 	void InputHorizontal(float value);
 	void InputVertical(float value);
-	// 대시 구현 
+	// 가속 구현 
 	void StartDash();
 	void EndDash();
+	// 대시 구현 
+	void InputDash();
+	int DashDistance = 1500;
 	// 점프 
 	void InputJump();
+	// 점프 중력 (낙하 속도) 
+	void StartJump();
+	void EndJump();
 	// 카메라 회전 구현 
 	void InputTurn(float value);
 	void InputLookup(float value);
+	// 공격 구현 
+	void StartAttack();
+	void EndAttack();
+	// 무기 장착 
+	/*UPROPERTY(EditAnywhere)
+	UStaticMeshComponent* Weapon;*/
 
 };
