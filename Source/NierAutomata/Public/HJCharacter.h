@@ -57,7 +57,7 @@ public:
 	void StartAttack();
 	void EndAttack();
 	// ¹«±â ÀåÂø 
-	/*UPROPERTY(EditAnywhere)
-	UStaticMeshComponent* Weapon;*/
+	UPROPERTY(EditAnywhere)
+	UStaticMeshComponent* Weapon;
 
 };

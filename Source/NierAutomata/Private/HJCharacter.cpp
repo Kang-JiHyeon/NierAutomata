@@ -37,7 +37,7 @@ AHJCharacter::AHJCharacter()
 	}
 
 	// 무기
-	/*FName WeaponSocket(TEXT("back_out_rSocket"));
+	FName WeaponSocket(TEXT("hand_rSocket"));
 	if (GetMesh()->DoesSocketExist(WeaponSocket))
 	{
 		Weapon = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("WEAPON"));
@@ -50,7 +50,7 @@ AHJCharacter::AHJCharacter()
 			Weapon->SetStaticMesh(tempWeapon.Object);
 		}
 		Weapon->SetupAttachment(GetMesh(), WeaponSocket);
-	}*/
+	}
 
 	// 점프 
 	/*JumpMaxCount = 2;*/
