@@ -63,7 +63,7 @@ AJHEnemy::AJHEnemy()
 
 	// Bomb
 	BombSkill = CreateDefaultSubobject<UJHBombSkill>(TEXT("Bomb Skill"));
-	BombSkill->SetupAttachment(RootComponent);
+	BombSkill->SetupAttachment(BottomMeshComp);
 
 	
 	for (int32 i = 0; i < BombSkill->BombCount; i++) {
@@ -101,7 +101,7 @@ AJHEnemy::AJHEnemy()
 
 	// LaserBeam
 	LaserBeamSkill = CreateDefaultSubobject<UJHLaserBeamSkill>(TEXT("LaserBeam Skill"));
-	LaserBeamSkill->SetupAttachment(RootComponent);
+	LaserBeamSkill->SetupAttachment(BottomMeshComp);
 
 	ConstructorHelpers::FClassFinder<AJHLaserBeam> LaserBeamFinder(TEXT("/Script/Engine.Blueprint'/Game/Blueprints/Kang/BP_JHLaserBeam.BP_JHLaserBeam_C'"));
 	if (LaserBeamFinder.Succeeded())
@@ -218,15 +218,6 @@ void AJHEnemy::RotateLookAt()
     FRotator InterpRot = UKismetMathLibrary::RInterpTo(this->GetActorRotation(), TargetRot, GetWorld()->DeltaTimeSeconds, InterpSpeed);
 
     SetActorRotation(InterpRot);
-
-
-	// 나의 앞방향이 플레이어의 앞방향과 반대방향이 되도록 하고 싶다.
-
-	FVector CurrForward = this->GetActorForwardVector();
-	FVector TargetForward = RotateTarget->GetActorForwardVector();
-
-
-
 }
 
 ///// <summary>
