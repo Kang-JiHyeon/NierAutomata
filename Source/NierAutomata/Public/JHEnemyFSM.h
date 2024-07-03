@@ -56,7 +56,7 @@ public:
 	class AActor* Target;
 
 	UPROPERTY(VisibleAnywhere)
-	class AJHEnemy* Me;
+	class AJHEnemy* MyOwner;
 	UPROPERTY(EditAnywhere)
 	float MoveSpeed = 500;
 	UPROPERTY(EditAnywhere)

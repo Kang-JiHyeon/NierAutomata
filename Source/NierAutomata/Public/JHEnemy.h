@@ -31,7 +31,10 @@ public:
 	class UCapsuleComponent* RootCapsuleComp;
 
 	UPROPERTY(EditAnywhere)
-	class UStaticMeshComponent* MeshComp;
+	class UStaticMeshComponent* BodyMeshComp;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	class UStaticMeshComponent* BottomMeshComp;
 
 	// FSM
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
@@ -49,4 +52,49 @@ public:
 
 	UPROPERTY(EditAnywhere)
 	class UJHLaserBeamSkill* LaserBeamSkill;
+
+private:
+	// Move
+	UPROPERTY(EditAnywhere)
+	FVector MoveTargetPos;
+
+	UPROPERTY(EditAnywhere)
+	int32 MoveSpeed = 1000;
+
+	// Rotate
+	UPROPERTY(VisibleAnywhere)
+	AActor* RotateTarget;
+
+	UPROPERTY(VisibleAnywhere)
+	FVector RotateTargetPos;
+
+	FVector RotateTargetDirection;
+
+	UPROPERTY(EditAnywhere)
+	int32 RotSpeed = 400;
+
+	UPROPERTY(EditAnywhere)
+	int32 InterpSpeed = 1;
+
+	// 제어 변수
+	UPROPERTY(EditAnywhere)
+	bool bIsMove;
+	UPROPERTY(EditAnywhere)
+	bool bIsRotatePosition;
+	UPROPERTY(EditAnywhere)
+	bool bIsLookAt;
+
+public:
+	void SetMovement(bool bValue);
+	void SetLockAt(bool bValue);
+	void SetMovePosition(FVector TargetPosotion);
+	void SetRotSpeed(float Value);
+
+
+	void Movement();
+	void Movement(FVector TargetPosition);
+	void RotateLookAt();
+	//void RotateTarget(FVector TargetPosition);
+	void RotateSpinBody();
+	void RotateSpinBottom();
 };

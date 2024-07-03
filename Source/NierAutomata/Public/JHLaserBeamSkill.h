@@ -35,10 +35,13 @@ public:
 	TSubclassOf<class AJHLaserBeam> SkillFactory;
 
 	UPROPERTY(EditAnywhere)
-	float Radius = 1000;
+	float Radius = 10;
 
 	UPROPERTY(EditAnywhere)
 	int32 MaxCount = 10; 
+
+	//UPROPERTY(EditAnywhere)
+	//USceneComponent* RotTarget;
 
 	UPROPERTY(EditAnywhere)
 	float RotSpeed = 20;
@@ -59,4 +62,6 @@ private:
 	void ToggleEnableActor();
 	void ToggleLaserBeamState(bool bEnable);
 	FVector GetPositionOnCircle(float Radius, float Angle, FVector CenterPos);
+
+	//void Rotate();
 };

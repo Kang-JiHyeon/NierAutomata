@@ -14,6 +14,7 @@
 #include "Components/SplineMeshComponent.h"
 #include "Components/ArrowComponent.h"
 #include "Components/CapsuleComponent.h"
+#include "Kismet/KismetMathLibrary.h"
 
 
 // Sets default values
@@ -30,14 +31,26 @@ AJHEnemy::AJHEnemy()
 	RootCapsuleComp->SetWorldScale3D(FVector(5, 5, 5));
 
 	// todo : 캡슐 충돌체 설정
-	MeshComp = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("Mesh"));
-	MeshComp->SetupAttachment(RootCapsuleComp);
-	MeshComp->SetCollisionProfileName(TEXT("NoCollision"));
+	BodyMeshComp = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("Body Mesh"));
+	BodyMeshComp->SetupAttachment(RootComponent);
+	BodyMeshComp->SetCollisionProfileName(TEXT("NoCollision"));
 
-	ConstructorHelpers::FObjectFinder<UStaticMesh> MeshFinder(TEXT("/Script/Engine.StaticMesh'/Game/StarterContent/Shapes/Shape_NarrowCapsule.Shape_NarrowCapsule'"));
-	if (MeshFinder.Succeeded())
-		MeshComp->SetStaticMesh(MeshFinder.Object);
-	MeshComp->SetRelativeLocation(FVector(0, 0, -50));
+	// Top - Capsule
+	ConstructorHelpers::FObjectFinder<UStaticMesh> TopMeshFinder(TEXT("/Script/Engine.StaticMesh'/Game/StarterContent/Shapes/Shape_NarrowCapsule.Shape_NarrowCapsule'"));
+	if (TopMeshFinder.Succeeded())
+		BodyMeshComp->SetStaticMesh(TopMeshFinder.Object);
+	BodyMeshComp->SetRelativeLocation(FVector(0, 0, -50));
+
+	// Bottom
+	BottomMeshComp = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("Bottom Mesh"));
+	BottomMeshComp->SetupAttachment(RootComponent);
+	BottomMeshComp->SetCollisionProfileName(TEXT("NoCollision"));
+
+	// Bottom - Cylinder
+	ConstructorHelpers::FObjectFinder<UStaticMesh> BottomMeshFinder(TEXT("/Script/Engine.StaticMesh'/Game/StarterContent/Shapes/Shape_Cylinder.Shape_Cylinder'"));
+	if (BottomMeshFinder.Succeeded())
+		BottomMeshComp->SetStaticMesh(BottomMeshFinder.Object);
+	BottomMeshComp->SetRelativeLocation(FVector(0, 0, -50));
 
 	// BossSkillManager
 	BossSkillManager = CreateDefaultSubobject<UJHBossSkillManager>(TEXT("BossSkillManager"));
@@ -49,8 +62,8 @@ AJHEnemy::AJHEnemy()
 	 //todo : 부모 설정?
 
 	// Bomb
-	BombSkill = CreateDefaultSubobject<UJHBombSkill>(TEXT("BombSkill"));
-	BombSkill->SetupAttachment(RootCapsuleComp);
+	BombSkill = CreateDefaultSubobject<UJHBombSkill>(TEXT("Bomb Skill"));
+	BombSkill->SetupAttachment(RootComponent);
 
 	
 	for (int32 i = 0; i < BombSkill->BombCount; i++) {
@@ -70,8 +83,8 @@ AJHEnemy::AJHEnemy()
 	}
 
 	// Missile
-	MissileSkill = CreateDefaultSubobject<UJHMissileSkill>(TEXT("MissileSkill"));
-	MissileSkill->SetupAttachment(RootCapsuleComp);
+	MissileSkill = CreateDefaultSubobject<UJHMissileSkill>(TEXT("Missile Skill"));
+	MissileSkill->SetupAttachment(RootComponent);
 
 	UArrowComponent* MissileArrow = CreateDefaultSubobject<UArrowComponent>(TEXT("Missile Arrow"));
 	MissileArrow->SetupAttachment(MissileSkill);
@@ -79,7 +92,7 @@ AJHEnemy::AJHEnemy()
 	MissileArrow->SetRelativeRotation(FRotator(90, 0, 0));
 
 	MissileSkill->SkillPosition = MissileArrow;
-
+	
 	ConstructorHelpers::FClassFinder<AJHMissile> MissileFinder(TEXT("/Script/Engine.Blueprint'/Game/Blueprints/Kang/BP_JHMissile.BP_JHMissile_C'"));
 	if (MissileFinder.Succeeded())
 	{
@@ -87,8 +100,8 @@ AJHEnemy::AJHEnemy()
 	}
 
 	// LaserBeam
-	LaserBeamSkill = CreateDefaultSubobject<UJHLaserBeamSkill>(TEXT("LaserBeamSkill"));
-	LaserBeamSkill->SetupAttachment(RootCapsuleComp);
+	LaserBeamSkill = CreateDefaultSubobject<UJHLaserBeamSkill>(TEXT("LaserBeam Skill"));
+	LaserBeamSkill->SetupAttachment(RootComponent);
 
 	ConstructorHelpers::FClassFinder<AJHLaserBeam> LaserBeamFinder(TEXT("/Script/Engine.Blueprint'/Game/Blueprints/Kang/BP_JHLaserBeam.BP_JHLaserBeam_C'"));
 	if (LaserBeamFinder.Succeeded())
@@ -106,7 +119,18 @@ AJHEnemy::AJHEnemy()
 void AJHEnemy::BeginPlay()
 {
 	Super::BeginPlay();
+
+	MoveTargetPos += FVector(0, 0, GetActorLocation().Z);
+	RotateTarget = GetWorld()->GetFirstPlayerController()->GetPawn();
+
+	FVector CurrPos = this->GetActorLocation();
+	RotateTargetPos = RotateTarget->GetActorLocation();
 	
+	RotateTargetPos.Z = 0;
+	CurrPos.Z = 0;
+
+	RotateTargetDirection = RotateTargetPos - CurrPos;
+	RotateTargetDirection.Normalize();
 }
 
 // Called every frame
@@ -116,3 +140,130 @@ void AJHEnemy::Tick(float DeltaTime)
 
 }
 
+
+void AJHEnemy::SetMovement(bool bValue)
+{
+	bIsMove = bValue;
+
+}
+void AJHEnemy::SetLockAt(bool bValue)
+{
+	bIsLookAt = bValue;
+}
+
+void AJHEnemy::SetRotSpeed(float Value)
+{
+	RotSpeed = Value;
+}
+
+/// <summary>
+/// 이동 함수
+/// </summary>
+void AJHEnemy::Movement()
+{
+	// 이동 중이 아니라면 종료
+	if (!bIsMove) return;
+
+	// 타겟의 위치로 이동
+	FVector CurrPos = GetActorLocation();
+	FVector Dir = MoveTargetPos  - CurrPos;
+
+	// 타겟 위치에 가까이 왔다면 타겟으로 위치 지정
+	if (Dir.Length() < 10)
+	{
+		SetActorLocation(MoveTargetPos);
+		bIsMove = false;
+	}
+	else
+	{
+		Dir.Normalize();
+		SetActorLocation(CurrPos + Dir * MoveSpeed * GetWorld()->DeltaTimeSeconds);
+	}
+}
+
+void AJHEnemy::Movement(FVector TargetPosition)
+{
+	// 이동 중이 아니라면 종료
+	if (!bIsMove) return;
+
+	// 타겟의 위치로 이동
+	FVector CurrPos = GetActorLocation();
+	FVector Dir = TargetPosition - CurrPos;
+
+	// 타겟 위치에 가까이 왔다면 타겟으로 위치 지정
+	if (Dir.Length() < 10)
+	{
+		SetActorLocation(TargetPosition);
+		bIsMove = false;
+	}
+	else
+	{
+		Dir.Normalize();
+		SetActorLocation(CurrPos + Dir * MoveSpeed * GetWorld()->DeltaTimeSeconds);
+	}
+}
+
+/// <summary>
+/// 회전 함수
+/// </summary>
+void AJHEnemy::RotateLookAt()
+{
+    FVector CurrPos = this->GetActorLocation();
+    FVector TargetPos = RotateTarget->GetActorLocation();
+
+    CurrPos.Z = 0;
+    TargetPos.Z = 0;
+
+    FRotator TargetRot = UKismetMathLibrary::FindLookAtRotation(CurrPos, TargetPos);
+    FRotator InterpRot = UKismetMathLibrary::RInterpTo(this->GetActorRotation(), TargetRot, GetWorld()->DeltaTimeSeconds, InterpSpeed);
+
+    SetActorRotation(InterpRot);
+
+
+	// 나의 앞방향이 플레이어의 앞방향과 반대방향이 되도록 하고 싶다.
+
+	FVector CurrForward = this->GetActorForwardVector();
+	FVector TargetForward = RotateTarget->GetActorForwardVector();
+
+
+
+}
+
+///// <summary>
+///// 특정 좌표를 바라보는 방향으로 회전
+///// </summary>
+///// <param name="TargetPosition"></param>
+//void AJHEnemy::RotateTarget(FVector TargetPosition)
+//{
+//	if (!bIsRotatePosition) return;
+//
+//	FVector CurrPos = this->GetActorLocation();
+//	CurrPos.Z = 0;
+//	TargetPosition.Z = 0;
+//
+//	UKismetMathLibrary::FindLookAtRotation(CurrPos, TargetPosition);
+//}
+
+/// <summary>
+/// 몸 전체 회전
+/// </summary>
+void AJHEnemy::RotateSpinBody()
+{
+	FRotator Rot = this->GetActorRotation() + FRotator(0, RotSpeed * GetWorld()->DeltaTimeSeconds, 0);
+
+	this->SetActorRotation(Rot);
+
+	UE_LOG(LogTemp, Warning, TEXT("RotateSpinBody!"));
+}
+
+/// <summary>
+/// 몸 하단 회전
+/// </summary>
+void AJHEnemy::RotateSpinBottom()
+{
+	FRotator Rot = BottomMeshComp->GetRelativeRotation() + FRotator(0, RotSpeed * GetWorld()->DeltaTimeSeconds, 0);
+
+	BottomMeshComp->SetRelativeRotation(Rot);
+
+	UE_LOG(LogTemp, Warning, TEXT("RotateSpinBottom!"));
+}

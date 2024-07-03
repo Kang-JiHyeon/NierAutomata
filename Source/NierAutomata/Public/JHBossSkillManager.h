@@ -14,6 +14,16 @@ enum class ESkillType : uint8
 	LaserBeam
 };
 
+UENUM(BlueprintType)
+enum class ERotateType : uint8
+{
+	None,
+	SpinBody,
+	SpinBottom,
+	LookAt,
+	Target
+};
+
 USTRUCT(Atomic)
 struct FSkillProperty
 {
@@ -25,6 +35,10 @@ public :
 	float CastTime;
 	UPROPERTY(EditAnywhere)
 	float DelayTime;
+	UPROPERTY(EditAnywhere)
+	ERotateType RotateType;
+	UPROPERTY(EditAnywhere)
+	float RotateSpeed;
 };
 
 UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
@@ -46,9 +60,16 @@ public:
 
 
 public:
+	
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	ESkillType CurrSkillType = ESkillType::Bomb;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	ERotateType CurrRotateType = ERotateType::None;
+
+	UPROPERTY(VisibleAnywhere)
+	class AJHEnemy* MyBoss;
 
 	UPROPERTY(VisibleAnywhere)
 	class UJHBombSkill* BombSkill;
@@ -77,4 +98,7 @@ public:
 public:
 	void OnInitialize();
 	void OnAttack();
+
+private:
+	void UpdatePattern();
 };

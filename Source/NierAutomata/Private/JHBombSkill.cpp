@@ -19,6 +19,8 @@ UJHBombSkill::UJHBombSkill()
 void UJHBombSkill::BeginPlay()
 {
 	Super::BeginPlay();
+
+	MyActor = GetOwner();
 }
 
 
@@ -60,14 +62,8 @@ void UJHBombSkill::Fire()
 			Bomb->Fire();
 		}
 
-		//ForceIndex++;
 
 		ForceIndex = ++ForceIndex % Forces.Num();
-
-		//if (ForceIndex % Forces.Num() == 0)
-		//{
-		//	ForceIndex = 0;
-		//}
 
 		UE_LOG(LogTemp, Warning, TEXT("Spawn Bomb!!"));
 	}
@@ -80,6 +76,15 @@ void UJHBombSkill::Fire()
 void UJHBombSkill::SetSkillTime(float Value)
 {
 	SkillTime = Value;
+}
+
+void UJHBombSkill::Rotate()
+{
+	//FRotator Rot = MyActor->GetActorRotation() + FRotator(0, RotSpeed * GetWorld()->DeltaTimeSeconds, 0);
+
+	//MyActor->SetActorRotation(Rot);
+
+	//UE_LOG(LogTemp, Warning, TEXT("Rotate!"));
 }
 
 void UJHBombSkill::OnInitialize()
@@ -98,5 +103,6 @@ void UJHBombSkill::OnAttack()
 		CurrSkillTime = 0;
 		Fire();
 	}
-}
 
+	Rotate();
+}

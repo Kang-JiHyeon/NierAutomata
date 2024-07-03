@@ -25,7 +25,7 @@ void UJHEnemyFSM::BeginPlay()
 {
 	Super::BeginPlay();
 
-	Me = Cast<AJHEnemy>(GetOwner());
+	MyOwner = Cast<AJHEnemy>(GetOwner());
 	
 }
 
@@ -80,16 +80,13 @@ void UJHEnemyFSM::MoveState()
 	// todo : 이동 위치 재지정 필요
 	
 	// 중앙으로 이동
-	FVector CurrPos = Me->GetActorLocation();
-	//FVector DestPos = FVector::Zero() + FVector::UpVector * CurrPos.Z;
-	FVector DestPos = FVector::RightVector*2000 + FVector::UpVector * CurrPos.Z;
+	FVector CurrPos = MyOwner->GetActorLocation();
+	FVector DestPos = FVector::Zero() + FVector::UpVector * CurrPos.Z;
 	FVector Dir = DestPos - CurrPos;
 
 	if (Dir.Size() <= AttackRange) {
-		Me->SetActorLocation(DestPos);
+		MyOwner->SetActorLocation(DestPos);
 		bIsMove = true;
-
-		//SkillManager->OnInitialize();
 
 		MState = EEnemyState::Attack;
 	}
@@ -97,8 +94,10 @@ void UJHEnemyFSM::MoveState()
 	Dir.Normalize();
 
 	// 이동
-	Me->SetActorLocation(CurrPos + Dir * MoveSpeed * GetWorld()->DeltaTimeSeconds);
+	MyOwner->SetActorLocation(CurrPos + Dir * MoveSpeed * GetWorld()->DeltaTimeSeconds);
 	// 회전
+
+
 	UKismetMathLibrary::FindLookAtRotation(CurrPos, DestPos);
 }
 
@@ -109,8 +108,7 @@ void UJHEnemyFSM::AttackState()
 	if (CurrentTime > AttackTime) {
 
 		CurrentTime = 0;
-		
-		//SkillManager->OnInitialize();
+	
 		MState = EEnemyState::Idle;
 	}
 
