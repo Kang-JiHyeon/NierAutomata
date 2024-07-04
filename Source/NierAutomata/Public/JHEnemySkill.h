@@ -3,17 +3,17 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "JHEnemySkill.h"
-#include "JHBomb.generated.h"
+#include "GameFramework/Actor.h"
+#include "JHEnemySkill.generated.h"
 
 UCLASS()
-class NIERAUTOMATA_API AJHBomb : public AJHEnemySkill
+class NIERAUTOMATA_API AJHEnemySkill : public AActor
 {
 	GENERATED_BODY()
 	
 public:	
 	// Sets default values for this actor's properties
-	AJHBomb();
+	AJHEnemySkill();
 
 protected:
 	// Called when the game starts or when spawned
@@ -22,19 +22,13 @@ protected:
 public:	
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
-	virtual void NotifyActorBeginOverlap(AActor* OtherActor) override;
+
+protected:
+	UPROPERTY(EditAnywhere)
+	int DamageAmount = 10;
 
 public:
+	UFUNCTION(BlueprintCallable, BlueprintPure)
+	virtual int GetDamage();
 
-	UPROPERTY(EditAnywhere)
-	class USphereComponent* SphereComp;
-	UPROPERTY(EditAnywhere)
-	class UStaticMeshComponent* MeshComp;
-
-	UPROPERTY(EditAnywhere)
-	float Force = 1000;
-
-public:
-	void Fire();
-	void SetForce(float Value);
 };

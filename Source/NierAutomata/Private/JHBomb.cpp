@@ -58,6 +58,7 @@ void AJHBomb::Tick(float DeltaTime)
 void AJHBomb::Fire()
 {
 	SphereComp->AddImpulse(GetActorUpVector() * Force);
+
 }
 
 void AJHBomb::SetForce(float Value)
@@ -69,13 +70,6 @@ void AJHBomb::SetForce(float Value)
 void AJHBomb::NotifyActorBeginOverlap(AActor* OtherActor)
 {
 	Super::NotifyActorBeginOverlap(OtherActor);
-
-
-	if (OtherActor->GetName().Contains(TEXT("Player")))
-	{
-		UE_LOG(LogTemp, Warning, TEXT("Bomb과 플레이어가 충돌했습니다! "));
-
-	}
 
 	Destroy();
 }

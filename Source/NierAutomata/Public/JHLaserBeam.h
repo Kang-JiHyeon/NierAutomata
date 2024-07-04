@@ -3,7 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "GameFramework/Actor.h"
+#include "JHEnemySkill.h"
 #include "JHLaserBeam.generated.h"
 
 UENUM(BlueprintType)
@@ -28,7 +28,7 @@ public:
 };
 
 UCLASS()
-class NIERAUTOMATA_API AJHLaserBeam : public AActor
+class NIERAUTOMATA_API AJHLaserBeam : public AJHEnemySkill
 {
 	GENERATED_BODY()
 	

@@ -22,18 +22,18 @@ void UJHBossSkillManager::BeginPlay()
 {
 	Super::BeginPlay();
 
-	if (SkillPattern.Num() <= 0)
-	{
-		UE_LOG(LogTemp, Warning, TEXT("SkillPattern Null!"));
-		return;
-	}
+	MyBoss = Cast<AJHEnemy>(GetOwner());
 
-	CurrSkillType = SkillPattern[PatternIndex].SkillType;
-	
-	MaxCastTime = SkillPattern[PatternIndex].CastTime;
-	MaxDelayTime = SkillPattern[PatternIndex].DelayTime;
-	CurrCastTime = 0;
-	CurrCastTime = 0;
+	if (MyBoss != nullptr)
+	{
+		if (SkillPattern.Num() <= 0)
+		{
+			UE_LOG(LogTemp, Warning, TEXT("SkillPattern Null!"));
+			return;
+		}
+
+		UpdatePattern();
+	}
 
 }
 
@@ -48,22 +48,6 @@ void UJHBossSkillManager::TickComponent(float DeltaTime, ELevelTick TickType, FA
 
 void UJHBossSkillManager::OnInitialize()
 {
-	//switch (CurrSkillType)
-	//{
-	//case ESkillType::Bomb:
-	//	BombSkill->OnInitialize();
-	//	break;
-	//case ESkillType::Missile:
-	//	MissileSkill->OnInitialize();
-	//	break;
-	//case ESkillType::LaserBeam:
-	//	LaserBeamSkill ->OnInitialize();
-	//	break;
-	//default:
-	//	break;
-	//}
-
-
 	BombSkill->OnInitialize();
 	MissileSkill->OnInitialize();
 	LaserBeamSkill->OnInitialize();
@@ -89,24 +73,20 @@ void UJHBossSkillManager::OnAttack()
 
 		if (CurrDelayTime > MaxDelayTime)
 		{	
-			
 			PatternIndex = (++PatternIndex) % SkillPattern.Num();
-
-			CurrSkillType = SkillPattern[PatternIndex].SkillType;
-			MaxCastTime = SkillPattern[PatternIndex].CastTime;
-			MaxDelayTime = SkillPattern[PatternIndex].DelayTime;
-
-			CurrCastTime = 0;
-			CurrDelayTime = 0;
+			
+			UpdatePattern();
 
 			bDelay = false;
 		}
 	}
-	else {
+	else 
+	{
 		CurrCastTime += GetWorld()->DeltaTimeSeconds;
 	}
 
 	if (!bDelay) {
+		// 공격
 		switch (CurrSkillType)
 		{
 		case ESkillType::Bomb:
@@ -121,7 +101,39 @@ void UJHBossSkillManager::OnAttack()
 		default:
 			break;
 		}
+
+		 // 회전
+		switch (CurrRotateType)
+		{
+		case ERotateType::SpinBody:
+			MyBoss->RotateSpinBody();
+			break;
+		case ERotateType::SpinBottom:
+			MyBoss->RotateSpinBottom();
+			break;
+		case ERotateType::LookAt:
+			MyBoss->RotateLookAt();
+			break;
+		case ERotateType::Target:
+			//MyBoss->RotateTarget();
+			break;
+		default:
+			break;
+		}
 	}
+
 }
 
+void UJHBossSkillManager::UpdatePattern()
+{
+	CurrSkillType = SkillPattern[PatternIndex].SkillType;
+	CurrRotateType = SkillPattern[PatternIndex].RotateType;
 
+	MaxCastTime = SkillPattern[PatternIndex].CastTime;
+	MaxDelayTime = SkillPattern[PatternIndex].DelayTime;
+
+	CurrCastTime = 0;
+	CurrDelayTime = 0;
+
+	MyBoss->SetRotSpeed(SkillPattern[PatternIndex].RotateSpeed);
+}

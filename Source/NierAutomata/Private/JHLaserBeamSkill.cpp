@@ -79,7 +79,6 @@ void UJHLaserBeamSkill::OnAttack()
 		}
 		else
 		{
-			//ToggleLaserBeamState(true);
 			bAttack = true;
 
 			CurrRotZ += RotSpeed * GetWorld()->DeltaTimeSeconds;
@@ -134,3 +133,4 @@ FVector UJHLaserBeamSkill::GetPositionOnCircle(float TargetRadius, float TargetD
 
 	return FVector(X, Y, CenterPos.Z);
 }
+

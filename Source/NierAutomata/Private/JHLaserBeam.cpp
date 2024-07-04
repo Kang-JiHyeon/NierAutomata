@@ -49,7 +49,7 @@ void AJHLaserBeam::BeginPlay()
 	ObjectParams.AddObjectTypesToQuery(ECollisionChannel::ECC_PhysicsBody);
 	ObjectParams.AddObjectTypesToQuery(ECollisionChannel::ECC_WorldDynamic);
 	ObjectParams.AddObjectTypesToQuery(ECollisionChannel::ECC_WorldStatic);
-	ObjectParams.AddObjectTypesToQuery(ECollisionChannel::ECC_GameTraceChannel3);
+	//ObjectParams.AddObjectTypesToQuery(ECollisionChannel::ECC_GameTraceChannel3);
 
 }
 
@@ -80,10 +80,10 @@ void AJHLaserBeam::OnAttack()
 		AHJCharacter* Player = Cast<AHJCharacter>(Hit.GetActor());
 
 		if (Player != nullptr) {
-			UE_LOG(LogTemp, Warning, TEXT("LaserBeam과 Player가 충돌!"));
+			//UE_LOG(LogTemp, Warning, TEXT("LaserBeam과 Player가 충돌!"));
 		}
 
-		UE_LOG(LogTemp, Warning, TEXT("LaserBeam과 Hit한 대상 : %s"), *Hit.GetActor()->GetName());
+		//UE_LOG(LogTemp, Warning, TEXT("LaserBeam과 Hit한 대상 : %s"), *Hit.GetActor()->GetName());
 
 		DrawDebugLine(GetWorld(), StartPos, EndPos, FColor::Green, false, 0.01f, 0, 5.0f);
 	}
@@ -110,11 +110,13 @@ void AJHLaserBeam::SetLaserBeamState(ELaserBeamState State)
 
 	if (State == ELaserBeamState::Idle)
 	{
+		ObjectParams.RemoveObjectTypesToQuery(ECollisionChannel::ECC_GameTraceChannel3);
 		SetStyle(&IdleStyle);
 		CurrIdleTime = 0;
 	}
 	else
 	{
+		ObjectParams.AddObjectTypesToQuery(ECollisionChannel::ECC_GameTraceChannel3);
 		SetStyle(&AttackStyle);
 	}
 }
