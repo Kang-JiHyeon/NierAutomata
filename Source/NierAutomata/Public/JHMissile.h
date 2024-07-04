@@ -3,11 +3,11 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "GameFramework/Actor.h"
+#include "JHEnemySkill.h"
 #include "JHMissile.generated.h"
 
 UCLASS()
-class NIERAUTOMATA_API AJHMissile : public AActor
+class NIERAUTOMATA_API AJHMissile : public AJHEnemySkill
 {
 	GENERATED_BODY()
 	

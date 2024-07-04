@@ -140,6 +140,23 @@ void AJHEnemy::Tick(float DeltaTime)
 
 }
 
+void AJHEnemy::NotifyActorBeginOverlap(AActor* OtherActor)
+{
+	Super::NotifyActorBeginOverlap(OtherActor);
+
+	// actor가 맞으면, 피를 깎고, FSM의 상태를 Damage 상태로 바꾸고 싶다.
+
+	UPrimitiveComponent* PrimitiveComponent = Cast<UPrimitiveComponent>(OtherActor->GetRootComponent());
+	if (PrimitiveComponent)
+	{
+		ECollisionChannel CollisionChannel = PrimitiveComponent->GetCollisionObjectType();
+
+		if (CollisionChannel == ECC_GameTraceChannel3 || CollisionChannel == ECC_GameTraceChannel3) {
+			UE_LOG(LogTemp, Warning, TEXT("Enemy Damage 입음!!"));
+		}
+	}
+}
+
 
 void AJHEnemy::SetMovement(bool bValue)
 {

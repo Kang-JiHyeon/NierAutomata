@@ -117,6 +117,7 @@ void UJHEnemyFSM::AttackState()
 
 void UJHEnemyFSM::DamageState()
 {
+	
 }
 
 void UJHEnemyFSM::DieState()

@@ -81,14 +81,5 @@ void AJHMissile::NotifyActorBeginOverlap(AActor* OtherActor)
 {
 	Super::NotifyActorBeginOverlap(OtherActor);
 
-	if (OtherActor->GetName().Contains(TEXT("Player")))
-	{
-		UE_LOG(LogTemp, Warning, TEXT("Bomb 과 플레이어가 충돌했습니다! "));
-
-	}
-
-	//// todo : 미사일 충돌 처리 필요!!
-	//UE_LOG(LogTemp, Warning, TEXT("미사일과의 충돌 대상 : %s"), *OtherActor->GetName())
-
 	Destroy();
 }
