@@ -31,7 +31,7 @@ public:
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 
 	// 카메라 & 스프링암 
-	UPROPERTY(EditAnywhere)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	UCameraComponent* Camera;
 
 	UPROPERTY(EditAnywhere)
@@ -39,6 +39,7 @@ public:
 	// 앞뒤좌우 이동 
 	void InputHorizontal(float value);
 	void InputVertical(float value);
+	FVector DashDirection;
 	// 가속 구현 
 	void StartDash();
 	void EndDash();
@@ -59,5 +60,7 @@ public:
 	// 무기 장착 
 	/*UPROPERTY(EditAnywhere)
 	UStaticMeshComponent* Weapon;*/
+
+
 
 };

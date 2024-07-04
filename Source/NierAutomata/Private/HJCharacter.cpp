@@ -4,6 +4,7 @@
 #include "HJCharacter.h"
 #include "HJWeapon.h"
 #include "GameFramework/CharacterMovementComponent.h"
+#include "GameFramework/Controller.h"
 
 // Sets default values
 AHJCharacter::AHJCharacter()
@@ -25,6 +26,9 @@ AHJCharacter::AHJCharacter()
 
 	// 카메라 회전
 	bUseControllerRotationYaw = true;
+
+	// 캐릭터 회전 
+	/*GetCharacterMovement()->bUseControllerDesiredRotation = true;*/
 	
 	// 스케레탈 메시
 	ConstructorHelpers::FObjectFinder<USkeletalMesh>
@@ -75,6 +79,7 @@ void AHJCharacter::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
+
 }
 
 // Called to bind functionality to input
@@ -112,11 +117,17 @@ void AHJCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCompone
 // 앞뒤좌우
 void AHJCharacter::InputHorizontal(float value)
 {
-	AddMovementInput(GetActorRightVector(), value);
+	if (value != 0.0f)
+	{
+		DashDirection.X = value;
+	}
 }
 void AHJCharacter::InputVertical(float value)
 {
-	AddMovementInput(GetActorForwardVector(), value);
+	if (value != 0.0f)
+	{
+		DashDirection.Y = value;
+	}
 }
 
 // 가속
@@ -131,9 +142,16 @@ void AHJCharacter::EndDash()
 // 대쉬
 void AHJCharacter::InputDash()
 {
-	FVector Direction = FRotationMatrix(Controller->GetControlRotation()).GetUnitAxis(EAxis::X);
+	FVector InputDirection = FVector::ZeroVector;
+
+	FRotator ControlRotation = Controller->GetControlRotation();
+	FVector ForwardDirection = FRotationMatrix(ControlRotation).GetUnitAxis(EAxis::X);
+	FVector RightDirection = FRotationMatrix(ControlRotation).GetUnitAxis(EAxis::Y);
+
+	InputDirection = (ForwardDirection * DashDirection.X + RightDirection * DashDirection.Y).GetSafeNormal();
+
 	GetCharacterMovement()->BrakingFrictionFactor = 0.f;
-	LaunchCharacter(Direction * DashDistance, true, true);
+	LaunchCharacter(InputDirection * DashDistance, true, true);
 }
 
 // 점프
