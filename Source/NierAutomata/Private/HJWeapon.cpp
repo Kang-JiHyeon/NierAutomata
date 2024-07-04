@@ -13,7 +13,7 @@ AHJWeapon::AHJWeapon()
 	RootComponent = Weapon;
 
 	ConstructorHelpers::FObjectFinder<USkeletalMesh>
-		tempWeapon(TEXT("/Script/Engine.StaticMesh'/Engine/BasicShapes/Cube.Cube'"));
+		tempWeapon(TEXT("/Script/Engine.SkeletalMesh'/Game/Mesh/SK_Blade_BlackKnight.SK_Blade_BlackKnight'"));
 	if (tempWeapon.Succeeded())
 	{
 		Weapon->SetSkeletalMesh(tempWeapon.Object);

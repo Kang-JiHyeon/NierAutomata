@@ -14,7 +14,7 @@ AHJCharacter::AHJCharacter()
 
 	// 카메라 & 스프링암 컴포넌트
 	Camera = CreateDefaultSubobject<UCameraComponent>(TEXT("CAMERA"));
-	SpringArm = CreateDefaultSubobject<USpringArmComponent>(TEXT("SPRINGARM"));
+	SpringArm = CreateDefaultSubobject<USpringArmComponent>(TEXT("SPRwINGARM"));
 
 	// 카메라 거치 
 	SpringArm->SetupAttachment(RootComponent);
@@ -40,22 +40,6 @@ AHJCharacter::AHJCharacter()
 		GetMesh()->SetRelativeLocationAndRotation(FVector(0, 0, -90), FRotator(0, -90, 0));
 	}
 
-	// 무기
-	/*FName WeaponSocket(TEXT("back_out_rSocket"));
-	if (GetMesh()->DoesSocketExist(WeaponSocket))
-	{
-		Weapon = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("WEAPON"));
-
-		ConstructorHelpers::FObjectFinder<UStaticMesh>
-			tempWeapon(TEXT("/Script/Engine.StaticMesh'/Game/StarterContent/Shapes/Shape_Pipe.Shape_Pipe'"));
-
-		if (tempWeapon.Succeeded())
-		{
-			Weapon->SetStaticMesh(tempWeapon.Object);
-		}
-		Weapon->SetupAttachment(GetMesh(), WeaponSocket);
-	}*/
-
 	// 점프 
 	/*JumpMaxCount = 2;*/
 
@@ -71,6 +55,17 @@ void AHJCharacter::BeginPlay()
 	// 점프 구현 (기본중력)
 	GetCharacterMovement()->JumpZVelocity = 900.0f;
 	GetCharacterMovement()->GravityScale = 2.8;
+
+	// 무기
+	FName WeaponSocket(TEXT("sky_attack_socket"));
+
+	auto CurrentWeapon = GetWorld()->SpawnActor<AHJWeapon>(FVector::ZeroVector, FRotator::ZeroRotator);
+
+	if (CurrentWeapon)
+	{
+		CurrentWeapon->AttachToComponent(GetMesh(), 
+		FAttachmentTransformRules::SnapToTargetNotIncludingScale, WeaponSocket);
+	}
 	
 }
 
