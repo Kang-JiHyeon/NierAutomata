@@ -23,7 +23,7 @@ protected:
 public:	
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
-	virtual void NotifyActorBeginOverlap(AActor* OtherActor);
+	virtual void NotifyActorBeginOverlap(AActor* OtherActor) override;
 
 
 public:
@@ -37,6 +37,8 @@ public:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	class UStaticMeshComponent* BottomMeshComp;
+
+	class UMaterialInstance* BodyMatirial;
 
 	// FSM
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
@@ -99,4 +101,8 @@ public:
 	//void RotateTarget(FVector TargetPosition);
 	void RotateSpinBody();
 	void RotateSpinBottom();
+
+	void SetBodyMaterial(UMaterialInterface* NewMaterial);
+	UMaterialInterface* GetBodyMaterial();
+
 };
