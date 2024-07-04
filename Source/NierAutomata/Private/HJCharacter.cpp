@@ -156,7 +156,7 @@ void AHJCharacter::InputJump()
 // 점프 중력 
 void AHJCharacter::StartJump()
 {
-	GetCharacterMovement()->GravityScale = 0.75;
+	GetCharacterMovement()->GravityScale = 0.5;
 }
 
 void AHJCharacter::EndJump()
