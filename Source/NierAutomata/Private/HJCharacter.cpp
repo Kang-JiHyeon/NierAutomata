@@ -59,14 +59,13 @@ void AHJCharacter::BeginPlay()
 	// 무기
 	FName WeaponSocket(TEXT("sky_attack_socket"));
 
-	auto CurrentWeapon = GetWorld()->SpawnActor<AHJWeapon>(FVector::ZeroVector, FRotator::ZeroRotator);
+	CurrentWeapon = GetWorld()->SpawnActor<AHJWeapon>(FVector::ZeroVector, FRotator::ZeroRotator);
 
 	if (CurrentWeapon)
 	{
 		CurrentWeapon->AttachToComponent(GetMesh(), 
 		FAttachmentTransformRules::SnapToTargetNotIncludingScale, WeaponSocket);
 	}
-	
 }
 
 // Called every frame
@@ -180,8 +179,44 @@ void AHJCharacter::EndAttack()
 {
 	
 }
+
 void AHJCharacter::StartAttack()
 {
-	
 }
 
+// 무기 이동 
+void AHJCharacter::StartWeapon()
+{
+	if (CurrentWeapon)
+	{
+		CurrentWeapon->DetachFromActor(FDetachmentTransformRules::KeepWorldTransform);
+	}
+
+	FName WeaponSocket2(TEXT("hand_lSocket"));
+
+	/*auto CurrentWeapon = GetWorld()->SpawnActor<AHJWeapon>(FVector::ZeroVector, FRotator::ZeroRotator);*/
+
+	if (CurrentWeapon)
+	{
+		CurrentWeapon->AttachToComponent(GetMesh(),
+			FAttachmentTransformRules::SnapToTargetNotIncludingScale, WeaponSocket2);
+	}
+}
+
+void AHJCharacter::BackWeapon()
+{
+	if (CurrentWeapon)
+	{
+		CurrentWeapon->DetachFromActor(FDetachmentTransformRules::KeepWorldTransform);
+	}
+	
+	FName WeaponSocket(TEXT("sky_attack_socket"));
+
+	/*auto CurrentWeapon = GetWorld()->SpawnActor<AHJWeapon>(FVector::ZeroVector, FRotator::ZeroRotator);*/
+
+	if (CurrentWeapon)
+	{
+		CurrentWeapon->AttachToComponent(GetMesh(),
+			FAttachmentTransformRules::SnapToTargetNotIncludingScale, WeaponSocket);
+	}
+}
