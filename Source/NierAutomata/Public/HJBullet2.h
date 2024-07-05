@@ -23,4 +23,35 @@ public:
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 
+	void FireLaser(FVector& StartPoint, FVector& EndPoint);
+
+	UPROPERTY(EditAnywhere)
+	class UParticleSystemComponent* LaserBeamPSC;
+
+	UPROPERTY(EditAnywhere)
+	class UParticleSystem* LaserBeamEffect;
+	
+	//// 레이져 컴포넌트 
+	//UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	//class USplineComponent* Laser;
+
+	//UPROPERTY(EditAnywhere)
+	//UStaticMesh* LaserMesh;
+
+	//UPROPERTY(EditAnywhere)
+	//UMaterialInterface* LaserMaterial;
+
+	//UPROPERTY(EditAnywhere)
+	//TArray<class USplineMeshComponent*> SplineMeshComponents;
+
+	//UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	//float SegmentLength;
+
+	//// 레이져 발사 함수 
+	//UPROPERTY(EditAnywhere)
+	//void FireLaser(FVector& StartPoint, FVector& EndPoint);
+
+	/*UPROPERTY(EditAnywhere)
+	void UpdateSplineMesh();*/
+
 };
