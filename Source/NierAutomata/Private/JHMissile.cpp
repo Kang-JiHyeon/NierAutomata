@@ -55,6 +55,8 @@ void AJHMissile::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
+	if(Target == nullptr) return;
+
 	// 일정 시간 동안은 앞으로 이동하다가
 	if (!bTrace) {
 		if (CurrUpTime > UpTime) {
@@ -75,11 +77,4 @@ void AJHMissile::Tick(float DeltaTime)
 
 	SetActorLocation(GetActorLocation() + Direction * Speed * DeltaTime);
 	
-}
-
-void AJHMissile::NotifyActorBeginOverlap(AActor* OtherActor)
-{
-	Super::NotifyActorBeginOverlap(OtherActor);
-
-	Destroy();
 }

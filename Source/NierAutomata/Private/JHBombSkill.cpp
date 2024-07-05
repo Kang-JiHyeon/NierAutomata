@@ -58,8 +58,11 @@ void UJHBombSkill::Fire()
 
 			AJHBomb* Bomb = GetWorld()->SpawnActor<AJHBomb>(SkillFactory, FirePos->GetComponentLocation(), FirePos->GetComponentRotation());
 
- 			Bomb->SetForce(Forces[ForceIndex]);
-			Bomb->Fire();
+			if (Bomb != nullptr)
+			{
+ 				Bomb->SetForce(Forces[ForceIndex]);
+				Bomb->Fire();
+			}
 		}
 
 

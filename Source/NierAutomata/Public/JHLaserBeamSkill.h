@@ -63,5 +63,6 @@ private:
 	void ToggleLaserBeamState(bool bEnable);
 	FVector GetPositionOnCircle(float Radius, float Angle, FVector CenterPos);
 
-	//void Rotate();
+	void CreateLaserBeams();
+	void DestroyLaserBeams();
 };

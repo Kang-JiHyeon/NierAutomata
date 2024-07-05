@@ -23,25 +23,10 @@ void UJHLaserBeamSkill::BeginPlay()
 {
 	Super::BeginPlay();
 
-	for (int32 i = 0; i < MaxCount; i++)
-	{
-		FRotator Rotation = FRotator(0, i * (360 / MaxCount), 0);
 
-		// LaserBeam 생성
-		AJHLaserBeam* LaserBeam = GetWorld()->SpawnActor<AJHLaserBeam>(SkillFactory);
 
-		USceneComponent* Root = LaserBeam->GetRootComponent();
-		Root->SetupAttachment(this);
-		Root->AttachToComponent(this, FAttachmentTransformRules::KeepWorldTransform);
-		LaserBeam->SetActorRelativeRotation(Rotation);
-		LaserBeam->SetActorRelativeLocation(LaserBeam->GetActorForwardVector() * Radius);
-		LaserBeam->SetIdleTime(IdleTime);
-
-		LaserBeams.Add(LaserBeam);
-	}
-
-	ToggleEnableActor();
-	ToggleLaserBeamState(false);
+	//ToggleEnableActor();
+	//ToggleLaserBeamState(false);
 }
 
 
@@ -54,62 +39,76 @@ void UJHLaserBeamSkill::TickComponent(float DeltaTime, ELevelTick TickType, FAct
 
 void UJHLaserBeamSkill::OnInitialize()
 {
-	if (LaserBeams.Num() <= 0) return;
+	//if (LaserBeams.Num() <= 0) return;
 
+	bAttack = false;
 	CurrIdleTime = 0;
-	bEnable = false;
-	ToggleEnableActor();
-	ToggleLaserBeamState(false);
+	//bEnable = false;
+	//ToggleEnableActor();
+	//ToggleLaserBeamState(false);
+
+	DestroyLaserBeams();
 }
 
 void UJHLaserBeamSkill::OnAttack()
 {
-	if (!bEnable)
-	{
-		bEnable = true;
-		ToggleEnableActor();
+	// 이미 공격 중이라면 종료
+	if(bAttack)	return;
 
-		bAttack = false;
-		
-	}
-	else
-	{
-		if (CurrIdleTime <= IdleTime) {
-			CurrIdleTime += GetWorld()->DeltaTimeSeconds;
-		}
-		else
-		{
-			bAttack = true;
+	bAttack = true;
 
-			CurrRotZ += RotSpeed * GetWorld()->DeltaTimeSeconds;
-			SetRelativeRotation(FRotator(0, -CurrRotZ, 0));
-		}
-	}
+	// LaserBeam 생성
+	CreateLaserBeams();
 
-	if (bEnable && bAttack)
-	{
-		ToggleLaserBeamState(true);
-	}
-	else
-	{
-		ToggleLaserBeamState(false);
-	}
+
+
+
+	//if (!bEnable)
+	//{
+	//	bEnable = true;
+	//	ToggleEnableActor();
+
+	//	
+	//	
+	//}
+	//else
+	//{
+	//	if (CurrIdleTime <= IdleTime) {
+	//		CurrIdleTime += GetWorld()->DeltaTimeSeconds;
+	//	}
+	//	else
+	//	{
+	//		bAttack = true;
+
+	//		CurrRotZ += RotSpeed * GetWorld()->DeltaTimeSeconds;
+	//		SetRelativeRotation(FRotator(0, -CurrRotZ, 0));
+	//	}
+	//}
+
+	//if (bEnable && bAttack)
+	//{
+	//	ToggleLaserBeamState(true);
+	//}
+	//else
+	//{
+	//	ToggleLaserBeamState(false);
+	//}
 
 }
 
 void UJHLaserBeamSkill::ToggleEnableActor()
 {
-	for (auto LaserBeam : LaserBeams)
-	{
-		// 액터의 노출
-		LaserBeam->SetActorHiddenInGame(!bEnable);
+	//for (auto LaserBeam : LaserBeams)
+	//{
+	//	// 액터의 노출
+	//	LaserBeam->SetActorHiddenInGame(!bEnable);
 
-		// 액터의 충돌
-		LaserBeam->SetActorEnableCollision(bEnable);
+	//	// 액터의 충돌
+	//	LaserBeam->SetActorEnableCollision(bEnable);
 
-		// 액터의 틱
-		LaserBeam->SetActorTickEnabled(bEnable);
-	}
+	//	// 액터의 틱
+	//	LaserBeam->SetActorTickEnabled(bEnable);
+	//}
 }
 
 void UJHLaserBeamSkill::ToggleLaserBeamState(bool bValue)
@@ -125,12 +124,47 @@ void UJHLaserBeamSkill::ToggleLaserBeamState(bool bValue)
 	}
 }
 
-FVector UJHLaserBeamSkill::GetPositionOnCircle(float TargetRadius, float TargetDegree, FVector CenterPos)
-{
-	float Radian = FMath::DegreesToRadians(TargetDegree);
-	float X = CenterPos.X + TargetRadius * FMath::Cos(Radian);
-	float Y = CenterPos.Y + TargetRadius * FMath::Sin(Radian);
+//FVector UJHLaserBeamSkill::GetPositionOnCircle(float TargetRadius, float TargetDegree, FVector CenterPos)
+//{
+//	float Radian = FMath::DegreesToRadians(TargetDegree);
+//	float X = CenterPos.X + TargetRadius * FMath::Cos(Radian);
+//	float Y = CenterPos.Y + TargetRadius * FMath::Sin(Radian);
+//
+//	return FVector(X, Y, CenterPos.Z);
+//}
 
-	return FVector(X, Y, CenterPos.Z);
+void UJHLaserBeamSkill::CreateLaserBeams()
+{
+	for (int32 i = 0; i < MaxCount; i++)
+	{
+		FRotator Rotation = FRotator(0, i * (360 / MaxCount), 0);
+
+		// LaserBeam 생성
+		AJHLaserBeam* LaserBeam = GetWorld()->SpawnActor<AJHLaserBeam>(SkillFactory);
+
+		USceneComponent* Root = LaserBeam->GetRootComponent();
+		//Root->SetupAttachment(this);
+		Root->AttachToComponent(this, FAttachmentTransformRules::KeepWorldTransform);
+		LaserBeam->SetActorRelativeRotation(Rotation);
+		LaserBeam->SetActorRelativeLocation(LaserBeam->GetActorForwardVector() * Radius);
+		LaserBeam->SetIdleTime(IdleTime);
+		LaserBeams.Add(LaserBeam);
+	}
+
+	UE_LOG(LogTemp, Warning, TEXT("CreateLaserBeams!!"));
+}
+
+void UJHLaserBeamSkill::DestroyLaserBeams()
+{
+	if (LaserBeams.IsEmpty())
+		return;
+	
+	for (auto LaserBeam : LaserBeams)
+	{
+		LaserBeam->Destroy();
+	}
+	LaserBeams.Empty();
+
+	UE_LOG(LogTemp, Warning, TEXT("DestroyLaserBeams!!"));
 }
 

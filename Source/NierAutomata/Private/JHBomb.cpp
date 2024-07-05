@@ -65,11 +65,3 @@ void AJHBomb::SetForce(float Value)
 {
 	Force = Value;
 }
-
-
-void AJHBomb::NotifyActorBeginOverlap(AActor* OtherActor)
-{
-	Super::NotifyActorBeginOverlap(OtherActor);
-
-	Destroy();
-}

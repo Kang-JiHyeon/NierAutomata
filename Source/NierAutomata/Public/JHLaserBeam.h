@@ -44,10 +44,12 @@ public:
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 
-public:
+private:
 
 	UPROPERTY(VisibleAnywhere)
-	ELaserBeamState CurLaserBeamStyle = ELaserBeamState::None;
+	ELaserBeamState CurLaserBeamState = ELaserBeamState::None;
+
+	USceneComponent* SceneComp;
 
 	UPROPERTY(EditAnywhere)
 	class USplineMeshComponent* SplineMesh;
@@ -61,27 +63,22 @@ public:
 	UPROPERTY(EditAnywhere)
 	float Distance = 10000;
 
-private:
+	
+
 	UPROPERTY(EditAnywhere)
 	float IdleTime = 3;
-
 	float CurrIdleTime = 0;
 
-	FVector StartPos;
-	FVector EndPos;
-
+	float HitDistance;
 	FHitResult Hit;
 	FCollisionQueryParams Params;
 	FCollisionObjectQueryParams ObjectParams;
 
+	FVector StartPos;
+	FVector Forward;
+
+
 public :
 	void SetIdleTime(float Value);
-	void SetCurrIdleTime(float Value);
 	void SetLaserBeamState(ELaserBeamState State);
-
-private:
-
-	void OnAttack();
-	void SetStyle(FLaserBeamStyle* Style);
-
 };
