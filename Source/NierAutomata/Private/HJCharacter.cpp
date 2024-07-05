@@ -41,9 +41,6 @@ AHJCharacter::AHJCharacter()
 		GetMesh()->SetRelativeLocationAndRotation(FVector(0, 0, -90), FRotator(0, -90, 0));
 	}
 
-	// 점프 
-	/*JumpMaxCount = 2;*/
-
 }
 
 // Called when the game starts or when spawned
@@ -51,11 +48,13 @@ void AHJCharacter::BeginPlay()
 {
 	Super::BeginPlay();
 
+	// 점프 
+	JumpMaxCount = 2;
 	// 가속 구현 (기본속도) 
 	GetCharacterMovement()->MaxWalkSpeed = 1200.0f;
 	// 점프 구현 (기본중력)
-	GetCharacterMovement()->JumpZVelocity = 900.0f;
-	GetCharacterMovement()->GravityScale = 2.8;
+	GetCharacterMovement()->JumpZVelocity = 1200.0f;
+	GetCharacterMovement()->GravityScale = 2.5;
 
 	// 무기
 	FName WeaponSocket(TEXT("sky_attack_socket"));
