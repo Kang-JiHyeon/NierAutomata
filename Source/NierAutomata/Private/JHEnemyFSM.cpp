@@ -171,6 +171,10 @@ void UJHEnemyFSM::DieState()
 /// </summary>
 void UJHEnemyFSM::OnDamageProcess()
 {
+
+	if(Hp <=0)
+		return;
+	
 	Hp--;
 
 	float HpRate = Hp / MaxHp;
@@ -188,6 +192,9 @@ void UJHEnemyFSM::OnDamageProcess()
         EnemyState = EEnemyState::Damage;
 		
 	}
+
 	UE_LOG(LogTemp, Warning, TEXT("Enemy Damage : %d , %f, %f"), Hp, MaxHp, HpRate);
+
+	OnChangedHp.Broadcast(Hp);
 }
 

@@ -81,7 +81,7 @@ public:
 	// Damage
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	float MaxHp = 10;
-	UPROPERTY(VisibleAnywhere)
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
 	int Hp;
 	UPROPERTY(EditAnywhere)
 	float DamageRate = 0.5f;
