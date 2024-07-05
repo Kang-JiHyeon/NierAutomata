@@ -6,7 +6,7 @@
 #include "GameFramework/Actor.h"
 #include "JHEnemySkill.generated.h"
 
-UCLASS()
+UCLASS(Blueprintable)
 class NIERAUTOMATA_API AJHEnemySkill : public AActor
 {
 	GENERATED_BODY()
