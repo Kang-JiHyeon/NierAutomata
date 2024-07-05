@@ -57,10 +57,20 @@ public:
 	// 공격 구현 
 	void StartAttack();
 	void EndAttack();
+
+	// 레이저 공격 
+	void FireLaser();
+
+	UPROPERTY(EditAnywhere)
+	class AHJBullet2* LaserBeam;
+
+	UPROPERTY()
 	// 무기 장착 
-	/*UPROPERTY(EditAnywhere)
-	UStaticMeshComponent* Weapon;*/
+	class AHJWeapon* CurrentWeapon;
 
-
-
+	UFUNCTION(BlueprintCallable)
+	void StartWeapon();
+	
+	UFUNCTION(BlueprintCallable)
+	void BackWeapon();
 };

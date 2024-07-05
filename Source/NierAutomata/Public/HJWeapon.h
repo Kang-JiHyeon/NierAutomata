@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
+#include "Components/BoxComponent.h"
 #include "HJWeapon.generated.h"
 
 UCLASS()
@@ -26,5 +27,8 @@ public:
 	// 무기 매쉬 
 	UPROPERTY(EditAnywhere)
 	USkeletalMeshComponent* Weapon;
+
+	UPROPERTY(EditAnywhere)
+	UBoxComponent* CompBox;
 
 };
