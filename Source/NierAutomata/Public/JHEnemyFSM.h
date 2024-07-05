@@ -6,6 +6,8 @@
 #include "Components/ActorComponent.h"
 #include "JHEnemyFSM.generated.h"
 
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FDelegateDynamicOneParamSignature, int32, InValue);
+
 UENUM(BlueprintType)
 enum class EEnemyState : uint8
 {
@@ -24,7 +26,7 @@ enum class EAttackSkillState : uint8
 	Ring
 };
 
-UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
+UCLASS( Blueprintable, BlueprintType, ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
 class NIERAUTOMATA_API UJHEnemyFSM : public UActorComponent
 {
 	GENERATED_BODY()
@@ -42,16 +44,20 @@ public:
 	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
 
 public:
-	// 에너미 상태
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = FSMComponent)
-	EEnemyState MState = EEnemyState::Idle;
+	UPROPERTY(BlueprintAssignable, BlueprintCallable, meta = (DisplayName = "OnChangedHp"))
+	FDelegateDynamicOneParamSignature OnChangedHp;
 
-	// 대기
+public:
+	// 에너미 상태
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	EEnemyState EnemyState = EEnemyState::Idle;
+
+	// Idle
 	UPROPERTY(EditAnywhere)
 	float IdleDelayTime = 2;
 	float CurrentTime = 0;
 
-	// 이동
+	// Move
 	UPROPERTY(VisibleAnywhere)
 	class AActor* Target;
 
@@ -64,13 +70,40 @@ public:
 
 	bool bIsMove;
 
-	// 공격
-	UPROPERTY()
+	// Attack
+	UPROPERTY(EditAnywhere)
 	class UJHBossSkillManager* SkillManager;
 
 	UPROPERTY(EditAnywhere)
 	float AttackTime = 20;
 
+
+	// Damage
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	float MaxHp = 10;
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
+	int Hp;
+	UPROPERTY(EditAnywhere)
+	float DamageRate = 0.5f;
+	UPROPERTY(EditAnywhere)
+	float DamageTime = 5;
+	bool bIsPlayDamageAnim;
+
+	// todo : 애니메이션 및 이펙트로 변경
+	UPROPERTY(EditAnywhere)
+	UMaterialInterface* DamageMaterial;
+	UMaterialInterface* DefaultMaterial;
+
+
+	// Die
+	UPROPERTY(EditAnywhere)
+	float DieTime = 5;
+	UPROPERTY(EditAnywhere)
+	float DieMoveSpeed = 300;
+	
+
+public:
+	void OnDamageProcess();
 private:
 	void IdleState();
 	void MoveState();

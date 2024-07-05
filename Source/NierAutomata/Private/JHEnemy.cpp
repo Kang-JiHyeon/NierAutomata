@@ -144,15 +144,21 @@ void AJHEnemy::NotifyActorBeginOverlap(AActor* OtherActor)
 {
 	Super::NotifyActorBeginOverlap(OtherActor);
 
-	// actor가 맞으면, 피를 깎고, FSM의 상태를 Damage 상태로 바꾸고 싶다.
-
-	UPrimitiveComponent* PrimitiveComponent = Cast<UPrimitiveComponent>(OtherActor->GetRootComponent());
-	if (PrimitiveComponent)
+	if (OtherActor != nullptr && OtherActor->IsValidLowLevel())
 	{
-		ECollisionChannel CollisionChannel = PrimitiveComponent->GetCollisionObjectType();
+		UPrimitiveComponent* PrimitiveComponent = Cast<UPrimitiveComponent>(OtherActor->GetRootComponent());
+		if (PrimitiveComponent)
+		{
+			ECollisionChannel CollisionChannel = PrimitiveComponent->GetCollisionObjectType();
 
-		if (CollisionChannel == ECC_GameTraceChannel3 || CollisionChannel == ECC_GameTraceChannel3) {
-			UE_LOG(LogTemp, Warning, TEXT("Enemy Damage 입음!!"));
+			// 플레이어의 공격일 경우 
+			if(CollisionChannel == ECC_GameTraceChannel4)
+			{
+				// Damage 상태로 변경
+				Fsm->OnDamageProcess();
+				// 공격 제거
+				OtherActor->Destroy();
+			}
 		}
 	}
 }
@@ -261,7 +267,7 @@ void AJHEnemy::RotateSpinBody()
 
 	this->SetActorRotation(Rot);
 
-	UE_LOG(LogTemp, Warning, TEXT("RotateSpinBody!"));
+	//UE_LOG(LogTemp, Warning, TEXT("RotateSpinBody!"));
 }
 
 /// <summary>
@@ -273,5 +279,20 @@ void AJHEnemy::RotateSpinBottom()
 
 	BottomMeshComp->SetRelativeRotation(Rot);
 
-	UE_LOG(LogTemp, Warning, TEXT("RotateSpinBottom!"));
+	//UE_LOG(LogTemp, Warning, TEXT("RotateSpinBottom!"));
+}
+
+void AJHEnemy::SetBodyMaterial(UMaterialInterface* NewMaterial)
+{
+	if(BodyMeshComp == nullptr || BodyMeshComp->GetMaterial(0) == NewMaterial) return;
+
+	BodyMeshComp->SetMaterial(0, NewMaterial);
+}
+
+UMaterialInterface* AJHEnemy::GetBodyMaterial()
+{
+	if(BodyMeshComp == nullptr)
+		return nullptr;
+	
+	return BodyMeshComp->GetMaterial(0);
 }
