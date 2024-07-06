@@ -91,7 +91,7 @@ AJHEnemy::AJHEnemy()
 	MissileArrow->SetRelativeLocation(FVector(0, 0, 50));
 	MissileArrow->SetRelativeRotation(FRotator(90, 0, 0));
 
-	MissileSkill->SkillPosition = MissileArrow;
+	MissileSkill->SkillArrow = MissileArrow;
 	
 	ConstructorHelpers::FClassFinder<AJHMissile> MissileFinder(TEXT("/Script/Engine.Blueprint'/Game/Blueprints/Kang/BP_JHMissile.BP_JHMissile_C'"));
 	if (MissileFinder.Succeeded())

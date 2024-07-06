@@ -33,8 +33,8 @@ public:
 	UPROPERTY(EditAnywhere)
 	TSubclassOf<class AJHMissile> SkillFactory;
 
-	UPROPERTY(EditAnywhere)
-	class UArrowComponent* SkillPosition;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	class UArrowComponent* SkillArrow;
 
 	UPROPERTY(EditAnywhere)
 	float CreateTime = 0.25f;

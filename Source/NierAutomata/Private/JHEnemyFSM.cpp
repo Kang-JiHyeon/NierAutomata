@@ -172,8 +172,7 @@ void UJHEnemyFSM::DieState()
 void UJHEnemyFSM::OnDamageProcess()
 {
 
-	if(Hp <=0)
-		return;
+	if(Hp <=0) return;
 	
 	Hp--;
 
@@ -193,7 +192,7 @@ void UJHEnemyFSM::OnDamageProcess()
 		
 	}
 
-	UE_LOG(LogTemp, Warning, TEXT("Enemy Damage : %d , %f, %f"), Hp, MaxHp, HpRate);
+	//UE_LOG(LogTemp, Warning, TEXT("Enemy Damage : %d , %f, %f"), Hp, MaxHp, HpRate);
 
 	OnChangedHp.Broadcast(Hp);
 }

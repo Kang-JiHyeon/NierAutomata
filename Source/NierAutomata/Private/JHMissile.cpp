@@ -5,6 +5,7 @@
 #include "Components/BoxComponent.h"
 #include "Kismet/KismetMathLibrary.h"
 #include "Kismet/GameplayStatics.h"
+#include <HJCharacter.h>
 
 // Sets default values
 AJHMissile::AJHMissile()
@@ -45,9 +46,8 @@ void AJHMissile::BeginPlay()
 	Super::BeginPlay();
 	
 	// 플레이어를 찾아 타겟으로 설정한다.
-	Target = UGameplayStatics::GetPlayerPawn(GetWorld(), 0);
-
-	Direction = GetActorForwardVector();
+	Target = GetWorld()->GetFirstPlayerController()->GetPawn();
+	TargetLocation = GetActorLocation() + FVector::UpVector * 10000;
 }
 
 // Called every frame
@@ -55,26 +55,44 @@ void AJHMissile::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
-	if(Target == nullptr) return;
-
-	// 일정 시간 동안은 앞으로 이동하다가
-	if (!bTrace) {
-		if (CurrUpTime > UpTime) {
-			bTrace = true;
-
-			Direction = Target->GetActorLocation() - GetActorLocation();
-			Direction.Normalize();
-		}
-		CurrUpTime += DeltaTime;
-	}
-	else {
-		 // todo : lerp 적용
-		 //UKismetMathLibrary::VLerp(GetActorLocation(), Direction, DeltaTime * 10);
-
-		FRotator Rotator = UKismetMathLibrary::FindLookAtRotation(GetActorLocation(), Target->GetActorLocation());
-		SetActorRotation(Rotator);
+	if (Target == nullptr)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("Missile의 Target이 null입니다."));
+		return;
 	}
 
-	SetActorLocation(GetActorLocation() + Direction * Speed * DeltaTime);
-	
+	// 위쪽 방향으로 회전하다가 일정 시간이 지나면 타겟 방향으로 회전하고 싶다.
+	if (CurrTime <= TraceDelayTime)
+	{
+		CurrTime += DeltaTime;
+		Direction = TargetLocation - GetActorLocation();
+	}
+	else
+	{
+		TargetLocation = Target->GetActorLocation();
+		TargetLocation.Z = 0;
+
+		Direction = TargetLocation - GetActorLocation();
+	}
+
+	// 현재 방향과 타겟 방향 사이의 회전 값 계산
+	Direction.Normalize();
+	FRotator CurrentRotation = GetActorRotation();
+	FRotator TargetRotation = Direction.Rotation();
+	FRotator NewRotation = FMath::RInterpTo(CurrentRotation, TargetRotation, DeltaTime, 10);
+
+	// 미사일 회전 설정
+	SetActorRotation(NewRotation);
+
+	// 미사일 위치 이동
+	FVector NewLocation = GetActorLocation() + (GetActorForwardVector() * Speed * DeltaTime);
+	SetActorLocation(NewLocation);
+}
+
+void AJHMissile::NotifyActorBeginOverlap(AActor* OtherActor)
+{
+	if (OtherActor->IsA<AHJCharacter>())
+	{
+		Destroy();
+	}
 }

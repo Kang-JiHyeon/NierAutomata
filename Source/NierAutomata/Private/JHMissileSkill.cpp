@@ -47,8 +47,13 @@ void UJHMissileSkill::OnAttack()
 
 		// todo: 랜덤 회전값 부여
 
-		// 미사일 생성
-		//AJHMissile* Missile = GetWorld()->SpawnActor<AJHMissile>(SkillFactory, SkillPosition->GetComponentLocation(), SkillPosition->GetRelativeRotation());
-		AJHMissile* Missile = GetWorld()->SpawnActor<AJHMissile>(SkillFactory, SkillPosition->GetComponentLocation(), SkillPosition->GetComponentRotation());
+		if (SkillFactory == nullptr)
+		{
+			UE_LOG(LogTemp, Warning, TEXT("MissileFactory가 없습니다."))
+		}
+		else
+		{
+			AJHMissile* Missile = GetWorld()->SpawnActor<AJHMissile>(SkillFactory, SkillArrow->GetComponentLocation(), SkillArrow->GetComponentRotation());
+		}
 	}
 }

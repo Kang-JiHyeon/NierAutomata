@@ -22,6 +22,7 @@ protected:
 public:	
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
+	virtual void NotifyActorBeginOverlap(AActor* OtherActor) override;
 
 public:
 
@@ -30,32 +31,17 @@ public:
 	UPROPERTY(EditAnywhere)
 	class UStaticMeshComponent* MeshComp;
 
+private:
+	
 	UPROPERTY(VisibleAnywhere)
 	APawn* Target;
-
-	UPROPERTY(VisibleAnywhere)
-	FVector MovePosition;
-
 	UPROPERTY()
 	FVector Direction;
-
 	UPROPERTY(EditAnywhere)
 	float Speed = 1500;
-
 	UPROPERTY(EditAnywhere)
-	float UpTime = 1;
+	float TraceDelayTime = 0.5f;
 
-	UPROPERTY() 
-	float CurrUpTime;
-
-	UPROPERTY(EditAnywhere)
-	float TraceTime = 2;
-
-	UPROPERTY()
-	float CurrTraceTime;
-
-
-	UPROPERTY()
-	bool bTrace;
-
+	float CurrTime;
+	FVector TargetLocation;
 };
