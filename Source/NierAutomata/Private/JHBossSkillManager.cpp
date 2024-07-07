@@ -149,3 +149,8 @@ void UJHBossSkillManager::UpdatePattern()
 
 	MyBoss->SetRotSpeed(SkillPattern[PatternIndex].RotateSpeed);
 }
+
+void UJHBossSkillManager::SetRotateType(ERotateType Type)
+{
+	CurrRotateType = Type;
+}

@@ -31,7 +31,6 @@ AJHMissile::AJHMissile()
 	if (TempMesh.Succeeded()) {
 		MeshComp->SetStaticMesh(TempMesh.Object);
 	}
-	//MeshComp->SetRelativeLocation(FVector(0, 0, -50));
 
 	ConstructorHelpers::FObjectFinder<UMaterial> TempMat(TEXT("/Script/Engine.Material'/Engine/MapTemplates/Materials/BasicAsset01.BasicAsset01'"));
 	if (TempMat.Succeeded()) {
@@ -70,7 +69,7 @@ void AJHMissile::Tick(float DeltaTime)
 	else
 	{
 		TargetPosition = Target->GetActorLocation();
-		TargetPosition.Z = -50;
+		TargetPosition.Z = 0;
 
 		Direction = TargetPosition - GetActorLocation();
 	}

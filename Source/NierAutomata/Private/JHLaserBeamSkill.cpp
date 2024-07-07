@@ -2,6 +2,7 @@
 
 
 #include "JHLaserBeamSkill.h"
+#include "JHEnemy.h"
 #include "JHLaserBeam.h"
 #include "Components/SplineComponent.h"
 #include "Components/SplineMeshComponent.h"
@@ -23,10 +24,7 @@ void UJHLaserBeamSkill::BeginPlay()
 {
 	Super::BeginPlay();
 
-
-
-	//ToggleEnableActor();
-	//ToggleLaserBeamState(false);
+	MyBoss = Cast<AJHEnemy>(GetOwner());
 }
 
 
@@ -47,12 +45,29 @@ void UJHLaserBeamSkill::OnInitialize()
 
 void UJHLaserBeamSkill::OnAttack()
 {
-	// 이미 공격 중이라면 종료
-	if(bAttack)	return;
-	bAttack = true;
-
-	// LaserBeam 생성
-	CreateLaserBeams();
+	// 이미 공격 중이라면
+	 if (bAttack)
+	{
+		// 일정 시간이 지나면 회전하고 싶다.
+		if (MyBoss != nullptr)
+		{
+			if (CurrIdleTime <= IdleTime)
+			{
+				CurrIdleTime += GetWorld()->DeltaTimeSeconds;
+			}
+			else
+			{
+				MyBoss->RotateSpinBottom();
+			}
+		}
+	}
+	else
+	{
+		// LaserBeam 생성
+		CreateLaserBeams();
+		
+		bAttack = true;
+	}
 }
 
 void UJHLaserBeamSkill::CreateLaserBeams()
@@ -65,7 +80,6 @@ void UJHLaserBeamSkill::CreateLaserBeams()
 		AJHLaserBeam* LaserBeam = GetWorld()->SpawnActor<AJHLaserBeam>(SkillFactory);
 
 		USceneComponent* Root = LaserBeam->GetRootComponent();
-		//Root->SetupAttachment(this);
 		Root->AttachToComponent(this, FAttachmentTransformRules::KeepWorldTransform);
 		LaserBeam->SetActorRelativeRotation(Rotation);
 		LaserBeam->SetActorRelativeLocation(LaserBeam->GetActorForwardVector() * Radius);

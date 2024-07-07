@@ -103,4 +103,5 @@ public:
 
 private:
 	void UpdatePattern();
+	void SetRotateType(ERotateType Type);
 };

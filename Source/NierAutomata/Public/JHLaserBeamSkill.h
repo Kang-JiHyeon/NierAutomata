@@ -30,6 +30,7 @@ public:
 	virtual void OnAttack() override;
 
 public:
+	class AJHEnemy* MyBoss;
 
 	UPROPERTY(EditAnywhere)
 	TSubclassOf<class AJHLaserBeam> SkillFactory;
