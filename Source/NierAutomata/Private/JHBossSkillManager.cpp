@@ -48,9 +48,21 @@ void UJHBossSkillManager::TickComponent(float DeltaTime, ELevelTick TickType, FA
 
 void UJHBossSkillManager::OnInitialize()
 {
-	BombSkill->OnInitialize();
-	MissileSkill->OnInitialize();
-	LaserBeamSkill->OnInitialize();
+	
+	switch (CurrSkillType)
+	{
+	case ESkillType::Bomb:
+		BombSkill->OnInitialize();
+		break;
+	case ESkillType::Missile:
+		MissileSkill->OnInitialize();
+		break;
+	case ESkillType::LaserBeam:
+		LaserBeamSkill->OnInitialize();
+		break;
+	default:
+		break;
+	}
 }
 
 

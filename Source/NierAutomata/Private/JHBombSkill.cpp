@@ -14,7 +14,6 @@ UJHBombSkill::UJHBombSkill()
 
 }
 
-
 // Called when the game starts
 void UJHBombSkill::BeginPlay()
 {
@@ -23,57 +22,44 @@ void UJHBombSkill::BeginPlay()
 	MyActor = GetOwner();
 }
 
-
 // Called every frame
 void UJHBombSkill::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)
 {
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
 }
 
-
-
 void UJHBombSkill::Fire()
 {
-	try
+
+	if (FirePositions.Num() <= 0) {
+		UE_LOG(LogTemp, Warning, TEXT("FirePositions null!!"));
+		return;
+	}
+
+	if (SkillFactory == nullptr) {
+
+		UE_LOG(LogTemp, Warning, TEXT("BombFactory null!!"));
+		return;
+	}
+
+	for (auto FirePos : FirePositions)
 	{
-
-		if (FirePositions.Num() <= 0) {
-			UE_LOG(LogTemp, Warning, TEXT("FirePositions null!!"));
-			return;
-		}
-
-		if (SkillFactory == nullptr) {
-
-			UE_LOG(LogTemp, Warning, TEXT("BombFactory null!!"));
-			return;
-		}
-
-		for (auto FirePos : FirePositions)
+		if (FirePos == nullptr)
 		{
-			if (FirePos == nullptr)
-			{
-				UE_LOG(LogTemp, Warning, TEXT("FirePositions[i] null!!"));
-				return;
-			}
-
-			AJHBomb* Bomb = GetWorld()->SpawnActor<AJHBomb>(SkillFactory, FirePos->GetComponentLocation(), FirePos->GetComponentRotation());
-
-			if (Bomb != nullptr)
-			{
- 				Bomb->SetForce(Forces[ForceIndex]);
-				Bomb->Fire();
-			}
+			UE_LOG(LogTemp, Warning, TEXT("FirePositions[i] null!!"));
+			return;
 		}
 
+		AJHBomb* Bomb = GetWorld()->SpawnActor<AJHBomb>(SkillFactory, FirePos->GetComponentLocation(), FirePos->GetComponentRotation());
 
-		ForceIndex = ++ForceIndex % Forces.Num();
+		if (Bomb != nullptr)
+		{
+ 			Bomb->SetForce(Forces[ForceIndex]);
+			Bomb->Fire();
+		}
+	}
 
-		UE_LOG(LogTemp, Warning, TEXT("Spawn Bomb!!"));
-	}
-	catch (const std::exception&)
-	{
-		UE_LOG(LogTemp, Warning, TEXT("BombSkill error!!"));
-	}
+	ForceIndex = ++ForceIndex % Forces.Num();
 }
 
 void UJHBombSkill::SetSkillTime(float Value)
@@ -81,21 +67,11 @@ void UJHBombSkill::SetSkillTime(float Value)
 	SkillTime = Value;
 }
 
-void UJHBombSkill::Rotate()
-{
-	//FRotator Rot = MyActor->GetActorRotation() + FRotator(0, RotSpeed * GetWorld()->DeltaTimeSeconds, 0);
-
-	//MyActor->SetActorRotation(Rot);
-
-	//UE_LOG(LogTemp, Warning, TEXT("Rotate!"));
-}
-
 void UJHBombSkill::OnInitialize()
 {
 	CurrSkillTime = 0;
 	ForceIndex = 0;
 }
-
 
 void UJHBombSkill::OnAttack()
 {
@@ -106,6 +82,4 @@ void UJHBombSkill::OnAttack()
 		CurrSkillTime = 0;
 		Fire();
 	}
-
-	Rotate();
 }

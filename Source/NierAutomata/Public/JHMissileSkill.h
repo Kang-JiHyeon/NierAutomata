@@ -7,6 +7,13 @@
 #include "JHAttackInterface.h"
 #include "JHMissileSkill.generated.h"
 
+UENUM(BlueprintType)
+enum class EMissileSpawnType : uint8
+{
+	Sequential,
+	AtOnce,
+};
+
 UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
 class NIERAUTOMATA_API UJHMissileSkill : public USceneComponent, public IJHAttackInterface
 {
@@ -30,19 +37,38 @@ public:
 
 public:
 
+	EMissileSpawnType MissileSpawnType = EMissileSpawnType::Sequential;
+
 	UPROPERTY(EditAnywhere)
-	TSubclassOf<class AJHMissile> SkillFactory;
+	TSubclassOf<class AJHMissile> SequentialMissileFactory;
+
+	UPROPERTY(EditAnywhere)
+	TSubclassOf<class AJHMissile> OnceMissileFactory;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	class UArrowComponent* SkillArrow;
+	class UArrowComponent* SequentilSkillArrow;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	class UArrowComponent* OnceSkillArrow;
+
+	UPROPERTY(EditAnywhere)
+	float RandomRotRange = 30;
 
 	UPROPERTY(EditAnywhere)
 	float CreateTime = 0.25f;
-	
-	UPROPERTY(EditAnywhere)
-	int32 CreateCount = 10;
-
-	int32 CurrCreateCount;
 	float CurrTime;
 
+	UPROPERTY(EditAnywhere)
+	int32 MaxCount = 10;
+
+	UPROPERTY(EditAnywhere)
+	float Radius = 200;
+	
+	bool bIsAttack;
+	bool bIsSequential;
+
+
+private:
+	void OnSpawnSequential();
+	void OnSpawnAtOnce();
 };

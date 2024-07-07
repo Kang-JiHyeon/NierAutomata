@@ -39,13 +39,8 @@ void UJHLaserBeamSkill::TickComponent(float DeltaTime, ELevelTick TickType, FAct
 
 void UJHLaserBeamSkill::OnInitialize()
 {
-	//if (LaserBeams.Num() <= 0) return;
-
 	bAttack = false;
 	CurrIdleTime = 0;
-	//bEnable = false;
-	//ToggleEnableActor();
-	//ToggleLaserBeamState(false);
 
 	DestroyLaserBeams();
 }
@@ -54,84 +49,11 @@ void UJHLaserBeamSkill::OnAttack()
 {
 	// 이미 공격 중이라면 종료
 	if(bAttack)	return;
-
 	bAttack = true;
 
 	// LaserBeam 생성
 	CreateLaserBeams();
-
-
-
-
-	//if (!bEnable)
-	//{
-	//	bEnable = true;
-	//	ToggleEnableActor();
-
-	//	
-	//	
-	//}
-	//else
-	//{
-	//	if (CurrIdleTime <= IdleTime) {
-	//		CurrIdleTime += GetWorld()->DeltaTimeSeconds;
-	//	}
-	//	else
-	//	{
-	//		bAttack = true;
-
-	//		CurrRotZ += RotSpeed * GetWorld()->DeltaTimeSeconds;
-	//		SetRelativeRotation(FRotator(0, -CurrRotZ, 0));
-	//	}
-	//}
-
-	//if (bEnable && bAttack)
-	//{
-	//	ToggleLaserBeamState(true);
-	//}
-	//else
-	//{
-	//	ToggleLaserBeamState(false);
-	//}
-
 }
-
-void UJHLaserBeamSkill::ToggleEnableActor()
-{
-	//for (auto LaserBeam : LaserBeams)
-	//{
-	//	// 액터의 노출
-	//	LaserBeam->SetActorHiddenInGame(!bEnable);
-
-	//	// 액터의 충돌
-	//	LaserBeam->SetActorEnableCollision(bEnable);
-
-	//	// 액터의 틱
-	//	LaserBeam->SetActorTickEnabled(bEnable);
-	//}
-}
-
-void UJHLaserBeamSkill::ToggleLaserBeamState(bool bValue)
-{
-	if (bAttack == bValue) return;
-
-	for (auto LaserBeam : LaserBeams)
-	{
-		if (bValue)
-			LaserBeam->SetLaserBeamState(ELaserBeamState::Attack);
-		else
-			LaserBeam->SetLaserBeamState(ELaserBeamState::Idle);
-	}
-}
-
-//FVector UJHLaserBeamSkill::GetPositionOnCircle(float TargetRadius, float TargetDegree, FVector CenterPos)
-//{
-//	float Radian = FMath::DegreesToRadians(TargetDegree);
-//	float X = CenterPos.X + TargetRadius * FMath::Cos(Radian);
-//	float Y = CenterPos.Y + TargetRadius * FMath::Sin(Radian);
-//
-//	return FVector(X, Y, CenterPos.Z);
-//}
 
 void UJHLaserBeamSkill::CreateLaserBeams()
 {
@@ -158,7 +80,7 @@ void UJHLaserBeamSkill::DestroyLaserBeams()
 {
 	if (LaserBeams.IsEmpty())
 		return;
-	
+
 	for (auto LaserBeam : LaserBeams)
 	{
 		LaserBeam->Destroy();

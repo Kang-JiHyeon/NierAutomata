@@ -47,7 +47,7 @@ void AJHMissile::BeginPlay()
 	
 	// 플레이어를 찾아 타겟으로 설정한다.
 	Target = GetWorld()->GetFirstPlayerController()->GetPawn();
-	TargetLocation = GetActorLocation() + FVector::UpVector * 10000;
+	TargetPosition = GetActorLocation() + (FVector::UpVector * OffsetUp + GetActorForwardVector() * OffsetForward);
 }
 
 // Called every frame
@@ -65,27 +65,27 @@ void AJHMissile::Tick(float DeltaTime)
 	if (CurrTime <= TraceDelayTime)
 	{
 		CurrTime += DeltaTime;
-		Direction = TargetLocation - GetActorLocation();
+		Direction = TargetPosition - GetActorLocation();
 	}
 	else
 	{
-		TargetLocation = Target->GetActorLocation();
-		TargetLocation.Z = 0;
+		TargetPosition = Target->GetActorLocation();
+		TargetPosition.Z = -50;
 
-		Direction = TargetLocation - GetActorLocation();
+		Direction = TargetPosition - GetActorLocation();
 	}
 
 	// 현재 방향과 타겟 방향 사이의 회전 값 계산
 	Direction.Normalize();
 	FRotator CurrentRotation = GetActorRotation();
 	FRotator TargetRotation = Direction.Rotation();
-	FRotator NewRotation = FMath::RInterpTo(CurrentRotation, TargetRotation, DeltaTime, 10);
+	FRotator NewRotation = FMath::RInterpTo(CurrentRotation, TargetRotation, DeltaTime, InterpSpeed);
 
 	// 미사일 회전 설정
 	SetActorRotation(NewRotation);
 
 	// 미사일 위치 이동
-	FVector NewLocation = GetActorLocation() + (GetActorForwardVector() * Speed * DeltaTime);
+	FVector NewLocation = GetActorLocation() + (GetActorForwardVector() * MoveSpeed * DeltaTime);
 	SetActorLocation(NewLocation);
 }
 

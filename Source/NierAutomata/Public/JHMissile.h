@@ -35,13 +35,23 @@ private:
 	
 	UPROPERTY(VisibleAnywhere)
 	APawn* Target;
-	UPROPERTY()
-	FVector Direction;
+
 	UPROPERTY(EditAnywhere)
-	float Speed = 1500;
+	float OffsetForward;
+
+	UPROPERTY(EditAnywhere)
+	float OffsetUp;
+
+	UPROPERTY(EditAnywhere)
+	float MoveSpeed = 2000;
+
+	UPROPERTY(EditAnywhere)
+	float InterpSpeed = 5;
+
 	UPROPERTY(EditAnywhere)
 	float TraceDelayTime = 0.5f;
 
+	FVector TargetPosition;
+	FVector Direction;
 	float CurrTime;
-	FVector TargetLocation;
 };

@@ -48,19 +48,11 @@ public:
 	float SkillTime = 1;
 	float CurrSkillTime = 0;
 
-	UPROPERTY(EditAnywhere)
-	float RotSpeed = 100;
-
-	int32 MaxFireCount = 3;
-	int32 CurrFireCount = 0;
-
 private:
-	
 	AActor* MyActor;
 
 public:
-
+	
 	void Fire();
 	void SetSkillTime(float Value);
-	void Rotate();
 };

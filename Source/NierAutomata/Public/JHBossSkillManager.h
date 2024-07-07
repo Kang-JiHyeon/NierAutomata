@@ -6,6 +6,8 @@
 #include "Components/ActorComponent.h"
 #include "JHBossSkillManager.generated.h"
 
+
+
 UENUM(BlueprintType)
 enum class ESkillType : uint8
 {

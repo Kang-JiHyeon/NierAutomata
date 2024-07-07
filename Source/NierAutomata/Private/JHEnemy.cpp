@@ -91,13 +91,25 @@ AJHEnemy::AJHEnemy()
 	MissileArrow->SetRelativeLocation(FVector(0, 0, 50));
 	MissileArrow->SetRelativeRotation(FRotator(90, 0, 0));
 
-	MissileSkill->SkillArrow = MissileArrow;
+	UArrowComponent* MissileArrow2 = CreateDefaultSubobject<UArrowComponent>(TEXT("Missile Arrow2"));
+	MissileArrow2->SetupAttachment(MissileSkill);
+	MissileArrow2->SetRelativeLocation(FVector(0, 0, -35));
+
+	MissileSkill->SequentilSkillArrow = MissileArrow;
+	MissileSkill->OnceSkillArrow = MissileArrow2;
 	
-	ConstructorHelpers::FClassFinder<AJHMissile> MissileFinder(TEXT("/Script/Engine.Blueprint'/Game/Blueprints/Kang/BP_JHMissile.BP_JHMissile_C'"));
-	if (MissileFinder.Succeeded())
+	ConstructorHelpers::FClassFinder<AJHMissile> SequentialMissileFinder(TEXT("/Script/Engine.Blueprint'/Game/Blueprints/Kang/BP_JHMissile.BP_JHMissile_C'"));
+	if (SequentialMissileFinder.Succeeded())
 	{
-		MissileSkill->SkillFactory = MissileFinder.Class;
+		MissileSkill->SequentialMissileFactory = SequentialMissileFinder.Class;
 	}
+
+	ConstructorHelpers::FClassFinder<AJHMissile> AtOnceMissileFinder(TEXT("/Script/Engine.Blueprint'/Game/Blueprints/Kang/BP_JHMissile_AtOnce.BP_JHMissile_AtOnce_c'"));
+	if (AtOnceMissileFinder.Succeeded())
+	{
+		MissileSkill->OnceMissileFactory = AtOnceMissileFinder.Class;
+	}
+
 
 	// LaserBeam
 	LaserBeamSkill = CreateDefaultSubobject<UJHLaserBeamSkill>(TEXT("LaserBeam Skill"));

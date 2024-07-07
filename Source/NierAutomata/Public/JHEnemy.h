@@ -44,7 +44,7 @@ public:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
 	class UJHEnemyFSM* Fsm;
 
-	 //Manager
+	//Manager
 	UPROPERTY(EditAnywhere)
 	class UJHBossSkillManager* BossSkillManager;
 	
