@@ -19,7 +19,6 @@ void UJHSpiralMoveSkill::BeginPlay()
 	Super::BeginPlay();
 
 	MyOwner = GetOwner();
-
 	CenterPos = MyOwner->GetActorLocation();
 }
 
@@ -29,22 +28,15 @@ void UJHSpiralMoveSkill::TickComponent(float DeltaTime, ELevelTick TickType, FAc
 {
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
 
-	// 일정 시간동안 확장하는 방향으로 나선형으로 이동하고 싶다.
-	// 일정 시간이 지나면 다시 축소하는 방향으로 나선형 이동하고 싶다.
-	// - 일정 시간
-	// - 방향
-	// - 이동 대상
-	// - 원점 좌표
-	// 각도
-
-	if (bIsAttack)
-	{
-		OnAttack();
-	}
-	else
-	{
-		OnInitialize();
-	}
+	//// Test
+	//if (bIsAttack)
+	//{
+	//	OnAttack();
+	//}
+	//else
+	//{
+	//	OnInitialize();
+	//}
 
 }
 
@@ -55,6 +47,7 @@ void UJHSpiralMoveSkill::OnInitialize()
 	Radius = 0;
 	DegreeAngle = 0;
 	CenterPos = FVector(0, 0, 0);
+	bIsAttack = false;
 }
 
 void UJHSpiralMoveSkill::OnAttack()
@@ -65,12 +58,17 @@ void UJHSpiralMoveSkill::OnAttack()
 		return;
 	}
 
-	//if (CurrTime < 0)
-	//	Sign = 1;
-	//else if (CurrTime > MoveTime)
-	//	Sign = -1;
+	if (!bIsAttack)
+	{
+		SetCenterPosition(MyOwner->GetActorLocation());
+		bIsAttack = true;
+	}
+
 	if (CurrTime < 0)
+	{
+		MyOwner->SetActorLocation(CenterPos);
 		return;
+	}
 
 	if (CurrTime > MoveTime)
 		Sign = -1;
@@ -83,7 +81,7 @@ void UJHSpiralMoveSkill::OnAttack()
 	Radius += Sign * RadiusSpeed * DeltaTime;
 	DegreeAngle += AngleSpeed * DeltaTime;
 
-	if (DegreeAngle > 360)
+	if (FMath::Abs(DegreeAngle) > 360)
 		DegreeAngle = 0;
 
 	float RadianAngle = FMath::DegreesToRadians(DegreeAngle);

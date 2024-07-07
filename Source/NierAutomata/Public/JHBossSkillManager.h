@@ -13,7 +13,8 @@ enum class ESkillType : uint8
 {
 	Bomb,
 	Missile,
-	LaserBeam
+	LaserBeam,
+	SpiralMove,
 };
 
 UENUM(BlueprintType)
@@ -82,8 +83,12 @@ public:
 	UPROPERTY(VisibleAnywhere)
 	class UJHLaserBeamSkill* LaserBeamSkill;
 
+	UPROPERTY(VisibleAnywhere)
+	class UJHSpiralMoveSkill* SpiralMoveSkill;
+
 	UPROPERTY(EditAnywhere)
 	TArray<FSkillProperty> SkillPattern;
+
 
 	float MaxCastTime = 0;
 	float CurrCastTime = 0;
@@ -94,7 +99,6 @@ public:
 	int32 PatternIndex = 0;
 	
 	bool bAttacking = false;
-
 	bool bDelay = false;
 
 public:

@@ -60,6 +60,9 @@ void AJHLaserBeam::BeginPlay()
 
 	// Beam 상태 Idle 상태로 변경
 	SetLaserBeamState(ELaserBeamState::Idle);
+
+
+	UE_LOG(LogTemp, Warning, TEXT("LaserBeam 생성 위치 : (%f, %f, %f)"), GetActorLocation().X, GetActorLocation().Y, GetActorLocation().Z);
 }
 
 // Called every frame

@@ -77,12 +77,12 @@ void UJHLaserBeamSkill::CreateLaserBeams()
 		FRotator Rotation = FRotator(0, i * (360 / MaxCount), 0);
 
 		// LaserBeam 생성
-		AJHLaserBeam* LaserBeam = GetWorld()->SpawnActor<AJHLaserBeam>(SkillFactory);
+		AJHLaserBeam* LaserBeam = GetWorld()->SpawnActor<AJHLaserBeam>(SkillFactory, GetComponentLocation(), GetComponentRotation());
 
 		USceneComponent* Root = LaserBeam->GetRootComponent();
 		Root->AttachToComponent(this, FAttachmentTransformRules::KeepWorldTransform);
-		LaserBeam->SetActorRelativeRotation(Rotation);
-		LaserBeam->SetActorRelativeLocation(LaserBeam->GetActorForwardVector() * Radius);
+		LaserBeam->SetActorRelativeRotation(Root->GetRelativeRotation() + Rotation);
+		//LaserBeam->SetActorRelativeLocation(LaserBeam->GetActorForwardVector() * Radius);
 		LaserBeam->SetIdleTime(IdleTime);
 		LaserBeams.Add(LaserBeam);
 	}

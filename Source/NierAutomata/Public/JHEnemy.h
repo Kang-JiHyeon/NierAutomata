@@ -56,6 +56,9 @@ public:
 
 	UPROPERTY(EditAnywhere)
 	class UJHLaserBeamSkill* LaserBeamSkill;
+	
+	UPROPERTY(EditAnywhere)
+	class UJHSpiralMoveSkill* SpiralMoveSkill;
 
 	// Arrow
 	UPROPERTY(EditAnywhere)

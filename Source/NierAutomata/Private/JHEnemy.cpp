@@ -9,6 +9,7 @@
 #include "JHMissile.h"
 #include "JHLaserBeamSkill.h"
 #include "JHLaserBeam.h"
+#include "JHSpiralMoveSkill.h"
 #include "JHBossSkillManager.h"
 #include "Components/SplineComponent.h"
 #include "Components/SplineMeshComponent.h"
@@ -64,14 +65,13 @@ AJHEnemy::AJHEnemy()
 	// Bomb
 	BombSkill = CreateDefaultSubobject<UJHBombSkill>(TEXT("Bomb Skill"));
 	BombSkill->SetupAttachment(BottomMeshComp);
-
 	
 	for (int32 i = 0; i < BombSkill->BombCount; i++) {
 		FString FirePosName = FString::Printf(TEXT("FirePos_%d"), i);
 		USceneComponent* TempFirePos = CreateDefaultSubobject<USceneComponent>(*FirePosName);
 
-		TempFirePos->SetRelativeRotation(FRotator(50, i * (360 / BombSkill->BombCount), 0));
 		TempFirePos->SetupAttachment(BombSkill);
+		TempFirePos->SetRelativeRotation(FRotator(50, i * (360 / BombSkill->BombCount), 0));
 
 		BombSkill->FirePositions.Add(TempFirePos);
 	}
@@ -120,10 +120,7 @@ AJHEnemy::AJHEnemy()
 		LaserBeamSkill->SkillFactory = LaserBeamFinder.Class;
 	}
 
-	// BossSkillManager
-	BossSkillManager->BombSkill = BombSkill;
-	BossSkillManager->MissileSkill = MissileSkill;
-	BossSkillManager->LaserBeamSkill = LaserBeamSkill;
+	SpiralMoveSkill = CreateDefaultSubobject<UJHSpiralMoveSkill>(TEXT("SpiralMove Skill"));
 }
 
 // Called when the game starts or when spawned

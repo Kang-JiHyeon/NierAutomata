@@ -6,6 +6,7 @@
 #include "JHBombSkill.h"
 #include "JHMissileSkill.h"
 #include "JHLaserBeamSkill.h"
+#include "JHSpiralMoveSkill.h"
 
 // Sets default values for this component's properties
 UJHBossSkillManager::UJHBossSkillManager()
@@ -26,6 +27,11 @@ void UJHBossSkillManager::BeginPlay()
 
 	if (MyBoss != nullptr)
 	{
+		BombSkill = MyBoss->BombSkill;
+		MissileSkill = MyBoss->MissileSkill;
+		LaserBeamSkill = MyBoss->LaserBeamSkill;
+		SpiralMoveSkill = MyBoss->SpiralMoveSkill;
+
 		if (SkillPattern.Num() <= 0)
 		{
 			UE_LOG(LogTemp, Warning, TEXT("SkillPattern Null!"));
@@ -34,7 +40,6 @@ void UJHBossSkillManager::BeginPlay()
 
 		UpdatePattern();
 	}
-
 }
 
 
@@ -48,7 +53,6 @@ void UJHBossSkillManager::TickComponent(float DeltaTime, ELevelTick TickType, FA
 
 void UJHBossSkillManager::OnInitialize()
 {
-	
 	switch (CurrSkillType)
 	{
 	case ESkillType::Bomb:
@@ -59,6 +63,9 @@ void UJHBossSkillManager::OnInitialize()
 		break;
 	case ESkillType::LaserBeam:
 		LaserBeamSkill->OnInitialize();
+		break;
+	case ESkillType::SpiralMove:
+		SpiralMoveSkill->OnInitialize();
 		break;
 	default:
 		break;
@@ -109,6 +116,9 @@ void UJHBossSkillManager::OnAttack()
 			break;
 		case ESkillType::LaserBeam:
 			LaserBeamSkill->OnAttack();
+			break;
+		case ESkillType::SpiralMove:
+			SpiralMoveSkill->OnAttack();
 			break;
 		default:
 			break;
