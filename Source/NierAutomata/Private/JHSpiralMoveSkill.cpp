@@ -45,7 +45,7 @@ void UJHSpiralMoveSkill::OnInitialize()
 	CurrTime = 0;
 	Sign = 1;
 	Radius = 0;
-	DegreeAngle = 0;
+	//DegreeAngle = 0;
 	CenterPos = FVector(0, 0, 0);
 	bIsAttack = false;
 }
@@ -87,7 +87,7 @@ void UJHSpiralMoveSkill::OnAttack()
 	float RadianAngle = FMath::DegreesToRadians(DegreeAngle);
 
 	float X = CenterPos.X + FMath::Cos(RadianAngle) * Radius;
-	float Y = CenterPos.Y + FMath::Sin(RadianAngle) * Radius;
+	float Y = CenterPos.Y + FMath::Sin(RadianAngle) * Radius * -1.0f;
 
 	MyOwner->SetActorLocation(CenterPos + FVector(X, Y, 0));
 }
