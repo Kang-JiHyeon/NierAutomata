@@ -57,6 +57,14 @@ public:
 	UPROPERTY(EditAnywhere)
 	class UJHLaserBeamSkill* LaserBeamSkill;
 
+	// Arrow
+	UPROPERTY(EditAnywhere)
+	class UArrowComponent* SequentialMissileArrow;
+
+	UPROPERTY(EditAnywhere)
+	class UArrowComponent* OnceMissileArrow;
+
+
 private:
 	// Move
 	UPROPERTY(EditAnywhere)

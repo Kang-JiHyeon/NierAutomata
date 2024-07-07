@@ -86,17 +86,17 @@ AJHEnemy::AJHEnemy()
 	MissileSkill = CreateDefaultSubobject<UJHMissileSkill>(TEXT("Missile Skill"));
 	MissileSkill->SetupAttachment(RootComponent);
 
-	UArrowComponent* MissileArrow = CreateDefaultSubobject<UArrowComponent>(TEXT("Missile Arrow"));
-	MissileArrow->SetupAttachment(MissileSkill);
-	MissileArrow->SetRelativeLocation(FVector(0, 0, 50));
-	MissileArrow->SetRelativeRotation(FRotator(90, 0, 0));
+	SequentialMissileArrow = CreateDefaultSubobject<UArrowComponent>(TEXT("Missile Arrow (Sequential)"));
+	SequentialMissileArrow->SetupAttachment(MissileSkill);
+	SequentialMissileArrow->SetRelativeLocation(FVector(0, 0, 50));
+	SequentialMissileArrow->SetRelativeRotation(FRotator(90, 0, 0));
 
-	UArrowComponent* MissileArrow2 = CreateDefaultSubobject<UArrowComponent>(TEXT("Missile Arrow2"));
-	MissileArrow2->SetupAttachment(MissileSkill);
-	MissileArrow2->SetRelativeLocation(FVector(0, 0, -35));
+	OnceMissileArrow = CreateDefaultSubobject<UArrowComponent>(TEXT("Missile Arrow (Once)"));
+	OnceMissileArrow->SetupAttachment(MissileSkill);
+	OnceMissileArrow->SetRelativeLocation(FVector(0, 0, -35));
 
-	MissileSkill->SequentilSkillArrow = MissileArrow;
-	MissileSkill->OnceSkillArrow = MissileArrow2;
+	MissileSkill->SequentilSkillArrow = SequentialMissileArrow;
+	MissileSkill->OnceSkillArrow = OnceMissileArrow;
 	
 	ConstructorHelpers::FClassFinder<AJHMissile> SequentialMissileFinder(TEXT("/Script/Engine.Blueprint'/Game/Blueprints/Kang/BP_JHMissile.BP_JHMissile_C'"));
 	if (SequentialMissileFinder.Succeeded())
@@ -104,12 +104,11 @@ AJHEnemy::AJHEnemy()
 		MissileSkill->SequentialMissileFactory = SequentialMissileFinder.Class;
 	}
 
-	ConstructorHelpers::FClassFinder<AJHMissile> AtOnceMissileFinder(TEXT("/Script/Engine.Blueprint'/Game/Blueprints/Kang/BP_JHMissile_AtOnce.BP_JHMissile_AtOnce_c'"));
+	ConstructorHelpers::FClassFinder<AJHMissile> AtOnceMissileFinder(TEXT("/Script/Engine.Blueprint'/Game/Blueprints/Kang/BP_JHMissile_AtOnce.BP_JHMissile_AtOnce_C'"));
 	if (AtOnceMissileFinder.Succeeded())
 	{
 		MissileSkill->OnceMissileFactory = AtOnceMissileFinder.Class;
 	}
-
 
 	// LaserBeam
 	LaserBeamSkill = CreateDefaultSubobject<UJHLaserBeamSkill>(TEXT("LaserBeam Skill"));

@@ -2,10 +2,10 @@
 
 
 #include "JHMissileSkill.h"
+#include "Components/ArrowComponent.h"
 #include "JHEnemy.h"
 #include "JHMissile.h"
 #include "Kismet/KismetMathLibrary.h"
-#include "Components/ArrowComponent.h"
 
 // Sets default values for this component's properties
 UJHMissileSkill::UJHMissileSkill()

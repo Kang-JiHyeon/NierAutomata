@@ -38,8 +38,8 @@ void UJHEnemyFSM::TickComponent(float DeltaTime, ELevelTick TickType, FActorComp
 {
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
 
-	FString LogMsg = UEnum::GetValueAsString(EnemyState);
-	GEngine->AddOnScreenDebugMessage(0, 1, FColor::Cyan, LogMsg);
+	//FString LogMsg = UEnum::GetValueAsString(EnemyState);
+	//GEngine->AddOnScreenDebugMessage(0, 1, FColor::Cyan, LogMsg);
 
 	switch (EnemyState)
 	{

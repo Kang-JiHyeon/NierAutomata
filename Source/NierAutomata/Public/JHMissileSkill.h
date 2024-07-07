@@ -45,10 +45,10 @@ public:
 	UPROPERTY(EditAnywhere)
 	TSubclassOf<class AJHMissile> OnceMissileFactory;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	//UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	class UArrowComponent* SequentilSkillArrow;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	//UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	class UArrowComponent* OnceSkillArrow;
 
 	UPROPERTY(EditAnywhere)
