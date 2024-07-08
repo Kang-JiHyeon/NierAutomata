@@ -45,7 +45,7 @@ public:
 	void EndDash();
 	// 대시 구현 
 	void InputDash();
-	int DashDistance = 1500;
+	int DashDistance = 5000;
 	// 점프 
 	void InputJump();
 	// 점프 중력 (낙하 속도) 
@@ -59,7 +59,7 @@ public:
 	void EndAttack();
 
 	// 레이저 공격 
-	void FireLaser();
+	void FireLaser(); 
 
 	UPROPERTY(EditAnywhere)
 	class AHJBullet2* LaserBeam;
@@ -73,4 +73,17 @@ public:
 	
 	UFUNCTION(BlueprintCallable)
 	void BackWeapon();
+
+	// 펫 장착 
+	class AHJJumpPet* JumpPet;
+	class AHJPet* CurrentPet;
+
+	// 무기 이동 
+	UFUNCTION(BlueprintCallable)
+	void StartSkyAttack();
+
+	UFUNCTION(BlueprintCallable)
+	void EndSkyAttack();
+
+
 };

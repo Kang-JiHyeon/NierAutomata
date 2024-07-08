@@ -4,6 +4,8 @@
 #include "HJCharacter.h"
 #include "HJWeapon.h"
 #include "HJBullet2.h"
+#include "HJPet.h"
+#include "HJJumpPet.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "GameFramework/Controller.h"
 
@@ -41,9 +43,6 @@ AHJCharacter::AHJCharacter()
 		GetMesh()->SetRelativeLocationAndRotation(FVector(0, 0, -90), FRotator(0, -90, 0));
 	}
 
-	// 점프 
-	/*JumpMaxCount = 2;*/
-
 }
 
 // Called when the game starts or when spawned
@@ -51,11 +50,13 @@ void AHJCharacter::BeginPlay()
 {
 	Super::BeginPlay();
 
+	// 점프 
+	JumpMaxCount = 2;
 	// 가속 구현 (기본속도) 
 	GetCharacterMovement()->MaxWalkSpeed = 1200.0f;
 	// 점프 구현 (기본중력)
-	GetCharacterMovement()->JumpZVelocity = 900.0f;
-	GetCharacterMovement()->GravityScale = 2.8;
+	GetCharacterMovement()->JumpZVelocity = 1200.0f;
+	GetCharacterMovement()->GravityScale = 2.0f;
 
 	// 무기
 	FName WeaponSocket(TEXT("sky_attack_socket"));
@@ -161,12 +162,12 @@ void AHJCharacter::InputJump()
 // 점프 중력 
 void AHJCharacter::StartJump()
 {
-	GetCharacterMovement()->GravityScale = 0.5;
+	GetCharacterMovement()->GravityScale = 0.01;
 }
 
 void AHJCharacter::EndJump()
 {
-	GetCharacterMovement()->GravityScale = 2.8;
+	GetCharacterMovement()->GravityScale = 2.0f;
 }
 
 // 카메라 회전 
@@ -246,3 +247,47 @@ void AHJCharacter::BackWeapon()
 			FAttachmentTransformRules::SnapToTargetNotIncludingScale, WeaponSocket);
 	}
 }
+
+// 스카이 어택 무기이동 
+void AHJCharacter::StartSkyAttack()
+{
+	if (CurrentWeapon)
+	{
+		CurrentWeapon->DetachFromActor(FDetachmentTransformRules::KeepWorldTransform);
+	}
+
+	FName WeaponSocket2(TEXT("hand_SkySocket"));
+
+	/*auto CurrentWeapon = GetWorld()->SpawnActor<AHJWeapon>(FVector::ZeroVector, FRotator::ZeroRotator);*/
+
+	if (CurrentWeapon)
+	{
+		CurrentWeapon->AttachToComponent(GetMesh(),
+			FAttachmentTransformRules::SnapToTargetNotIncludingScale, WeaponSocket2);
+	}
+	
+}
+
+void AHJCharacter::EndSkyAttack()
+{
+	if (CurrentWeapon)
+	{
+		CurrentWeapon->DetachFromActor(FDetachmentTransformRules::KeepWorldTransform);
+	}
+
+	FName WeaponSocket(TEXT("sky_attack_socket"));
+
+	/*auto CurrentWeapon = GetWorld()->SpawnActor<AHJWeapon>(FVector::ZeroVector, FRotator::ZeroRotator);*/
+
+	if (CurrentWeapon)
+	{
+		CurrentWeapon->AttachToComponent(GetMesh(),
+			FAttachmentTransformRules::SnapToTargetNotIncludingScale, WeaponSocket);
+	}
+
+}
+
+
+
+ 
+
