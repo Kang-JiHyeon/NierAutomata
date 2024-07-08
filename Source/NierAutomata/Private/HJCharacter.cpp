@@ -43,6 +43,13 @@ AHJCharacter::AHJCharacter()
 		GetMesh()->SetRelativeLocationAndRotation(FVector(0, 0, -90), FRotator(0, -90, 0));
 	}
 
+	// Weapon Factory
+
+	ConstructorHelpers::FClassFinder<AHJWeapon> tempWeapon(TEXT("/Script/Engine.Blueprint'/Game/Blueprints/BP_HJWeapon.BP_HJWeapon_C'"));
+	if (tempWeapon.Succeeded())
+	{
+		WeaponFactory = tempWeapon.Class;
+	}
 }
 
 // Called when the game starts or when spawned
@@ -61,7 +68,7 @@ void AHJCharacter::BeginPlay()
 	// ¹«±â
 	FName WeaponSocket(TEXT("sky_attack_socket"));
 
-	CurrentWeapon = GetWorld()->SpawnActor<AHJWeapon>(FVector::ZeroVector, FRotator::ZeroRotator);
+	CurrentWeapon = GetWorld()->SpawnActor<AHJWeapon>(WeaponFactory, FVector::ZeroVector, FRotator::ZeroRotator);
 
 	if (CurrentWeapon)
 	{

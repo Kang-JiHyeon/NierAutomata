@@ -169,12 +169,12 @@ void UJHEnemyFSM::DieState()
 /// 공격을 당했을 때 호출되는 함수
 /// - HP 감소시키고, HP의 값에 따라 Damage, Die 상태로 전환
 /// </summary>
-void UJHEnemyFSM::OnDamageProcess()
+void UJHEnemyFSM::OnDamageProcess(int32 Damage)
 {
 
 	if(Hp <=0) return;
 	
-	Hp--;
+	Hp -= Damage;
 
 	float HpRate = Hp / MaxHp;
 

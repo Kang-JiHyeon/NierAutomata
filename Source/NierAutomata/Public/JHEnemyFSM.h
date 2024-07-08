@@ -103,7 +103,7 @@ public:
 	
 
 public:
-	void OnDamageProcess();
+	void OnDamageProcess(int32 Damage);
 private:
 	void IdleState();
 	void MoveState();

@@ -68,6 +68,9 @@ public:
 	// ¹«±â ÀåÂø 
 	class AHJWeapon* CurrentWeapon;
 
+	UPROPERTY(EditAnywhere)
+	TSubclassOf<AHJWeapon> WeaponFactory;
+
 	UFUNCTION(BlueprintCallable)
 	void StartWeapon();
 	

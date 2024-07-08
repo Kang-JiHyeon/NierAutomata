@@ -152,23 +152,58 @@ void AJHEnemy::NotifyActorBeginOverlap(AActor* OtherActor)
 {
 	Super::NotifyActorBeginOverlap(OtherActor);
 
-	if (OtherActor != nullptr && OtherActor->IsValidLowLevel())
-	{
-		UPrimitiveComponent* PrimitiveComponent = Cast<UPrimitiveComponent>(OtherActor->GetRootComponent());
-		if (PrimitiveComponent)
-		{
-			ECollisionChannel CollisionChannel = PrimitiveComponent->GetCollisionObjectType();
+	//if (OtherActor != nullptr && OtherActor->IsValidLowLevel())
+	//{
+	//	UPrimitiveComponent* PrimitiveComponent = Cast<UPrimitiveComponent>(OtherActor->GetRootComponent());
+	//	if (PrimitiveComponent)
+	//	{
+	//		ECollisionChannel CollisionChannel = PrimitiveComponent->GetCollisionObjectType();
 
-			// 플레이어의 공격일 경우 
-			if(CollisionChannel == ECC_GameTraceChannel4)
-			{
-				// Damage 상태로 변경
-				Fsm->OnDamageProcess();
-				// 공격 제거
-				OtherActor->Destroy();
-			}
+	//		// 플레이어의 공격일 경우 
+	//		if(CollisionChannel == ECC_GameTraceChannel4)
+	//		{
+	//			// Damage 상태로 변경
+	//			Fsm->OnDamageProcess();
+	//			// 공격 제거
+	//			OtherActor->Destroy();
+	//		}s
+	//	}
+	//}
+
+	// 플레이어의 무기라면 제거하지 않음
+    if (OtherActor->Tags.Contains(TEXT("PlayerWeapon")))
+    {
+		// Damage 상태로 변경
+		Fsm->OnDamageProcess(10);
+		//UE_LOG(LogTemp, Warning, TEXT("PlayerWeapon Overlap!"));
+    }
+	else if (OtherActor->Tags.Contains(TEXT("PetBullet")))
+	{
+		Fsm->OnDamageProcess(1);
+		// 공격 제거
+		OtherActor->Destroy();
+		//UE_LOG(LogTemp, Warning, TEXT("PetBullet Overlap!"));
+	}
+	else if (OtherActor->Tags.Contains(TEXT("PetLaser")))
+	{
+		Fsm->OnDamageProcess(10);
+		OtherActor->Destroy();
+		//UE_LOG(LogTemp, Warning, TEXT("PetLaser Overlap!"));
+	}
+
+
+	//UE_LOG(LogTemp, Warning, TEXT("Overlap Actor Name : %s"), *OtherActor->GetActorNameOrLabel());
+
+	if (OtherActor->Tags.Num() > 0)
+	{
+		for (auto Tag : OtherActor->Tags)
+		{
+			UE_LOG(LogTemp, Warning, TEXT("Overlap Actor Name : %s, Tag : %s"), *OtherActor->GetActorNameOrLabel(), *Tag.ToString());
 		}
 	}
+
+
+
 }
 
 
