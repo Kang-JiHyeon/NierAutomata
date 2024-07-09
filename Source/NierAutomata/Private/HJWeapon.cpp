@@ -19,7 +19,7 @@ AHJWeapon::AHJWeapon()
 	Weapon->SetupAttachment(CompBox);
 
 	ConstructorHelpers::FObjectFinder<USkeletalMesh>
-		tempWeapon(TEXT("/Script/Engine.SkeletalMesh'/Game/Mesh/SK_Blade_BlackKnight.SK_Blade_BlackKnight'"));
+		tempWeapon(TEXT("/Script/Engine.SkeletalMesh'/Game/Character/2B_Sword/Mystical_Curse_Blade.Mystical_Curse_Blade'"));
 	if (tempWeapon.Succeeded())
 	{
 		Weapon->SetSkeletalMesh(tempWeapon.Object);
