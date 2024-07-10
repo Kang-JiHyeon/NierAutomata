@@ -5,7 +5,7 @@
 #include "Components/BoxComponent.h"
 #include "Kismet/KismetMathLibrary.h"
 #include "Kismet/GameplayStatics.h"
-#include <HJCharacter.h>
+#include "HJCharacter.h"
 
 // Sets default values
 AJHMissile::AJHMissile()

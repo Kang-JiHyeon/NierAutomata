@@ -11,10 +11,13 @@
 #include "JHLaserBeam.h"
 #include "JHSpiralMoveSkill.h"
 #include "JHBossSkillManager.h"
+#include "JHBossAnimInstance.h"
 #include "Components/SplineComponent.h"
 #include "Components/SplineMeshComponent.h"
 #include "Components/ArrowComponent.h"
 #include "Components/CapsuleComponent.h"
+#include "Components/SkeletalMeshComponent.h"
+#include "Engine/SkeletalMesh.h"
 #include "Kismet/KismetMathLibrary.h"
 
 
@@ -32,20 +35,39 @@ AJHEnemy::AJHEnemy()
 	RootCapsuleComp->SetWorldScale3D(FVector(5, 5, 5));
 
 	// todo : 캡슐 충돌체 설정
-	BodyMeshComp = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("Body Mesh"));
-	BodyMeshComp->SetupAttachment(RootComponent);
-	BodyMeshComp->SetCollisionProfileName(TEXT("NoCollision"));
+	//BodyMeshComp = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("Body Mesh"));
+	//BodyMeshComp->SetupAttachment(RootComponent);
+	//BodyMeshComp->SetCollisionProfileName(TEXT("NoCollision"));
 
-	// Top - Capsule
-	ConstructorHelpers::FObjectFinder<UStaticMesh> TopMeshFinder(TEXT("/Script/Engine.StaticMesh'/Game/StarterContent/Shapes/Shape_NarrowCapsule.Shape_NarrowCapsule'"));
-	if (TopMeshFinder.Succeeded())
-		BodyMeshComp->SetStaticMesh(TopMeshFinder.Object);
-	BodyMeshComp->SetRelativeLocation(FVector(0, 0, -50));
+	//// Top - Capsule
+	//ConstructorHelpers::FObjectFinder<UStaticMesh> TopMeshFinder(TEXT("/Script/Engine.StaticMesh'/Game/StarterContent/Shapes/Shape_NarrowCapsule.Shape_NarrowCapsule'"));
+	//if (TopMeshFinder.Succeeded())
+	//	BodyMeshComp->SetStaticMesh(TopMeshFinder.Object);
+	//BodyMeshComp->SetRelativeLocation(FVector(0, 0, -50));
 
 	// Bottom
 	BottomMeshComp = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("Bottom Mesh"));
 	BottomMeshComp->SetupAttachment(RootComponent);
 	BottomMeshComp->SetCollisionProfileName(TEXT("NoCollision"));
+
+	// Top : SkeletalMeshComp
+	SkeletalMeshComp = CreateDefaultSubobject<USkeletalMeshComponent>(TEXT("SkeletalMeshComp"));
+	SkeletalMeshComp->SetupAttachment(RootComponent);
+	SkeletalMeshComp->SetRelativeScale3D(FVector(0.3f));
+	SkeletalMeshComp->SetRelativeLocation(FVector(0, 0, -50));
+	
+	// SkeletalMesh
+	ConstructorHelpers::FObjectFinder<USkeletalMesh> SkeletalMeshFinder(TEXT("/Script/Engine.SkeletalMesh'/Game/Models/Beauvoir/NierAutomata_Beauvoir.NierAutomata_Beauvoir'"));
+	if (SkeletalMeshFinder.Succeeded())
+	{
+		SkeletalMeshComp->SetSkeletalMesh(SkeletalMeshFinder.Object);
+	}
+	// Anim Class
+	ConstructorHelpers::FClassFinder<UJHBossAnimInstance> AnimFinder(TEXT("/Script/Engine.AnimBlueprint'/Game/Animation/Beauvoir/ABP_JHBeauvoir.ABP_JHBeauvoir_C'"));
+	if (AnimFinder.Succeeded())
+	{
+		SkeletalMeshComp->SetAnimClass(AnimFinder.Class);
+	}
 
 	// Bottom - Cylinder
 	ConstructorHelpers::FObjectFinder<UStaticMesh> BottomMeshFinder(TEXT("/Script/Engine.StaticMesh'/Game/StarterContent/Shapes/Shape_Cylinder.Shape_Cylinder'"));
@@ -327,15 +349,15 @@ void AJHEnemy::RotateSpinBottom()
 
 void AJHEnemy::SetBodyMaterial(UMaterialInterface* NewMaterial)
 {
-	if(BodyMeshComp == nullptr || BodyMeshComp->GetMaterial(0) == NewMaterial) return;
+	if(SkeletalMeshComp == nullptr || SkeletalMeshComp->GetMaterial(0) == NewMaterial) return;
 
-	BodyMeshComp->SetMaterial(0, NewMaterial);
+	SkeletalMeshComp->SetMaterial(0, NewMaterial);
 }
 
 UMaterialInterface* AJHEnemy::GetBodyMaterial()
 {
-	if(BodyMeshComp == nullptr)
+	if(SkeletalMeshComp == nullptr)
 		return nullptr;
 	
-	return BodyMeshComp->GetMaterial(0);
+	return SkeletalMeshComp->GetMaterial(0);
 }

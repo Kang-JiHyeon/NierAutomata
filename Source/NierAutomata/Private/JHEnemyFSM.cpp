@@ -2,12 +2,13 @@
 
 
 #include "JHEnemyFSM.h"
-#include "JHBombSkill.h"
-#include "JHMissileSkill.h"
+#include "JHBossAnimInstance.h"
 #include "JHEnemy.h"
 #include "JHBossSkillManager.h"
-#include <Kismet/GameplayStatics.h>
-#include <Kismet/KismetMathLibrary.h>
+#include "JHBombSkill.h"
+#include "JHMissileSkill.h"
+#include "Kismet/GameplayStatics.h"
+#include "Kismet/KismetMathLibrary.h"
 
 // Sets default values for this component's properties
 UJHEnemyFSM::UJHEnemyFSM()
@@ -27,9 +28,16 @@ void UJHEnemyFSM::BeginPlay()
 
 	MyOwner = Cast<AJHEnemy>(GetOwner());
 	
-	Hp = MaxHp;
+	if (MyOwner)
+	{
+		AnimInstance = Cast<UJHBossAnimInstance>(MyOwner->SkeletalMeshComp->GetAnimInstance());
+		
+		// todo : 불타는 파티클로 바꿔야 함
+		DefaultMaterial = MyOwner->GetBodyMaterial();
+	}
 
-	DefaultMaterial = MyOwner->GetBodyMaterial();
+	// 보스의 HP 초기화
+	Hp = MaxHp;
 }
 
 
@@ -75,6 +83,7 @@ void UJHEnemyFSM::IdleState()
 	{
 		CurrentTime = 0;
 		EnemyState = EEnemyState::Move;
+		OnChangeAnimState();
 	}
 
 }
@@ -98,6 +107,8 @@ void UJHEnemyFSM::MoveState()
 		bIsMove = true;
 
 		EnemyState = EEnemyState::Attack;
+
+		OnChangeAnimState();
 	}
 
 	Dir.Normalize();
@@ -140,6 +151,7 @@ void UJHEnemyFSM::DamageState()
 		bIsPlayDamageAnim = true;
 
 		EnemyState = EEnemyState::Attack;
+		OnChangeAnimState();
 	}
 	else
 	{
@@ -165,6 +177,17 @@ void UJHEnemyFSM::DieState()
 	MyOwner->SetActorLocation(MyOwner->GetActorLocation() + Dir * GetWorld()->DeltaTimeSeconds );
 }
 
+void UJHEnemyFSM::OnChangeAnimState()
+{
+	AnimInstance->AnimState = EnemyState;
+
+	// Attack 상태일 때 공격 재생 중이지 않으면 
+	if (EnemyState == EEnemyState::Attack && AnimInstance->bAttackPlay == false)
+	{
+		AnimInstance->bAttackPlay = true;
+	}
+}
+
 /// <summary>
 /// 공격을 당했을 때 호출되는 함수
 /// - HP 감소시키고, HP의 값에 따라 Damage, Die 상태로 전환
@@ -183,6 +206,9 @@ void UJHEnemyFSM::OnDamageProcess(int32 Damage)
 	{
 		// Die 상태로 전환
 		EnemyState = EEnemyState::Die;
+
+		OnChangeAnimState();
+
 	}
 	// 일정 비율보다 낮고, 데미지 애니메이션을 시작한 적이 없다면
 	else if(HpRate <= DamageRate && !bIsPlayDamageAnim)
@@ -190,6 +216,7 @@ void UJHEnemyFSM::OnDamageProcess(int32 Damage)
         // Damage 상태로 전환
         EnemyState = EEnemyState::Damage;
 		
+		OnChangeAnimState();
 	}
 
 	//UE_LOG(LogTemp, Warning, TEXT("Enemy Damage : %d , %f, %f"), Hp, MaxHp, HpRate);

@@ -48,9 +48,16 @@ public:
 	FDelegateDynamicOneParamSignature OnChangedHp;
 
 public:
+    UPROPERTY(VisibleAnywhere)
+    class AJHEnemy* MyOwner;
+
 	// 에너미 상태
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	EEnemyState EnemyState = EEnemyState::Idle;
+
+	UPROPERTY(EditAnywhere)
+	// Anim
+	class UJHBossAnimInstance* AnimInstance;
 
 	// Idle
 	UPROPERTY(EditAnywhere)
@@ -61,8 +68,6 @@ public:
 	UPROPERTY(VisibleAnywhere)
 	class AActor* Target;
 
-	UPROPERTY(VisibleAnywhere)
-	class AJHEnemy* MyOwner;
 	UPROPERTY(EditAnywhere)
 	float MoveSpeed = 500;
 	UPROPERTY(EditAnywhere)
@@ -103,6 +108,8 @@ public:
 	
 
 public:
+	void OnChangeAnimState();
+
 	void OnDamageProcess(int32 Damage);
 private:
 	void IdleState();

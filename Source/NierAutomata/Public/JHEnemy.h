@@ -32,8 +32,15 @@ public:
 	UPROPERTY(EditAnywhere)
 	class UCapsuleComponent* RootCapsuleComp;
 
-	UPROPERTY(EditAnywhere)
-	class UStaticMeshComponent* BodyMeshComp;
+	//UPROPERTY(EditAnywhere)
+	//class UStaticMeshComponent* BodyMeshComp;
+
+	// SkeletalMesh
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	class USkeletalMeshComponent* SkeletalMeshComp;
+
+	TSubclassOf<class UJHBossAnimInstance> AnimFactory;
+
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	class UStaticMeshComponent* BottomMeshComp;

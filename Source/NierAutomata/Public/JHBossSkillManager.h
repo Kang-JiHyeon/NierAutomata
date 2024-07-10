@@ -64,7 +64,6 @@ public:
 
 public:
 	
-
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	ESkillType CurrSkillType = ESkillType::Bomb;
 
@@ -72,7 +71,10 @@ public:
 	ERotateType CurrRotateType = ERotateType::None;
 
 	UPROPERTY(VisibleAnywhere)
-	class AJHEnemy* MyBoss;
+	class AJHEnemy* MyOwner;
+
+	//UPROPERTY(VisibleAnywhere)
+	class UJHEnemyFSM* MyOwnerFsm;
 
 	UPROPERTY(VisibleAnywhere)
 	class UJHBombSkill* BombSkill;

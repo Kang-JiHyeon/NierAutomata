@@ -3,6 +3,7 @@
 
 #include "JHBossSkillManager.h"
 #include "JHEnemy.h"
+#include "JHEnemyFsm.h"
 #include "JHBombSkill.h"
 #include "JHMissileSkill.h"
 #include "JHLaserBeamSkill.h"
@@ -23,14 +24,17 @@ void UJHBossSkillManager::BeginPlay()
 {
 	Super::BeginPlay();
 
-	MyBoss = Cast<AJHEnemy>(GetOwner());
+	MyOwner = Cast<AJHEnemy>(GetOwner());
 
-	if (MyBoss != nullptr)
+	if (MyOwner != nullptr)
 	{
-		BombSkill = MyBoss->BombSkill;
-		MissileSkill = MyBoss->MissileSkill;
-		LaserBeamSkill = MyBoss->LaserBeamSkill;
-		SpiralMoveSkill = MyBoss->SpiralMoveSkill;
+		// FSM
+		MyOwnerFsm = MyOwner->Fsm;
+		// Skill
+		BombSkill = MyOwner->BombSkill;
+		MissileSkill = MyOwner->MissileSkill;
+		LaserBeamSkill = MyOwner->LaserBeamSkill;
+		SpiralMoveSkill = MyOwner->SpiralMoveSkill;
 
 		if (SkillPattern.Num() <= 0)
 		{
@@ -96,6 +100,9 @@ void UJHBossSkillManager::OnAttack()
 			
 			UpdatePattern();
 
+			// 애니메이션 초기화
+			MyOwnerFsm->OnChangeAnimState();
+			
 			bDelay = false;
 		}
 	}
@@ -128,13 +135,13 @@ void UJHBossSkillManager::OnAttack()
 		switch (CurrRotateType)
 		{
 		case ERotateType::SpinBody:
-			MyBoss->RotateSpinBody();
+			MyOwner->RotateSpinBody();
 			break;
 		case ERotateType::SpinBottom:
-			MyBoss->RotateSpinBottom();
+			MyOwner->RotateSpinBottom();
 			break;
 		case ERotateType::LookAt:
-			MyBoss->RotateLookAt();
+			MyOwner->RotateLookAt();
 			break;
 		case ERotateType::Target:
 			//MyBoss->RotateTarget();
@@ -148,16 +155,18 @@ void UJHBossSkillManager::OnAttack()
 
 void UJHBossSkillManager::UpdatePattern()
 {
+	// 스킬 정보 초기화
 	CurrSkillType = SkillPattern[PatternIndex].SkillType;
 	CurrRotateType = SkillPattern[PatternIndex].RotateType;
 
 	MaxCastTime = SkillPattern[PatternIndex].CastTime;
 	MaxDelayTime = SkillPattern[PatternIndex].DelayTime;
 
+	MyOwner->SetRotSpeed(SkillPattern[PatternIndex].RotateSpeed);
+	
+	// 지속, 대기 시간 초기화
 	CurrCastTime = 0;
 	CurrDelayTime = 0;
-
-	MyBoss->SetRotSpeed(SkillPattern[PatternIndex].RotateSpeed);
 }
 
 void UJHBossSkillManager::SetRotateType(ERotateType Type)
