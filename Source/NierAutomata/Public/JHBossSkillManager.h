@@ -73,7 +73,7 @@ public:
 	UPROPERTY(VisibleAnywhere)
 	class AJHEnemy* MyOwner;
 
-	//UPROPERTY(VisibleAnywhere)
+	UPROPERTY(VisibleAnywhere)
 	class UJHEnemyFSM* MyOwnerFsm;
 
 	UPROPERTY(VisibleAnywhere)
@@ -91,7 +91,6 @@ public:
 	UPROPERTY(EditAnywhere)
 	TArray<FSkillProperty> SkillPattern;
 
-
 	float MaxCastTime = 0;
 	float CurrCastTime = 0;
 	
@@ -100,7 +99,7 @@ public:
 
 	int32 PatternIndex = 0;
 	
-	bool bAttacking = false;
+	bool bAttackPlay = false;
 	bool bDelay = false;
 
 public:

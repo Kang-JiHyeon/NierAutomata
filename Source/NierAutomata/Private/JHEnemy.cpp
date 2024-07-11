@@ -17,7 +17,7 @@
 #include "Components/ArrowComponent.h"
 #include "Components/CapsuleComponent.h"
 #include "Components/SkeletalMeshComponent.h"
-#include "Engine/SkeletalMesh.h"
+//#include "Engine/SkeletalMesh.h"
 #include "Kismet/KismetMathLibrary.h"
 
 
@@ -32,7 +32,6 @@ AJHEnemy::AJHEnemy()
 	// 크기
 	RootCapsuleComp->SetCapsuleHalfHeight(50);
 	RootCapsuleComp->SetCapsuleRadius(25);
-	RootCapsuleComp->SetWorldScale3D(FVector(5, 5, 5));
 
 	// todo : 캡슐 충돌체 설정
 	//BodyMeshComp = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("Body Mesh"));
@@ -45,6 +44,13 @@ AJHEnemy::AJHEnemy()
 	//	BodyMeshComp->SetStaticMesh(TopMeshFinder.Object);
 	//BodyMeshComp->SetRelativeLocation(FVector(0, 0, -50));
 
+	// BossSkillManager
+	BossSkillManager = CreateDefaultSubobject<UJHBossSkillManager>(TEXT("BossSkillManager"));
+
+	// FSM
+	Fsm = CreateDefaultSubobject<UJHEnemyFSM>(TEXT("EnemyFSM"));
+	Fsm->SkillManager = BossSkillManager;
+
 	// Bottom
 	BottomMeshComp = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("Bottom Mesh"));
 	BottomMeshComp->SetupAttachment(RootComponent);
@@ -55,7 +61,13 @@ AJHEnemy::AJHEnemy()
 	SkeletalMeshComp->SetupAttachment(RootComponent);
 	SkeletalMeshComp->SetRelativeScale3D(FVector(0.3f));
 	SkeletalMeshComp->SetRelativeLocation(FVector(0, 0, -50));
+	SkeletalMeshComp->SetRelativeRotation(FRotator(0, -90, 0));
 	
+	// SkeletalMesh Collision
+	SkeletalMeshComp->SetGenerateOverlapEvents(true);
+	SkeletalMeshComp->SetCollisionProfileName(TEXT("Enemy"));
+	SkeletalMeshComp->OnComponentBeginOverlap.AddDynamic(this, &AJHEnemy::OnDamageProcess);
+
 	// SkeletalMesh
 	ConstructorHelpers::FObjectFinder<USkeletalMesh> SkeletalMeshFinder(TEXT("/Script/Engine.SkeletalMesh'/Game/Models/Beauvoir/NierAutomata_Beauvoir.NierAutomata_Beauvoir'"));
 	if (SkeletalMeshFinder.Succeeded())
@@ -74,15 +86,6 @@ AJHEnemy::AJHEnemy()
 	if (BottomMeshFinder.Succeeded())
 		BottomMeshComp->SetStaticMesh(BottomMeshFinder.Object);
 	BottomMeshComp->SetRelativeLocation(FVector(0, 0, -50));
-
-	// BossSkillManager
-	BossSkillManager = CreateDefaultSubobject<UJHBossSkillManager>(TEXT("BossSkillManager"));
-
-	// FSM
-	Fsm = CreateDefaultSubobject<UJHEnemyFSM>(TEXT("EnemyFSM"));
-	Fsm->SkillManager = BossSkillManager;
-
-	 //todo : 부모 설정?
 
 	// Bomb
 	BombSkill = CreateDefaultSubobject<UJHBombSkill>(TEXT("Bomb Skill"));
@@ -142,6 +145,7 @@ AJHEnemy::AJHEnemy()
 		LaserBeamSkill->SkillFactory = LaserBeamFinder.Class;
 	}
 
+	// SpiralMoveSkill
 	SpiralMoveSkill = CreateDefaultSubobject<UJHSpiralMoveSkill>(TEXT("SpiralMove Skill"));
 }
 
@@ -170,63 +174,11 @@ void AJHEnemy::Tick(float DeltaTime)
 
 }
 
-void AJHEnemy::NotifyActorBeginOverlap(AActor* OtherActor)
-{
-	Super::NotifyActorBeginOverlap(OtherActor);
-
-	//if (OtherActor != nullptr && OtherActor->IsValidLowLevel())
-	//{
-	//	UPrimitiveComponent* PrimitiveComponent = Cast<UPrimitiveComponent>(OtherActor->GetRootComponent());
-	//	if (PrimitiveComponent)
-	//	{
-	//		ECollisionChannel CollisionChannel = PrimitiveComponent->GetCollisionObjectType();
-
-	//		// 플레이어의 공격일 경우 
-	//		if(CollisionChannel == ECC_GameTraceChannel4)
-	//		{
-	//			// Damage 상태로 변경
-	//			Fsm->OnDamageProcess();
-	//			// 공격 제거
-	//			OtherActor->Destroy();
-	//		}s
-	//	}
-	//}
-
-	// 플레이어의 무기라면 제거하지 않음
-    if (OtherActor->Tags.Contains(TEXT("PlayerWeapon")))
-    {
-		// Damage 상태로 변경
-		Fsm->OnDamageProcess(10);
-		//UE_LOG(LogTemp, Warning, TEXT("PlayerWeapon Overlap!"));
-    }
-	else if (OtherActor->Tags.Contains(TEXT("PetBullet")))
-	{
-		Fsm->OnDamageProcess(1);
-		// 공격 제거
-		OtherActor->Destroy();
-		//UE_LOG(LogTemp, Warning, TEXT("PetBullet Overlap!"));
-	}
-	else if (OtherActor->Tags.Contains(TEXT("PetLaser")))
-	{
-		Fsm->OnDamageProcess(10);
-		OtherActor->Destroy();
-		//UE_LOG(LogTemp, Warning, TEXT("PetLaser Overlap!"));
-	}
-
-
-	//UE_LOG(LogTemp, Warning, TEXT("Overlap Actor Name : %s"), *OtherActor->GetActorNameOrLabel());
-
-	if (OtherActor->Tags.Num() > 0)
-	{
-		for (auto Tag : OtherActor->Tags)
-		{
-			UE_LOG(LogTemp, Warning, TEXT("Overlap Actor Name : %s, Tag : %s"), *OtherActor->GetActorNameOrLabel(), *Tag.ToString());
-		}
-	}
-
-
-
-}
+//void AJHEnemy::NotifyActorBeginOverlap(AActor* OtherActor)
+//{
+//	Super::NotifyActorBeginOverlap(OtherActor);
+//
+//}
 
 
 void AJHEnemy::SetMovement(bool bValue)
@@ -360,4 +312,28 @@ UMaterialInterface* AJHEnemy::GetBodyMaterial()
 		return nullptr;
 	
 	return SkeletalMeshComp->GetMaterial(0);
+}
+
+void AJHEnemy::OnDamageProcess(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
+{
+	// 플레이어의 무기라면 제거하지 않음
+	if (OtherActor->Tags.Contains(TEXT("PlayerWeapon")))
+	{
+		Fsm->OnDamageProcess(10);
+		UE_LOG(LogTemp, Warning, TEXT("PlayerWeapon Overlap!"));
+	}
+	else if (OtherActor->Tags.Contains(TEXT("PetBullet")))
+	{
+		Fsm->OnDamageProcess(1);
+		// 공격 제거
+		OtherActor->Destroy();
+		UE_LOG(LogTemp, Warning, TEXT("PetBullet Overlap!"));
+	}
+	else if (OtherActor->Tags.Contains(TEXT("PetLaser")))
+	{
+		Fsm->OnDamageProcess(10);
+		OtherActor->Destroy();
+		UE_LOG(LogTemp, Warning, TEXT("PetLaser Overlap!"));
+	}
+	UE_LOG(LogTemp, Warning, TEXT("Overlap !!"));
 }

@@ -41,7 +41,7 @@ public:
 	int BombCount = 10;
 
 	UPROPERTY(EditAnywhere)
-	TArray<float> Forces = {700, 1000, 1200};
+	TArray<float> Forces = {1000, 1200, 1400};
 	int32 ForceIndex = 0;
 
 	UPROPERTY(EditAnywhere)

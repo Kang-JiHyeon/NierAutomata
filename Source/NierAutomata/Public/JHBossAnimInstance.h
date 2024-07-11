@@ -16,11 +16,7 @@ public:
     UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = FSM)
 	EEnemyState AnimState;
 
-	//UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category=BossAnim)
-	//float Speed;
-
     UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = FSM)
     bool bAttackPlay = false;
 
-	//virtual void NativeUpdateAnimation(float DeltaSeconds) override;
 };

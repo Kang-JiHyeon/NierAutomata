@@ -1,12 +1,12 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+ï»¿// Fill out your copyright notice in the Description page of Project Settings.
 
 
 #include "JHEnemyFSM.h"
-#include "JHBossAnimInstance.h"
 #include "JHEnemy.h"
-#include "JHBossSkillManager.h"
 #include "JHBombSkill.h"
 #include "JHMissileSkill.h"
+#include "JHBossSkillManager.h"
+#include "JHBossAnimInstance.h"
 #include "Kismet/GameplayStatics.h"
 #include "Kismet/KismetMathLibrary.h"
 
@@ -26,18 +26,18 @@ void UJHEnemyFSM::BeginPlay()
 {
 	Super::BeginPlay();
 
+	// ë³´ìŠ¤ì˜ HP ì´ˆê¸°í™”
+	Hp = MaxHp;
+
 	MyOwner = Cast<AJHEnemy>(GetOwner());
-	
 	if (MyOwner)
 	{
-		AnimInstance = Cast<UJHBossAnimInstance>(MyOwner->SkeletalMeshComp->GetAnimInstance());
+		UAnimInstance* AnimInstance = MyOwner->SkeletalMeshComp->GetAnimInstance();
+		BossAnim = Cast<UJHBossAnimInstance>(AnimInstance);
 		
-		// todo : ºÒÅ¸´Â ÆÄÆ¼Å¬·Î ¹Ù²ã¾ß ÇÔ
+		// todo : ë¶ˆíƒ€ëŠ” íŒŒí‹°í´ë¡œ ë°”ê¿”ì•¼ í•¨
 		DefaultMaterial = MyOwner->GetBodyMaterial();
 	}
-
-	// º¸½ºÀÇ HP ÃÊ±âÈ­
-	Hp = MaxHp;
 }
 
 
@@ -72,8 +72,8 @@ void UJHEnemyFSM::TickComponent(float DeltaTime, ELevelTick TickType, FActorComp
 }
 
 /// <summary>
-/// Idle »óÅÂÀÏ ¶§ È£ÃâµÇ´Â ÇÔ¼ö
-/// - ÀÏÁ¤ ½Ã°£µ¿¾È ´ë±âÇÏ´Ù°¡ Move »óÅÂ·Î ÀüÈ¯
+/// Idle ìƒíƒœì¼ ë•Œ í˜¸ì¶œë˜ëŠ” í•¨ìˆ˜
+/// - ì¼ì • ì‹œê°„ë™ì•ˆ ëŒ€ê¸°í•˜ë‹¤ê°€ Move ìƒíƒœë¡œ ì „í™˜
 /// </summary>
 void UJHEnemyFSM::IdleState()
 {
@@ -89,15 +89,15 @@ void UJHEnemyFSM::IdleState()
 }
 
 /// <summary>
-/// Move »óÅÂÀÏ ¶§ È£ÃâµÇ´Â ÇÔ¼ö
-/// - Å¸ÄÏ À§Ä¡·Î ÀÌµ¿ÇÏ°í Attack »óÅÂ·Î ÀüÈ¯
-/// - todo : Å¸°Ù À§Ä¡ ÁöÁ¤ ÇÊ¿ä!!
+/// Move ìƒíƒœì¼ ë•Œ í˜¸ì¶œë˜ëŠ” í•¨ìˆ˜
+/// - íƒ€ì¼“ ìœ„ì¹˜ë¡œ ì´ë™í•˜ê³  Attack ìƒíƒœë¡œ ì „í™˜
+/// - todo : íƒ€ê²Ÿ ìœ„ì¹˜ ì§€ì • í•„ìš”!!
 /// </summary>
 void UJHEnemyFSM::MoveState()
 {
-	// todo : ÀÌµ¿ À§Ä¡ ÀçÁöÁ¤ ÇÊ¿ä
+	// todo : ì´ë™ ìœ„ì¹˜ ì¬ì§€ì • í•„ìš”
 	
-	// Áß¾ÓÀ¸·Î ÀÌµ¿
+	// ì¤‘ì•™ìœ¼ë¡œ ì´ë™
 	FVector CurrPos = MyOwner->GetActorLocation();
 	FVector DestPos = FVector::Zero() + FVector::UpVector * CurrPos.Z;
 	FVector Dir = DestPos - CurrPos;
@@ -109,19 +109,22 @@ void UJHEnemyFSM::MoveState()
 		EnemyState = EEnemyState::Attack;
 
 		OnChangeAnimState();
+		OnChangeAttackPlay(true);
+		OnChangeAttackPlay(false);
+
 	}
 
 	Dir.Normalize();
 
-	// ÀÌµ¿
+	// ì´ë™
 	MyOwner->SetActorLocation(CurrPos + Dir * MoveSpeed * GetWorld()->DeltaTimeSeconds);
-	// È¸Àü
+	// íšŒì „
 	UKismetMathLibrary::FindLookAtRotation(CurrPos, DestPos);
 }
 
 /// <summary>
-/// Attack »óÅÂÀÏ ¶§ È£ÃâµÇ´Â ÇÔ¼ö
-/// - °ø°İ ½Ã°£µ¿¾È °ø°İÇÏ´Ù°¡ ´ë±â »óÅÂ·Î ÀüÈ¯
+/// Attack ìƒíƒœì¼ ë•Œ í˜¸ì¶œë˜ëŠ” í•¨ìˆ˜
+/// - ê³µê²© ì‹œê°„ë™ì•ˆ ê³µê²©í•˜ë‹¤ê°€ ëŒ€ê¸° ìƒíƒœë¡œ ì „í™˜
 /// </summary>
 void UJHEnemyFSM::AttackState()
 {
@@ -137,8 +140,8 @@ void UJHEnemyFSM::AttackState()
 }
 
 /// <summary>
-/// Damage »óÅÂÀÏ ¶§ È£ÃâµÇ´Â ÇÔ¼ö
-/// - ÀÏÁ¤ ½Ã°£µ¿¾È Damage »óÅÂ¸¦ Áö¼ÓÇÑ´Ù.
+/// Damage ìƒíƒœì¼ ë•Œ í˜¸ì¶œë˜ëŠ” í•¨ìˆ˜
+/// - ì¼ì • ì‹œê°„ë™ì•ˆ Damage ìƒíƒœë¥¼ ì§€ì†í•œë‹¤.
 /// </summary>
 void UJHEnemyFSM::DamageState()
 {
@@ -160,37 +163,54 @@ void UJHEnemyFSM::DamageState()
 }
 
 /// <summary>
-/// Die »óÅÂÀÏ ¶§ È£ÃâµÇ´Â ÇÔ¼ö
-/// - ÀÏÁ¤ ½Ã°£µ¿¾È ³»·Á°¬´Ù°¡ »ç¶óÁø´Ù.
+/// Die ìƒíƒœì¼ ë•Œ í˜¸ì¶œë˜ëŠ” í•¨ìˆ˜
+/// - ì¼ì • ì‹œê°„ë™ì•ˆ ë‚´ë ¤ê°”ë‹¤ê°€ ì‚¬ë¼ì§„ë‹¤.
 /// </summary>
 void UJHEnemyFSM::DieState()
 {
+	FVector Dir = FVector::DownVector * DieMoveSpeed;
+	MyOwner->SetActorLocation(MyOwner->GetActorLocation() + Dir * GetWorld()->DeltaTimeSeconds );
+	
 	CurrentTime += GetWorld()->DeltaTimeSeconds;
 
 	if(CurrentTime > DieTime)
 	{
-		CurrentTime = 0;
 		MyOwner->Destroy();
+		//CurrentTime = 0;
 	}
-
-	FVector Dir = FVector::DownVector * DieMoveSpeed;
-	MyOwner->SetActorLocation(MyOwner->GetActorLocation() + Dir * GetWorld()->DeltaTimeSeconds );
 }
 
 void UJHEnemyFSM::OnChangeAnimState()
 {
-	AnimInstance->AnimState = EnemyState;
-
-	// Attack »óÅÂÀÏ ¶§ °ø°İ Àç»ı ÁßÀÌÁö ¾ÊÀ¸¸é 
-	if (EnemyState == EEnemyState::Attack && AnimInstance->bAttackPlay == false)
+	if (BossAnim != nullptr)
 	{
-		AnimInstance->bAttackPlay = true;
+		BossAnim->AnimState = EnemyState;
+	}
+	else
+	{
+		UE_LOG(LogTemp, Warning, TEXT("BossAnimInstanceê°€ nullì…ë‹ˆë‹¤."));
+	}
+}
+
+void UJHEnemyFSM::OnChangeAttackPlay(bool bPlay)
+{
+	if (BossAnim != nullptr)
+	{
+		// Attack ìƒíƒœì¼ ë•Œ ê³µê²© ì¬ìƒ ì¤‘ì´ì§€ ì•Šìœ¼ë©´ 
+		if (EnemyState == EEnemyState::Attack)
+		{
+			BossAnim->bAttackPlay = bPlay;
+		}
+	}
+	else
+	{
+		UE_LOG(LogTemp, Warning, TEXT("BossAnimInstanceê°€ nullì…ë‹ˆë‹¤."));
 	}
 }
 
 /// <summary>
-/// °ø°İÀ» ´çÇßÀ» ¶§ È£ÃâµÇ´Â ÇÔ¼ö
-/// - HP °¨¼Ò½ÃÅ°°í, HPÀÇ °ª¿¡ µû¶ó Damage, Die »óÅÂ·Î ÀüÈ¯
+/// ê³µê²©ì„ ë‹¹í–ˆì„ ë•Œ í˜¸ì¶œë˜ëŠ” í•¨ìˆ˜
+/// - HP ê°ì†Œì‹œí‚¤ê³ , HPì˜ ê°’ì— ë”°ë¼ Damage, Die ìƒíƒœë¡œ ì „í™˜
 /// </summary>
 void UJHEnemyFSM::OnDamageProcess(int32 Damage)
 {
@@ -201,21 +221,20 @@ void UJHEnemyFSM::OnDamageProcess(int32 Damage)
 
 	float HpRate = Hp / MaxHp;
 
-	// Ã¼·ÂÀÌ ¾øÀ¸¸é 
+	// ì²´ë ¥ì´ ì—†ìœ¼ë©´ 
 	if(Hp <= 0)
 	{
-		// Die »óÅÂ·Î ÀüÈ¯
+		// Die ìƒíƒœë¡œ ì „í™˜
 		EnemyState = EEnemyState::Die;
 
 		OnChangeAnimState();
 
 	}
-	// ÀÏÁ¤ ºñÀ²º¸´Ù ³·°í, µ¥¹ÌÁö ¾Ö´Ï¸ŞÀÌ¼ÇÀ» ½ÃÀÛÇÑ ÀûÀÌ ¾ø´Ù¸é
+	// ì¼ì • ë¹„ìœ¨ë³´ë‹¤ ë‚®ê³ , ë°ë¯¸ì§€ ì• ë‹ˆë©”ì´ì…˜ì„ ì‹œì‘í•œ ì ì´ ì—†ë‹¤ë©´
 	else if(HpRate <= DamageRate && !bIsPlayDamageAnim)
 	{
-        // Damage »óÅÂ·Î ÀüÈ¯
+        // Damage ìƒíƒœë¡œ ì „í™˜
         EnemyState = EEnemyState::Damage;
-		
 		OnChangeAnimState();
 	}
 

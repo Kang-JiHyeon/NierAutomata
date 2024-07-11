@@ -23,7 +23,7 @@ protected:
 public:	
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
-	virtual void NotifyActorBeginOverlap(AActor* OtherActor) override;
+	//virtual void NotifyActorBeginOverlap(AActor* OtherActor) override;
 
 
 public:
@@ -32,21 +32,6 @@ public:
 	UPROPERTY(EditAnywhere)
 	class UCapsuleComponent* RootCapsuleComp;
 
-	//UPROPERTY(EditAnywhere)
-	//class UStaticMeshComponent* BodyMeshComp;
-
-	// SkeletalMesh
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	class USkeletalMeshComponent* SkeletalMeshComp;
-
-	TSubclassOf<class UJHBossAnimInstance> AnimFactory;
-
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	class UStaticMeshComponent* BottomMeshComp;
-
-	class UMaterialInstance* BodyMatirial;
-
 	// FSM
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
 	class UJHEnemyFSM* Fsm;
@@ -54,7 +39,19 @@ public:
 	//Manager
 	UPROPERTY(EditAnywhere)
 	class UJHBossSkillManager* BossSkillManager;
-	
+
+	//UPROPERTY(EditAnywhere)
+	//class UStaticMeshComponent* BodyMeshComp;
+
+	 //SkeletalMesh
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	class USkeletalMeshComponent* SkeletalMeshComp;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	class UStaticMeshComponent* BottomMeshComp;
+
+	class UMaterialInstance* BodyMatirial;
+
 	UPROPERTY(EditAnywhere)
 	class UJHBombSkill* BombSkill;
 
@@ -112,7 +109,6 @@ public:
 	void SetMovePosition(FVector TargetPosotion);
 	void SetRotSpeed(float Value);
 
-
 	void Movement();
 	void Movement(FVector TargetPosition);
 	void RotateLookAt();
@@ -122,5 +118,7 @@ public:
 
 	void SetBodyMaterial(UMaterialInterface* NewMaterial);
 	UMaterialInterface* GetBodyMaterial();
-
+	
+	UFUNCTION()
+	void OnDamageProcess(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
 };

@@ -85,13 +85,23 @@ void UJHBossSkillManager::OnAttack()
 		return;
 	}
 
+	// 공격 애니메이션 
+	if (bAttackPlay)
+	{
+		bAttackPlay = false;
+		MyOwnerFsm->OnChangeAttackPlay(false);
+	}
+
+	// 스킬 발동 시간이 최대 시간보다 클 경우
 	if (CurrCastTime > MaxCastTime)
 	{
+		// 지연 시간이 흐르다가 
 		CurrDelayTime += GetWorld()->DeltaTimeSeconds;
 
 		if (!bDelay) {
 			OnInitialize();
 			bDelay = true;
+
 		}
 
 		if (CurrDelayTime > MaxDelayTime)
@@ -101,7 +111,8 @@ void UJHBossSkillManager::OnAttack()
 			UpdatePattern();
 
 			// 애니메이션 초기화
-			MyOwnerFsm->OnChangeAnimState();
+			MyOwnerFsm->OnChangeAttackPlay(true);
+			//MyOwnerFsm->OnChangeAttackPlay(false);
 			
 			bDelay = false;
 		}
@@ -151,6 +162,9 @@ void UJHBossSkillManager::OnAttack()
 		}
 	}
 
+
+
+
 }
 
 void UJHBossSkillManager::UpdatePattern()
@@ -167,6 +181,9 @@ void UJHBossSkillManager::UpdatePattern()
 	// 지속, 대기 시간 초기화
 	CurrCastTime = 0;
 	CurrDelayTime = 0;
+
+	bAttackPlay = true;
+	MyOwnerFsm->OnChangeAttackPlay(true);
 }
 
 void UJHBossSkillManager::SetRotateType(ERotateType Type)

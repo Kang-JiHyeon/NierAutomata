@@ -36,7 +36,7 @@ private:
 	float Radius;
 
 	UPROPERTY(EditAnywhere)
-	float RadiusSpeed = 300;
+	float RadiusSpeed = 700;
 
 	UPROPERTY(VisibleAnywhere)
 	float DegreeAngle;
@@ -46,7 +46,7 @@ private:
 
 	// ½Ã°£
 	UPROPERTY(EditAnywhere)
-	float MoveTime = 5;
+	float MoveTime = 3;
 
 	UPROPERTY(VisibleAnywhere)
 	float CurrTime;

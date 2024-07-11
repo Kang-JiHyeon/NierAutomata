@@ -55,9 +55,9 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	EEnemyState EnemyState = EEnemyState::Idle;
 
-	UPROPERTY(EditAnywhere)
 	// Anim
-	class UJHBossAnimInstance* AnimInstance;
+	UPROPERTY(EditAnywhere)
+	class UJHBossAnimInstance* BossAnim;
 
 	// Idle
 	UPROPERTY(EditAnywhere)
@@ -109,6 +109,7 @@ public:
 
 public:
 	void OnChangeAnimState();
+	void OnChangeAttackPlay(bool bValue);
 
 	void OnDamageProcess(int32 Damage);
 private:
