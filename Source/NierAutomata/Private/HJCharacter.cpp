@@ -45,7 +45,7 @@ AHJCharacter::AHJCharacter()
 
 	// Weapon Factory
 
-	ConstructorHelpers::FClassFinder<AHJWeapon> tempWeapon(TEXT("/Script/Engine.Blueprint'/Game/Blueprints/BP_HJWeapon.BP_HJWeapon_C'"));
+	ConstructorHelpers::FClassFinder<AHJWeapon> tempWeapon(TEXT("/Script/Engine.Blueprint'/Game/Blueprints/Han/BP_HJWeapon.BP_HJWeapon_C'"));
 	if (tempWeapon.Succeeded())
 	{
 		WeaponFactory = tempWeapon.Class;
