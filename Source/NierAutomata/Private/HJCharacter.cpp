@@ -35,7 +35,7 @@ AHJCharacter::AHJCharacter()
 	
 	// 스케레탈 메시
 	ConstructorHelpers::FObjectFinder<USkeletalMesh>
-		tempMesh(TEXT("/Script/Engine.SkeletalMesh'/Game/ControlRig/Characters/Mannequins/Meshes/SKM_Quinn.SKM_Quinn'"));
+		tempMesh(TEXT("/Script/Engine.SkeletalMesh'/Game/Character/2b_rigged/2b01.2b01'"));
 
 	if (tempMesh.Succeeded())
 	{
@@ -66,7 +66,7 @@ void AHJCharacter::BeginPlay()
 	GetCharacterMovement()->GravityScale = 2.0f;
 
 	// 무기
-	FName WeaponSocket(TEXT("sky_attack_socket"));
+	FName WeaponSocket(TEXT("sky_sword_socket"));
 
 	CurrentWeapon = GetWorld()->SpawnActor<AHJWeapon>(WeaponFactory, FVector::ZeroVector, FRotator::ZeroRotator);
 
@@ -226,7 +226,7 @@ void AHJCharacter::StartWeapon()
 		CurrentWeapon->DetachFromActor(FDetachmentTransformRules::KeepWorldTransform);
 	}
 
-	FName WeaponSocket2(TEXT("hand_lSocket"));
+	FName WeaponSocket2(TEXT("LHand_Socket"));
 
 	/*auto CurrentWeapon = GetWorld()->SpawnActor<AHJWeapon>(FVector::ZeroVector, FRotator::ZeroRotator);*/
 
@@ -244,7 +244,7 @@ void AHJCharacter::BackWeapon()
 		CurrentWeapon->DetachFromActor(FDetachmentTransformRules::KeepWorldTransform);
 	}
 	
-	FName WeaponSocket(TEXT("sky_attack_socket"));
+	FName WeaponSocket(TEXT("sky_sword_socket"));
 
 	/*auto CurrentWeapon = GetWorld()->SpawnActor<AHJWeapon>(FVector::ZeroVector, FRotator::ZeroRotator);*/
 
@@ -282,7 +282,7 @@ void AHJCharacter::EndSkyAttack()
 		CurrentWeapon->DetachFromActor(FDetachmentTransformRules::KeepWorldTransform);
 	}
 
-	FName WeaponSocket(TEXT("sky_attack_socket"));
+	FName WeaponSocket(TEXT("sky_sword_socket"));
 
 	/*auto CurrentWeapon = GetWorld()->SpawnActor<AHJWeapon>(FVector::ZeroVector, FRotator::ZeroRotator);*/
 
