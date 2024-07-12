@@ -32,6 +32,13 @@ public:
 	UPROPERTY(EditAnywhere)
 	class UCapsuleComponent* RootCapsuleComp;
 
+	UPROPERTY(EditAnywhere)
+	class USphereComponent* SphereTopComp;
+	UPROPERTY(EditAnywhere)
+	class USphereComponent* SphereBottomComp;
+
+
+
 	// FSM
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
 	class UJHEnemyFSM* Fsm;

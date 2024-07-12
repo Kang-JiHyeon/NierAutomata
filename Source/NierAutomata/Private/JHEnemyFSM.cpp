@@ -110,8 +110,6 @@ void UJHEnemyFSM::MoveState()
 
 		OnChangeAnimState();
 		OnChangeAttackPlay(true);
-		OnChangeAttackPlay(false);
-
 	}
 
 	Dir.Normalize();

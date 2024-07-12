@@ -5,6 +5,7 @@
 #include "HJCharacter.h"
 #include "Components/SplineMeshComponent.h"
 #include "Kismet/GameplayStatics.h"
+#include "Particles/ParticleSystemComponent.h"
 
 // Sets default values
 AJHLaserBeam::AJHLaserBeam()
@@ -35,8 +36,20 @@ AJHLaserBeam::AJHLaserBeam()
 		AttackStyle.StaticMesh = AttackMeshFinder.Object;
 	}
 	ConstructorHelpers::FObjectFinder<UMaterial> ActiveMatFinder(TEXT("/Script/Engine.Material'/Engine/VREditor/LaserPointer/LaserPointerMaterial.LaserPointerMaterial'"));
-	if (ActiveMatFinder.Succeeded()) {
+	if (ActiveMatFinder.Succeeded())
+	{
 		AttackStyle.Material = ActiveMatFinder.Object;
+	}
+
+
+	// ParticleSystem
+	ParticleSystem = CreateDefaultSubobject<UParticleSystemComponent>(TEXT("ParticleSystem"));
+	ParticleSystem->SetupAttachment(RootComponent);
+
+	ConstructorHelpers::FObjectFinder<UParticleSystem> ParticleSystemFinder(TEXT("/Script/Engine.ParticleSystem'/Game/Assets/Kang/P_JHLaser_Red.P_JHLaser_Red'"));
+	if (ParticleSystemFinder.Succeeded())
+	{
+		ParticleSystem->SetTemplate(ParticleSystemFinder.Object);
 	}
 }
 

@@ -49,6 +49,7 @@ private:
 	UPROPERTY(VisibleAnywhere)
 	ELaserBeamState CurLaserBeamState = ELaserBeamState::None;
 
+	UPROPERTY()
 	USceneComponent* SceneComp;
 
 	UPROPERTY(EditAnywhere)
@@ -62,6 +63,9 @@ private:
 
 	UPROPERTY(EditAnywhere)
 	float Distance = 10000;
+
+	UPROPERTY(EditAnywhere)
+	UParticleSystemComponent* ParticleSystem;
 
 	
 

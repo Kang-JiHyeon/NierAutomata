@@ -16,8 +16,8 @@
 #include "Components/SplineMeshComponent.h"
 #include "Components/ArrowComponent.h"
 #include "Components/CapsuleComponent.h"
+#include "Components/SphereComponent.h"
 #include "Components/SkeletalMeshComponent.h"
-//#include "Engine/SkeletalMesh.h"
 #include "Kismet/KismetMathLibrary.h"
 
 
@@ -32,6 +32,22 @@ AJHEnemy::AJHEnemy()
 	// 크기
 	RootCapsuleComp->SetCapsuleHalfHeight(50);
 	RootCapsuleComp->SetCapsuleRadius(25);
+
+	// Collision
+	SphereTopComp = CreateDefaultSubobject<USphereComponent>(TEXT("SphereComp_Top"));
+	SphereTopComp->SetupAttachment(RootComponent);
+	SphereTopComp->SetRelativeLocation(FVector(0, 0, 40.0));
+	SphereTopComp->SetSphereRadius(25);
+	SphereTopComp->SetCollisionProfileName(TEXT("Enemy"));
+	SphereTopComp->OnComponentBeginOverlap.AddDynamic(this, &AJHEnemy::OnDamageProcess);
+
+	SphereBottomComp = CreateDefaultSubobject<USphereComponent>(TEXT("SphereComp_Bottom"));
+	SphereBottomComp->SetupAttachment(RootComponent);
+	SphereBottomComp->SetRelativeLocation(FVector(0, 0, -25));
+	SphereBottomComp->SetSphereRadius(50);
+	SphereBottomComp->SetCollisionProfileName(TEXT("Enemy"));
+	SphereBottomComp->OnComponentBeginOverlap.AddDynamic(this, &AJHEnemy::OnDamageProcess);
+
 
 	// todo : 캡슐 충돌체 설정
 	//BodyMeshComp = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("Body Mesh"));
@@ -66,7 +82,7 @@ AJHEnemy::AJHEnemy()
 	// SkeletalMesh Collision
 	SkeletalMeshComp->SetGenerateOverlapEvents(true);
 	SkeletalMeshComp->SetCollisionProfileName(TEXT("Enemy"));
-	SkeletalMeshComp->OnComponentBeginOverlap.AddDynamic(this, &AJHEnemy::OnDamageProcess);
+	//SkeletalMeshComp->OnComponentBeginOverlap.AddDynamic(this, &AJHEnemy::OnDamageProcess);
 
 	// SkeletalMesh
 	ConstructorHelpers::FObjectFinder<USkeletalMesh> SkeletalMeshFinder(TEXT("/Script/Engine.SkeletalMesh'/Game/Models/Beauvoir/NierAutomata_Beauvoir.NierAutomata_Beauvoir'"));
@@ -317,9 +333,11 @@ UMaterialInterface* AJHEnemy::GetBodyMaterial()
 void AJHEnemy::OnDamageProcess(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
 	// 플레이어의 무기라면 제거하지 않음
+
+	// TODO : Weapon 중복 Overlap 해결
 	if (OtherActor->Tags.Contains(TEXT("PlayerWeapon")))
 	{
-		Fsm->OnDamageProcess(10);
+		Fsm->OnDamageProcess(1);
 		UE_LOG(LogTemp, Warning, TEXT("PlayerWeapon Overlap!"));
 	}
 	else if (OtherActor->Tags.Contains(TEXT("PetBullet")))
@@ -335,5 +353,5 @@ void AJHEnemy::OnDamageProcess(UPrimitiveComponent* OverlappedComponent, AActor*
 		OtherActor->Destroy();
 		UE_LOG(LogTemp, Warning, TEXT("PetLaser Overlap!"));
 	}
-	UE_LOG(LogTemp, Warning, TEXT("Overlap !!"));
+	UE_LOG(LogTemp, Warning, TEXT("Overlap : %s"), *OtherActor->GetName());
 }
