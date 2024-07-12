@@ -45,12 +45,9 @@ public:
 	void EndDash();
 	// 대시 구현 
 	void InputDash();
-	int DashDistance = 5000;
+	int DashDistance = 1000;
 	// 점프 
 	void InputJump();
-	// 점프 중력 (낙하 속도) 
-	void StartJump();
-	void EndJump();
 	// 카메라 회전 구현 
 	void InputTurn(float value);
 	void InputLookup(float value);

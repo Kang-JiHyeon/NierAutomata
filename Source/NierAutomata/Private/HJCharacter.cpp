@@ -102,13 +102,10 @@ void AHJCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCompone
 	PlayerInputComponent->BindAction(TEXT("Dash"), IE_Released, this, &AHJCharacter::EndDash);
 
 	// 대쉬
-	PlayerInputComponent->BindAction(TEXT("Dash2"), IE_DoubleClick, this, &AHJCharacter::InputDash);
+	PlayerInputComponent->BindAction(TEXT("Dash2"), IE_Pressed, this, &AHJCharacter::InputDash);
 
 	// 점프 구현 
 	PlayerInputComponent->BindAction(TEXT("Jump"), IE_Pressed, this, &AHJCharacter::InputJump);
-	// 점프 중력
-	PlayerInputComponent->BindAction(TEXT("Land"), IE_Pressed, this, &AHJCharacter::StartJump);
-	PlayerInputComponent->BindAction(TEXT("Land"), IE_Released, this, &AHJCharacter::EndJump);
 
 	// 공격 
 	PlayerInputComponent->BindAction(TEXT("Attack3"), IE_Pressed, this, &AHJCharacter::StartAttack);
@@ -116,9 +113,6 @@ void AHJCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCompone
 
 	// 레이저 공격 
 	PlayerInputComponent->BindAction(TEXT("Attack2"), IE_Pressed, this, &AHJCharacter::FireLaser);
-
-
-
 }
 
 // 앞뒤좌우
@@ -155,7 +149,7 @@ void AHJCharacter::InputDash()
 	FVector ForwardDirection = FRotationMatrix(ControlRotation).GetUnitAxis(EAxis::X);
 	FVector RightDirection = FRotationMatrix(ControlRotation).GetUnitAxis(EAxis::Y);
 
-	InputDirection = (ForwardDirection * DashDirection.X + RightDirection * DashDirection.Y).GetSafeNormal();
+	InputDirection = (ForwardDirection * DashDirection.X + RightDirection * DashDirection.Y)/*.GetSafeNormal()*/;
 
 	GetCharacterMovement()->BrakingFrictionFactor = 0.f;
 	LaunchCharacter(InputDirection * DashDistance, true, true);
@@ -165,16 +159,6 @@ void AHJCharacter::InputDash()
 void AHJCharacter::InputJump()
 {
 	Jump();
-}
-// 점프 중력 
-void AHJCharacter::StartJump()
-{
-	GetCharacterMovement()->GravityScale = 0.01;
-}
-
-void AHJCharacter::EndJump()
-{
-	GetCharacterMovement()->GravityScale = 2.0f;
 }
 
 // 카메라 회전 
@@ -263,7 +247,7 @@ void AHJCharacter::StartSkyAttack()
 		CurrentWeapon->DetachFromActor(FDetachmentTransformRules::KeepWorldTransform);
 	}
 
-	FName WeaponSocket2(TEXT("hand_SkySocket"));
+	FName WeaponSocket2(TEXT("RHandSocket"));
 
 	/*auto CurrentWeapon = GetWorld()->SpawnActor<AHJWeapon>(FVector::ZeroVector, FRotator::ZeroRotator);*/
 
