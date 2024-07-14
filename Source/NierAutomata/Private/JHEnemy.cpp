@@ -72,9 +72,13 @@ AJHEnemy::AJHEnemy()
 	Fsm->SkillManager = BossSkillManager;
 
 	// Bottom
-	BottomMeshComp = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("Bottom Mesh"));
-	BottomMeshComp->SetupAttachment(RootComponent);
-	BottomMeshComp->SetCollisionProfileName(TEXT("NoCollision"));
+	BottomSceneComp = CreateDefaultSubobject<USceneComponent>(TEXT("BottomSceneComp"));
+	BottomSceneComp->SetupAttachment(RootComponent);
+	BottomSceneComp->SetRelativeLocation(FVector(0, 0, -50));
+
+	//BottomMeshComp = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("Bottom Mesh"));
+	//BottomMeshComp->SetupAttachment(RootComponent);
+	//BottomMeshComp->SetCollisionProfileName(TEXT("NoCollision"));
 
 	// Top : SkeletalMeshComp
 	SkeletalMeshComp = CreateDefaultSubobject<USkeletalMeshComponent>(TEXT("SkeletalMeshComp"));
@@ -102,14 +106,14 @@ AJHEnemy::AJHEnemy()
 	}
 
 	// Bottom - Cylinder
-	ConstructorHelpers::FObjectFinder<UStaticMesh> BottomMeshFinder(TEXT("/Script/Engine.StaticMesh'/Game/StarterContent/Shapes/Shape_Cylinder.Shape_Cylinder'"));
-	if (BottomMeshFinder.Succeeded())
-		BottomMeshComp->SetStaticMesh(BottomMeshFinder.Object);
-	BottomMeshComp->SetRelativeLocation(FVector(0, 0, -50));
+	//ConstructorHelpers::FObjectFinder<UStaticMesh> BottomMeshFinder(TEXT("/Script/Engine.StaticMesh'/Game/StarterContent/Shapes/Shape_Cylinder.Shape_Cylinder'"));
+	//if (BottomMeshFinder.Succeeded())
+	//	BottomMeshComp->SetStaticMesh(BottomMeshFinder.Object);
+	//BottomMeshComp->SetRelativeLocation(FVector(0, 0, -50));
 
 	// Bomb
 	BombSkill = CreateDefaultSubobject<UJHBombSkill>(TEXT("Bomb Skill"));
-	BombSkill->SetupAttachment(BottomMeshComp);
+	BombSkill->SetupAttachment(BottomSceneComp);
 	
 	for (int32 i = 0; i < BombSkill->BombCount; i++) {
 		FString FirePosName = FString::Printf(TEXT("FirePos_%d"), i);
@@ -157,7 +161,7 @@ AJHEnemy::AJHEnemy()
 
 	// LaserBeam
 	LaserBeamSkill = CreateDefaultSubobject<UJHLaserBeamSkill>(TEXT("LaserBeam Skill"));
-	LaserBeamSkill->SetupAttachment(BottomMeshComp);
+	LaserBeamSkill->SetupAttachment(BottomSceneComp);
 
 	ConstructorHelpers::FClassFinder<AJHLaserBeam> LaserBeamFinder(TEXT("/Script/Engine.Blueprint'/Game/Blueprints/Kang/BP_JHLaserBeam.BP_JHLaserBeam_C'"));
 	if (LaserBeamFinder.Succeeded())
@@ -325,9 +329,9 @@ void AJHEnemy::RotateSpinBody()
 /// </summary>
 void AJHEnemy::RotateSpinBottom()
 {
-	FRotator Rot = BottomMeshComp->GetRelativeRotation() + FRotator(0, RotSpeed * GetWorld()->DeltaTimeSeconds, 0);
+	FRotator Rot = BottomSceneComp->GetRelativeRotation() + FRotator(0, RotSpeed * GetWorld()->DeltaTimeSeconds, 0);
 
-	BottomMeshComp->SetRelativeRotation(Rot);
+	BottomSceneComp->SetRelativeRotation(Rot);
 
 	//UE_LOG(LogTemp, Warning, TEXT("RotateSpinBottom!"));
 }
@@ -392,6 +396,4 @@ void AJHEnemy::OnDamageProcess(UPrimitiveComponent* OverlappedComponent, AActor*
 			DamageUI->AddToViewport(1);
 		}
 	}
-
-
 }

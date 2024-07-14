@@ -95,11 +95,6 @@ public:
 	bool bIsPlayDamageAnim;
 	bool bActiveDamageParticle;
 
-	// todo : 애니메이션 및 이펙트로 변경
-	UPROPERTY(EditAnywhere)
-	UMaterialInterface* DamageMaterial;
-	UMaterialInterface* DefaultMaterial;
-
 	UPROPERTY(EditAnywhere)
 	class UParticleSystem* PSFire;
 

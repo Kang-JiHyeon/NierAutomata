@@ -48,15 +48,13 @@ public:
 	UPROPERTY(EditAnywhere)
 	class UJHBossSkillManager* BossSkillManager;
 
-	//UPROPERTY(EditAnywhere)
-	//class UStaticMeshComponent* BodyMeshComp;
 
 	 //SkeletalMesh
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	class USkeletalMeshComponent* SkeletalMeshComp;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	class UStaticMeshComponent* BottomMeshComp;
+	class USceneComponent* BottomSceneComp;
 
 	class UMaterialInstance* BodyMatirial;
 
