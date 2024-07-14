@@ -20,6 +20,9 @@
 #include "Components/SkeletalMeshComponent.h"
 #include "Particles/ParticleSystemComponent.h"
 #include "Kismet/KismetMathLibrary.h"
+#include "JHEnemyDamageUI.h"
+#include "Blueprint/SlateBlueprintLibrary.h"
+
 
 
 // Sets default values
@@ -165,9 +168,16 @@ AJHEnemy::AJHEnemy()
 	// SpiralMoveSkill
 	SpiralMoveSkill = CreateDefaultSubobject<UJHSpiralMoveSkill>(TEXT("SpiralMove Skill"));
 
-	// Fire Particle System Component
+	// Particle System Component
 	PsDamageComp = CreateDefaultSubobject<UParticleSystemComponent>(TEXT("PSDamageComp"));
 	PsDamageComp->SetupAttachment(RootComponent);
+
+	// Damage UI
+	ConstructorHelpers::FClassFinder<UJHEnemyDamageUI> DamageUIFinder(TEXT("/Script/UMGEditor.WidgetBlueprint'/Game/Blueprints/Kang/BP_JHEnemyDamageUI.BP_JHEnemyDamageUI_C'"));
+	if (DamageUIFinder.Succeeded())
+	{
+		DamageUIFactory = DamageUIFinder.Class;
+	}
 
 
 }
@@ -339,26 +349,49 @@ UMaterialInterface* AJHEnemy::GetBodyMaterial()
 
 void AJHEnemy::OnDamageProcess(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
-	// 플레이어의 무기라면 제거하지 않음
-
+	// HP 
+	int32 Damage = 0;
 	// TODO : Weapon 중복 Overlap 해결
+	// 플레이어의 무기라면 제거하지 않음
 	if (OtherActor->Tags.Contains(TEXT("PlayerWeapon")))
 	{
 		Fsm->OnDamageProcess(1);
+		Damage = 1;
 		UE_LOG(LogTemp, Warning, TEXT("PlayerWeapon Overlap!"));
 	}
 	else if (OtherActor->Tags.Contains(TEXT("PetBullet")))
 	{
+		Damage = 1;
 		Fsm->OnDamageProcess(1);
-		// 공격 제거
 		OtherActor->Destroy();
 		UE_LOG(LogTemp, Warning, TEXT("PetBullet Overlap!"));
 	}
 	else if (OtherActor->Tags.Contains(TEXT("PetLaser")))
 	{
+		Damage = 10;
 		Fsm->OnDamageProcess(10);
 		OtherActor->Destroy();
 		UE_LOG(LogTemp, Warning, TEXT("PetLaser Overlap!"));
 	}
 	UE_LOG(LogTemp, Warning, TEXT("Overlap : %s"), *OtherActor->GetName());
+
+
+
+	if (Damage <= 0) return;
+
+	// Damage UI 생성
+	if (DamageUIFactory != nullptr)
+	{
+		// 위젯 생성
+		auto* DamageUI = Cast<UJHEnemyDamageUI>(CreateWidget(GetWorld(), DamageUIFactory));
+
+		if (DamageUI != nullptr)
+		{
+			DamageUI->SetTracePosision(OtherComp->GetComponentLocation());
+			DamageUI->SetTextDamage(Damage);
+			DamageUI->AddToViewport(1);
+		}
+	}
+
+
 }

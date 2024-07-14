@@ -79,6 +79,9 @@ public:
 	UPROPERTY(EditAnywhere)
 	class UArrowComponent* OnceMissileArrow;
 
+	UPROPERTY(EditAnywhere)
+	TSubclassOf<class UJHEnemyDamageUI> DamageUIFactory;
+
 
 private:
 	// Move
@@ -129,4 +132,8 @@ public:
 	
 	UFUNCTION()
 	void OnDamageProcess(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
+
+
+private:
+	void OnCreatedDamageUI(int32 Damage);
 };
