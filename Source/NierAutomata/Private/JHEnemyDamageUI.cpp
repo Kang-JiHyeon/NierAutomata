@@ -57,11 +57,6 @@ void UJHEnemyDamageUI::SetTracePosision(FVector Value)
 	TracePos = Value;
 }
 
-void UJHEnemyDamageUI::DestoryWidget()
-{
-	this->RemoveFromParent();
-}
-
 void UJHEnemyDamageUI::TweeningLocation()
 {
 	ElapsedTime += GetWorld()->GetDeltaSeconds();
@@ -73,4 +68,9 @@ void UJHEnemyDamageUI::TweeningLocation()
 	}
 	FVector2D NewLocation = FMath::Lerp(TweenStartLocation, TweenEndLocation, Alpha);
 	SetRenderTranslation(NewLocation);
+}
+
+void UJHEnemyDamageUI::DestoryWidget()
+{
+	this->RemoveFromParent();
 }

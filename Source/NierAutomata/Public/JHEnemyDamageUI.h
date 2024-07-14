@@ -26,15 +26,16 @@ public:
 private:
 	UPROPERTY()
 	APlayerController* PlayerController;
+	
+	UPROPERTY(EditAnywhere)
+	FVector2D TweenOffset = FVector2D(0, -50);
+	
+	UPROPERTY(EditAnywhere)
+	float TweenDuration = 0.5f;
+
 
 	FTimerHandle TimerHandle;
 	FVector TracePos;
-
-	UPROPERTY(EditAnywhere)
-	float TweenDuration = 0.5f;
-	UPROPERTY(EditAnywhere)
-	FVector2D TweenOffset = FVector2D(0, -50);
-
 	FVector RandomOffset;
 	FVector2D TweenStartLocation;
 	FVector2D TweenEndLocation;
@@ -46,9 +47,7 @@ private:
 public:
 	void SetTextDamage(int32 Value);
 	void SetTracePosision(FVector Value);
-	void DestoryWidget();
-
 	void TweeningLocation();
-
+	void DestoryWidget();
 };
 
