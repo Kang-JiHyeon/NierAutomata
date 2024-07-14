@@ -227,6 +227,7 @@ void UJHEnemyFSM::OnDamageProcess(int32 Damage)
 	{
 		bIsPlayDamageAnim = true;
 
+		// Damage 파티클 재생
 		PSDamageComp->SetActive(true);
 		UE_LOG(LogTemp, Warning, TEXT("Fire Particle Start!"));
 
