@@ -36,7 +36,7 @@ public:
 	TSubclassOf<class AJHLaserBeam> SkillFactory;
 
 	UPROPERTY(EditAnywhere)
-	float Radius = 10;
+	float Radius = 350;
 
 	UPROPERTY(EditAnywhere)
 	int32 MaxCount = 10;

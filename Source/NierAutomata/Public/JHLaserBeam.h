@@ -67,7 +67,11 @@ private:
 	UPROPERTY(EditAnywhere)
 	UParticleSystemComponent* ParticleSystem;
 
-	
+	UPROPERTY(EditAnywhere)
+	class UNiagaraComponent* NSLaser;
+
+	UPROPERTY(EditAnywhere)
+	class UNiagaraComponent* NSLaserImpact;
 
 	UPROPERTY(EditAnywhere)
 	float IdleTime = 3;
@@ -80,6 +84,12 @@ private:
 
 	FVector StartPos;
 	FVector Forward;
+
+	// Niagara
+	FVector TraceEnd;
+	FVector HitLocation;
+	bool bHit;
+	
 
 
 public :

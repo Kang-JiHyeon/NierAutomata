@@ -6,6 +6,8 @@
 #include "Components/SplineMeshComponent.h"
 #include "Kismet/GameplayStatics.h"
 #include "Particles/ParticleSystemComponent.h"
+#include "NiagaraFunctionLibrary.h"
+#include "NiagaraComponent.h"
 
 // Sets default values
 AJHLaserBeam::AJHLaserBeam()
@@ -42,14 +44,33 @@ AJHLaserBeam::AJHLaserBeam()
 	}
 
 
-	// ParticleSystem
-	ParticleSystem = CreateDefaultSubobject<UParticleSystemComponent>(TEXT("ParticleSystem"));
-	ParticleSystem->SetupAttachment(RootComponent);
+	//// ParticleSystem
+	//ParticleSystem = CreateDefaultSubobject<UParticleSystemComponent>(TEXT("ParticleSystem"));
+	//ParticleSystem->SetupAttachment(RootComponent);
 
-	ConstructorHelpers::FObjectFinder<UParticleSystem> ParticleSystemFinder(TEXT("/Script/Engine.ParticleSystem'/Game/Assets/Kang/P_JHLaser_Red.P_JHLaser_Red'"));
-	if (ParticleSystemFinder.Succeeded())
+	//ConstructorHelpers::FObjectFinder<UParticleSystem> ParticleSystemFinder(TEXT("/Script/Engine.ParticleSystem'/Game/Assets/Kang/P_JHLaser_Red.PS_JHLaser_Red'"));
+	//if (ParticleSystemFinder.Succeeded())
+	//{
+	//	ParticleSystem->SetTemplate(ParticleSystemFinder.Object);
+	//}
+
+	// Niagara System
+	NSLaser = CreateDefaultSubobject<UNiagaraComponent>(TEXT("NSLaser"));
+	NSLaser->SetupAttachment(RootComponent);
+
+	ConstructorHelpers::FObjectFinder<UNiagaraSystem> NiagaraLaserFinder(TEXT("/Script/Niagara.NiagaraSystem'/Game/Assets/Kang/NS_Laser.NS_Laser'"));
+	if (NiagaraLaserFinder.Succeeded())
 	{
-		ParticleSystem->SetTemplate(ParticleSystemFinder.Object);
+		NSLaser->SetAsset(NiagaraLaserFinder.Object);
+	}
+
+	NSLaserImpact = CreateDefaultSubobject<UNiagaraComponent>(TEXT("NSLaserImpact"));
+	NSLaserImpact->SetupAttachment(RootComponent);
+	
+	ConstructorHelpers::FObjectFinder<UNiagaraSystem> NiagaraLaserImpactFinder(TEXT("/Script/Niagara.NiagaraSystem'/Game/Assets/Kang/NS_LaserImpact.NS_LaserImpact'"));
+	if (NiagaraLaserImpactFinder.Succeeded())
+	{
+		NSLaserImpact->SetAsset(NiagaraLaserImpactFinder.Object);
 	}
 }
 
@@ -74,8 +95,14 @@ void AJHLaserBeam::BeginPlay()
 	// Beam 상태 Idle 상태로 변경
 	SetLaserBeamState(ELaserBeamState::Idle);
 
+	// Niagara 설정
+	NSLaser->SetVisibility(false);
+	NSLaserImpact->SetVisibility(false);
 
-	UE_LOG(LogTemp, Warning, TEXT("LaserBeam 생성 위치 : (%f, %f, %f)"), GetActorLocation().X, GetActorLocation().Y, GetActorLocation().Z);
+	NSLaser->SetColorParameter(FName(TEXT("Color")), FLinearColor::Red);
+	NSLaserImpact->SetColorParameter(FName(TEXT("Color")), FLinearColor::Red);
+
+	//UE_LOG(LogTemp, Warning, TEXT("LaserBeam 생성 위치 : (%f, %f, %f)"), GetActorLocation().X, GetActorLocation().Y, GetActorLocation().Z);
 }
 
 // Called every frame
@@ -90,17 +117,32 @@ void AJHLaserBeam::Tick(float DeltaTime)
 	if (GetWorld()->LineTraceSingleByObjectType(Hit, StartPos, Forward, ObjectParams, Params))
 	{
 		HitDistance = (Hit.Location - StartPos).Length();
-
 		// SlineMesh 길이 변경
 		SplineMesh->SetStartAndEnd(FVector::ZeroVector, FVector(100, 0, 0), FVector::ForwardVector * HitDistance, FVector(100, 0, 0), true);
+
+		// Hit Location
+		HitLocation = Hit.Location;
+		bHit = true;
+	}
+	else
+	{
+		bHit = false;
 	}
 
 	// 일정 시간이 지나면 대기 모드에서 공격 모드로 전환
 	if (CurrIdleTime <= IdleTime) {
 		CurrIdleTime += DeltaTime;
 	}
-	else {
+	else
+	{
 		SetLaserBeamState(ELaserBeamState::Attack);
+
+		FVector LaserEnd = bHit ? HitLocation : Forward;
+		NSLaser->SetVectorParameter(TEXT("LaserEnd"), LaserEnd);
+		NSLaser->SetVisibility(true);
+
+		NSLaserImpact->SetWorldLocation(StartPos);
+		NSLaserImpact->SetVisibility(true);
 	}
 }
 
@@ -121,11 +163,11 @@ void AJHLaserBeam::SetLaserBeamState(ELaserBeamState State)
 	CurLaserBeamState = State;
 
 	// collision 활성화 여부 설정
-	bool bIsIdle = State == ELaserBeamState::Idle;
-	SplineMesh->SetGenerateOverlapEvents(!bIsIdle);
+	bool bIdle = State == ELaserBeamState::Idle;
+	SplineMesh->SetGenerateOverlapEvents(!bIdle);
 
 	// StaticMesh, Material 변경
-	FLaserBeamStyle Style = bIsIdle ? IdleStyle : AttackStyle;
+	FLaserBeamStyle Style = bIdle ? IdleStyle : AttackStyle;
 
 	SplineMesh->SetStaticMesh(Style.StaticMesh);
 	SplineMesh->SetMaterial(0, Style.Material);
@@ -133,4 +175,6 @@ void AJHLaserBeam::SetLaserBeamState(ELaserBeamState State)
 	FVector2D TargetScale = FVector2D(Style.Scale.Y, Style.Scale.Z);
 	SplineMesh->SetStartScale(TargetScale);
 	SplineMesh->SetEndScale(TargetScale);
+
+	SplineMesh->SetVisibility(bIdle);
 }
