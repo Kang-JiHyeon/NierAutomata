@@ -93,12 +93,20 @@ public:
 	UPROPERTY(EditAnywhere)
 	float DamageTime = 5;
 	bool bIsPlayDamageAnim;
+	bool bActiveDamageParticle;
 
 	// todo : 애니메이션 및 이펙트로 변경
 	UPROPERTY(EditAnywhere)
 	UMaterialInterface* DamageMaterial;
 	UMaterialInterface* DefaultMaterial;
 
+	UPROPERTY(EditAnywhere)
+	class UParticleSystem* PSFire;
+
+	UPROPERTY()
+	class UParticleSystemComponent* PSDamageComp;
+	UPROPERTY()
+	FTimerHandle TimerHandle;
 
 	// Die
 	UPROPERTY(EditAnywhere)

@@ -18,6 +18,7 @@
 #include "Components/CapsuleComponent.h"
 #include "Components/SphereComponent.h"
 #include "Components/SkeletalMeshComponent.h"
+#include "Particles/ParticleSystemComponent.h"
 #include "Kismet/KismetMathLibrary.h"
 
 
@@ -163,6 +164,12 @@ AJHEnemy::AJHEnemy()
 
 	// SpiralMoveSkill
 	SpiralMoveSkill = CreateDefaultSubobject<UJHSpiralMoveSkill>(TEXT("SpiralMove Skill"));
+
+	// Fire Particle System Component
+	PsDamageComp = CreateDefaultSubobject<UParticleSystemComponent>(TEXT("PSDamageComp"));
+	PsDamageComp->SetupAttachment(RootComponent);
+
+
 }
 
 // Called when the game starts or when spawned

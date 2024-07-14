@@ -51,6 +51,7 @@ public:
 
 	float CurrRotZ;
 
+	UPROPERTY()
 	TArray<AJHLaserBeam*> LaserBeams;
 
 	bool bEnable;

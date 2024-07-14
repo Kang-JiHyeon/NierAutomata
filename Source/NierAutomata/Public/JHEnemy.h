@@ -37,11 +37,12 @@ public:
 	UPROPERTY(EditAnywhere)
 	class USphereComponent* SphereBottomComp;
 
-
-
 	// FSM
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
 	class UJHEnemyFSM* Fsm;
+
+	UPROPERTY(EditAnywhere)
+	class UParticleSystemComponent* PsDamageComp;
 
 	//Manager
 	UPROPERTY(EditAnywhere)
