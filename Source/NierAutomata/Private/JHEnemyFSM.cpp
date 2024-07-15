@@ -219,6 +219,7 @@ void UJHEnemyFSM::OnDamageProcess(int32 Damage)
 	{
 		// Die 상태로 전환
 		EnemyState = EEnemyState::Die;
+		CurrentTime = 0;
 		OnChangeAnimState();
 
 	}
