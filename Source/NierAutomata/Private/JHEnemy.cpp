@@ -359,21 +359,21 @@ void AJHEnemy::OnDamageProcess(UPrimitiveComponent* OverlappedComponent, AActor*
 	// 플레이어의 무기라면 제거하지 않음
 	if (OtherActor->Tags.Contains(TEXT("PlayerWeapon")))
 	{
-		Fsm->OnDamageProcess(1);
-		Damage = 1;
+		Damage = UKismetMathLibrary::RandomIntegerInRange(5, 10);;
+		Fsm->OnDamageProcess(Damage);
 		UE_LOG(LogTemp, Warning, TEXT("PlayerWeapon Overlap!"));
 	}
 	else if (OtherActor->Tags.Contains(TEXT("PetBullet")))
 	{
-		Damage = 1;
-		Fsm->OnDamageProcess(1);
+		Damage = UKismetMathLibrary::RandomIntegerInRange(1, 3);
+		Fsm->OnDamageProcess(Damage);
 		OtherActor->Destroy();
 		UE_LOG(LogTemp, Warning, TEXT("PetBullet Overlap!"));
 	}
 	else if (OtherActor->Tags.Contains(TEXT("PetLaser")))
 	{
-		Damage = 10;
-		Fsm->OnDamageProcess(10);
+		Damage = UKismetMathLibrary::RandomIntegerInRange(20, 40);
+		Fsm->OnDamageProcess(Damage);
 		OtherActor->Destroy();
 		UE_LOG(LogTemp, Warning, TEXT("PetLaser Overlap!"));
 	}
