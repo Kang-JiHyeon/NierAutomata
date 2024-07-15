@@ -23,13 +23,13 @@ public:
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 
-	void FireLaser(FVector& StartPoint, FVector& EndPoint);
+	/*void FireLaser(FVector& StartPoint, FVector& EndPoint);*/
 
-	UPROPERTY(EditAnywhere)
+	/*UPROPERTY(EditAnywhere)
 	class UParticleSystemComponent* LaserBeamPSC;
 
 	UPROPERTY(EditAnywhere)
-	class UParticleSystem* LaserBeamEffect;
+	class UParticleSystem* LaserBeamEffect;*/
 	
 	//// 레이져 컴포넌트 
 	//UPROPERTY(EditAnywhere, BlueprintReadWrite)

@@ -11,8 +11,8 @@ AHJBullet2::AHJBullet2()
  	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
 
-	LaserBeamPSC = CreateDefaultSubobject<UParticleSystemComponent>(TEXT("LaserBeamPSC"));
-	RootComponent = LaserBeamPSC;
+	/*LaserBeamPSC = CreateDefaultSubobject<UParticleSystemComponent>(TEXT("LaserBeamPSC"));
+	RootComponent = LaserBeamPSC;*/
 	/*Laser = CreateDefaultSubobject<USplineComponent>(TEXT("LASER"));
 	SetRootComponent(Laser);
 	SegmentLength = 100.0f;*/
@@ -33,32 +33,24 @@ void AHJBullet2::Tick(float DeltaTime)
 
 }
 
-void AHJBullet2::FireLaser(FVector& StartPoint, FVector& EndPoint)
-{
-	FHitResult HitResult;
-	FCollisionQueryParams CollisionParams;
-	CollisionParams.AddIgnoredActor(this);
-
-	GetWorld()->LineTraceSingleByChannel(HitResult, StartPoint, EndPoint, ECC_Visibility, CollisionParams);
-
-	FVector LaserEndPoint = HitResult.bBlockingHit ? HitResult.Location : EndPoint;
-
-	if (LaserBeamEffect)
-	{
-		LaserBeamPSC->SetTemplate(LaserBeamEffect);
-		LaserBeamPSC->SetBeamSourcePoint(0, StartPoint, 0);
-		LaserBeamPSC->SetBeamTargetPoint(0, LaserEndPoint, 0);
-		LaserBeamPSC->ActivateSystem();
-	}
-
-
-	/*Laser->ClearSplinePoints();
-	Laser->AddSplinePoint(StartPoint, ESplineCoordinateSpace::World);
-	Laser->AddSplinePoint(EndPoint, ESplineCoordinateSpace::World);
-	Laser->UpdateSpline();
-
-	UpdateSplineMesh();*/
-}
+//void AHJBullet2::FireLaser(FVector& StartPoint, FVector& EndPoint)
+//{
+//	FHitResult HitResult;
+//	FCollisionQueryParams CollisionParams;
+//	CollisionParams.AddIgnoredActor(this);
+//
+//	GetWorld()->LineTraceSingleByChannel(HitResult, StartPoint, EndPoint, ECC_Visibility, CollisionParams);
+//
+//	FVector LaserEndPoint = HitResult.bBlockingHit ? HitResult.Location : EndPoint;
+//
+//	if (LaserBeamEffect)
+//	{
+//		LaserBeamPSC->SetTemplate(LaserBeamEffect);
+//		LaserBeamPSC->SetBeamSourcePoint(0, StartPoint, 0);
+//		LaserBeamPSC->SetBeamTargetPoint(0, LaserEndPoint, 0);
+//		LaserBeamPSC->ActivateSystem();
+//	}
+//}
 
 //void AHJBullet2::UpdateSplineMesh()
 //{

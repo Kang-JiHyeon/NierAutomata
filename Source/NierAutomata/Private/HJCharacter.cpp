@@ -170,22 +170,22 @@ void AHJCharacter::EndAttack()
 
 void AHJCharacter::FireLaser()
 {
-	UE_LOG(LogTemp, Warning, TEXT("FireLaser function called"));
+	/*UE_LOG(LogTemp, Warning, TEXT("FireLaser function called"));*/
 	// 시작 지점에서 엔드 지점으로 멀리 뻗어 나간다 
-	FVector StartPoint = GetActorLocation();
+	/*FVector StartPoint = GetActorLocation();
 	FVector ForwardVector = GetActorForwardVector();
-	FVector EndPoint = StartPoint + (ForwardVector * 1000.0f);
+	FVector EndPoint = StartPoint + (ForwardVector * 1000.0f);*/
 
-	if (LaserBeam)
+	/*if (LaserBeam)
 	{
 		LaserBeam->Destroy();
-	}
+	}*/
 
-	LaserBeam = GetWorld()->SpawnActor<AHJBullet2>(AHJBullet2::StaticClass(), StartPoint, FRotator::ZeroRotator);
+	/*LaserBeam = GetWorld()->SpawnActor<AHJBullet2>(AHJBullet2::StaticClass(), StartPoint, FRotator::ZeroRotator);
 	if (LaserBeam)
 	{
 		LaserBeam->FireLaser(StartPoint, EndPoint);
-	}
+	}*/
 
 }
 
@@ -198,12 +198,15 @@ void AHJCharacter::WeaponEquip()
 	// 무기
 	FName WeaponSocket(TEXT("sky_sword_socket"));
 
-	CurrentWeapon = GetWorld()->SpawnActor<AHJWeapon>(WeaponFactory, FVector::ZeroVector, FRotator::ZeroRotator);
+	if (CurrentWeapon == nullptr)
+	{ 
+		CurrentWeapon = GetWorld()->SpawnActor<AHJWeapon>(WeaponFactory, GetActorLocation(), FRotator::ZeroRotator);
 
-	if (CurrentWeapon)
-	{
-		CurrentWeapon->AttachToComponent(GetMesh(),
-			FAttachmentTransformRules::SnapToTargetNotIncludingScale, WeaponSocket);
+		if (CurrentWeapon)
+		{
+			CurrentWeapon->AttachToComponent(GetMesh(),
+				FAttachmentTransformRules::SnapToTargetNotIncludingScale, WeaponSocket);
+		}
 	}
 }
 
