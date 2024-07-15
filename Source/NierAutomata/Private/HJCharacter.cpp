@@ -64,17 +64,6 @@ void AHJCharacter::BeginPlay()
 	// 점프 구현 (기본중력)
 	GetCharacterMovement()->JumpZVelocity = 1200.0f;
 	GetCharacterMovement()->GravityScale = 2.0f;
-
-	// 무기
-	FName WeaponSocket(TEXT("sky_sword_socket"));
-
-	CurrentWeapon = GetWorld()->SpawnActor<AHJWeapon>(WeaponFactory, FVector::ZeroVector, FRotator::ZeroRotator);
-
-	if (CurrentWeapon)
-	{
-		CurrentWeapon->AttachToComponent(GetMesh(), 
-		FAttachmentTransformRules::SnapToTargetNotIncludingScale, WeaponSocket);
-	}
 }
 
 // Called every frame
@@ -113,6 +102,8 @@ void AHJCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCompone
 
 	// 레이저 공격 
 	PlayerInputComponent->BindAction(TEXT("Attack2"), IE_Pressed, this, &AHJCharacter::FireLaser);
+	// 무기 장착 
+	PlayerInputComponent->BindAction(TEXT("WeaponEquip"), IE_Pressed, this, &AHJCharacter::WeaponEquip);
 }
 
 // 앞뒤좌우
@@ -200,6 +191,20 @@ void AHJCharacter::FireLaser()
 
 void AHJCharacter::StartAttack()
 {
+}
+
+void AHJCharacter::WeaponEquip()
+{
+	// 무기
+	FName WeaponSocket(TEXT("sky_sword_socket"));
+
+	CurrentWeapon = GetWorld()->SpawnActor<AHJWeapon>(WeaponFactory, FVector::ZeroVector, FRotator::ZeroRotator);
+
+	if (CurrentWeapon)
+	{
+		CurrentWeapon->AttachToComponent(GetMesh(),
+			FAttachmentTransformRules::SnapToTargetNotIncludingScale, WeaponSocket);
+	}
 }
 
 // 무기 이동 

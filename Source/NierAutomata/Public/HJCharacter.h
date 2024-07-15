@@ -64,6 +64,7 @@ public:
 	UPROPERTY()
 	// ¹«±â ÀåÂø 
 	class AHJWeapon* CurrentWeapon;
+	void WeaponEquip();
 
 	UPROPERTY(EditAnywhere)
 	TSubclassOf<AHJWeapon> WeaponFactory;
