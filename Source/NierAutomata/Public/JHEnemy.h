@@ -32,23 +32,29 @@ public:
 	UPROPERTY(EditAnywhere)
 	class UCapsuleComponent* RootCapsuleComp;
 
+	UPROPERTY(EditAnywhere)
+	class USphereComponent* SphereTopComp;
+	UPROPERTY(EditAnywhere)
+	class USphereComponent* SphereBottomComp;
+
 	// FSM
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
 	class UJHEnemyFSM* Fsm;
+
+	UPROPERTY(EditAnywhere)
+	class UParticleSystemComponent* PsDamageComp;
 
 	//Manager
 	UPROPERTY(EditAnywhere)
 	class UJHBossSkillManager* BossSkillManager;
 
-	//UPROPERTY(EditAnywhere)
-	//class UStaticMeshComponent* BodyMeshComp;
 
 	 //SkeletalMesh
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	class USkeletalMeshComponent* SkeletalMeshComp;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	class UStaticMeshComponent* BottomMeshComp;
+	class USceneComponent* BottomSceneComp;
 
 	class UMaterialInstance* BodyMatirial;
 
@@ -70,6 +76,9 @@ public:
 
 	UPROPERTY(EditAnywhere)
 	class UArrowComponent* OnceMissileArrow;
+
+	UPROPERTY(EditAnywhere)
+	TSubclassOf<class UJHEnemyDamageUI> DamageUIFactory;
 
 
 private:
@@ -121,4 +130,8 @@ public:
 	
 	UFUNCTION()
 	void OnDamageProcess(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
+
+
+private:
+	void OnCreatedDamageUI(int32 Damage);
 };

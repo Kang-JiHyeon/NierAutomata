@@ -49,6 +49,7 @@ private:
 	UPROPERTY(VisibleAnywhere)
 	ELaserBeamState CurLaserBeamState = ELaserBeamState::None;
 
+	UPROPERTY()
 	USceneComponent* SceneComp;
 
 	UPROPERTY(EditAnywhere)
@@ -63,7 +64,14 @@ private:
 	UPROPERTY(EditAnywhere)
 	float Distance = 10000;
 
-	
+	UPROPERTY(EditAnywhere)
+	UParticleSystemComponent* ParticleSystem;
+
+	UPROPERTY(EditAnywhere)
+	class UNiagaraComponent* NSLaser;
+
+	UPROPERTY(EditAnywhere)
+	class UNiagaraComponent* NSLaserImpact;
 
 	UPROPERTY(EditAnywhere)
 	float IdleTime = 3;
@@ -76,6 +84,12 @@ private:
 
 	FVector StartPos;
 	FVector Forward;
+
+	// Niagara
+	FVector TraceEnd;
+	FVector HitLocation;
+	bool bHit;
+	
 
 
 public :
