@@ -99,11 +99,12 @@ void UJHMissileSkill::OnSpawnAtOnce()
 		{
 			FRotator Rotation = FRotator(0, i * (360 / MaxCount), 0);
 
+			//AJHMissile* Missile = GetWorld()->SpawnActor<AJHMissile>(OnceMissileFactory, OnceSkillArrow->GetComponentLocation() + Missile->GetActorForwardVector() * Radius, Rotation);
 			AJHMissile* Missile = GetWorld()->SpawnActor<AJHMissile>(OnceMissileFactory, OnceSkillArrow->GetComponentLocation(), Rotation);
 
 			if (Missile != nullptr)
 			{
-				Missile->SetActorRelativeLocation(Missile->GetActorForwardVector() * Radius);
+				Missile->SetActorLocation(Missile->GetActorLocation() + Missile->GetActorForwardVector() * Radius);
 			}
 		}
 

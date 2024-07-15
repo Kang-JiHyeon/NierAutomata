@@ -43,7 +43,9 @@ void UJHBossSkillManager::BeginPlay()
 		}
 
 		UpdatePattern();
+	
 	}
+
 }
 
 

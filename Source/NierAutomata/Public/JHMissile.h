@@ -28,8 +28,13 @@ public:
 
 	UPROPERTY(EditAnywhere)
 	class UBoxComponent* BoxComp;
+	
 	UPROPERTY(EditAnywhere)
 	class UStaticMeshComponent* MeshComp;
+
+	UPROPERTY(EditAnywhere)
+	class UParticleSystem* PsExplosion;
+
 
 private:
 	
