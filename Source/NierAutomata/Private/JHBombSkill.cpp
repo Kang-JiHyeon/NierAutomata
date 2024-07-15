@@ -50,12 +50,19 @@ void UJHBombSkill::Fire()
 			return;
 		}
 
+
+
 		AJHBomb* Bomb = GetWorld()->SpawnActor<AJHBomb>(SkillFactory, FirePos->GetComponentLocation(), FirePos->GetComponentRotation());
 
 		if (Bomb != nullptr)
 		{
  			Bomb->SetForce(Forces[ForceIndex]);
 			Bomb->Fire();
+			UE_LOG(LogTemp, Warning, TEXT("Bottom Fire!"));
+		}
+		else
+		{
+			UE_LOG(LogTemp, Warning, TEXT("Bottom Null!"));
 		}
 	}
 
