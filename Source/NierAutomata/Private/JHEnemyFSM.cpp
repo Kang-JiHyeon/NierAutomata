@@ -9,6 +9,8 @@
 #include "JHBossAnimInstance.h"
 #include "Kismet/GameplayStatics.h"
 #include "Kismet/KismetMathLibrary.h"
+#include "Particles/ParticleSystem.h"
+#include "Particles/ParticleSystemComponent.h"
 
 // Sets default values for this component's properties
 UJHEnemyFSM::UJHEnemyFSM()
@@ -30,14 +32,19 @@ void UJHEnemyFSM::BeginPlay()
 	Hp = MaxHp;
 
 	MyOwner = Cast<AJHEnemy>(GetOwner());
-	if (MyOwner)
+	if (MyOwner != nullptr)
 	{
 		UAnimInstance* AnimInstance = MyOwner->SkeletalMeshComp->GetAnimInstance();
 		BossAnim = Cast<UJHBossAnimInstance>(AnimInstance);
 		
 		// todo : 불타는 파티클로 바꿔야 함
-		DefaultMaterial = MyOwner->GetBodyMaterial();
+		//DefaultMaterial = MyOwner->GetBodyMaterial();
+		
+		PSDamageComp = MyOwner->PsDamageComp;
+		PSDamageComp->AttachToComponent(MyOwner->GetRootComponent(), FAttachmentTransformRules::KeepWorldTransform);
+		PSDamageComp->SetActive(false);
 	}
+
 }
 
 
@@ -110,8 +117,6 @@ void UJHEnemyFSM::MoveState()
 
 		OnChangeAnimState();
 		OnChangeAttackPlay(true);
-		OnChangeAttackPlay(false);
-
 	}
 
 	Dir.Normalize();
@@ -128,13 +133,6 @@ void UJHEnemyFSM::MoveState()
 /// </summary>
 void UJHEnemyFSM::AttackState()
 {
-	//CurrentTime += GetWorld()->DeltaTimeSeconds;
-
-	//if (CurrentTime > AttackTime) {
-
-	//	CurrentTime = 0;
-	//	EnemyState = EEnemyState::Idle;
-	//}
 
 	SkillManager->OnAttack();
 }
@@ -149,16 +147,9 @@ void UJHEnemyFSM::DamageState()
 
 	if (CurrentTime > DamageTime)
 	{
-		MyOwner->SetBodyMaterial(DefaultMaterial);
 		CurrentTime = 0;
-		bIsPlayDamageAnim = true;
-
 		EnemyState = EEnemyState::Attack;
 		OnChangeAnimState();
-	}
-	else
-	{
-		MyOwner->SetBodyMaterial(DamageMaterial);
 	}
 }
 
@@ -179,6 +170,8 @@ void UJHEnemyFSM::DieState()
 		//CurrentTime = 0;
 	}
 }
+
+
 
 void UJHEnemyFSM::OnChangeAnimState()
 {
@@ -226,13 +219,30 @@ void UJHEnemyFSM::OnDamageProcess(int32 Damage)
 	{
 		// Die 상태로 전환
 		EnemyState = EEnemyState::Die;
-
 		OnChangeAnimState();
 
 	}
 	// 일정 비율보다 낮고, 데미지 애니메이션을 시작한 적이 없다면
-	else if(HpRate <= DamageRate && !bIsPlayDamageAnim)
+	else if(HpRate < DamageRate && !bIsPlayDamageAnim)
 	{
+		bIsPlayDamageAnim = true;
+
+		// Damage 파티클 재생
+		PSDamageComp->SetActive(true);
+		UE_LOG(LogTemp, Warning, TEXT("Fire Particle Start!"));
+
+		// 1초 뒤에 Damage 파티클 비활성화
+		GetWorld()->GetTimerManager().SetTimer(TimerHandle, [this]()
+		{
+			if (PSDamageComp)
+			{
+				PSDamageComp->SetActive(false);
+				UE_LOG(LogTemp, Warning, TEXT("Fire Particle End!"));
+
+			}
+		}, 1.0f, false);
+
+
         // Damage 상태로 전환
         EnemyState = EEnemyState::Damage;
 		OnChangeAnimState();
@@ -242,4 +252,3 @@ void UJHEnemyFSM::OnDamageProcess(int32 Damage)
 
 	OnChangedHp.Broadcast(Hp);
 }
-

@@ -3,6 +3,9 @@
 
 #include "JHBomb.h"
 #include "Components/SphereComponent.h"
+#include "Particles/ParticleSystem.h"
+#include "Kismet/GameplayStatics.h"
+#include "HJCharacter.h"
 
 // Sets default values
 AJHBomb::AJHBomb()
@@ -47,6 +50,27 @@ AJHBomb::AJHBomb()
 void AJHBomb::BeginPlay()
 {
 	Super::BeginPlay();
+}
+
+void AJHBomb::NotifyActorBeginOverlap(AActor* OtherActor)
+{
+	Super::NotifyActorBeginOverlap(OtherActor);
+
+	// 부딪힌 대상이 플레이어라면 
+	if (OtherActor->IsA<AHJCharacter>())
+	{
+		// 폭발 파티클을 생성하고 죽는다.
+		UGameplayStatics::SpawnEmitterAtLocation(GetWorld(), PsExplosion.Particle, GetActorLocation(), FRotator::ZeroRotator, PsExplosion.Scale, true);
+		this->Destroy();
+	}
+	// 만약 감지된 대상이 바닥이라면
+	else if(OtherActor->GetName().Contains(TEXT("Destroy")))
+	{
+		// 폭발, 흔적 파티클을 재생하고 싶다.
+		FVector Pos = GetActorLocation() * FVector(1, 1, 0);
+		UGameplayStatics::SpawnEmitterAtLocation(GetWorld(), PsExplosion.Particle, Pos, FRotator::ZeroRotator, PsExplosion.Scale, true);
+		UGameplayStatics::SpawnEmitterAtLocation(GetWorld(), PsBlastMark.Particle, Pos, FRotator::ZeroRotator, PsBlastMark.Scale, true);
+	}
 }
 
 // Called every frame

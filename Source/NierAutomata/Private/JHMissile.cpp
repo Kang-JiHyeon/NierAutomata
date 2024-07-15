@@ -6,6 +6,7 @@
 #include "Kismet/KismetMathLibrary.h"
 #include "Kismet/GameplayStatics.h"
 #include "HJCharacter.h"
+#include "Particles/ParticleSystem.h"
 
 // Sets default values
 AJHMissile::AJHMissile()
@@ -27,7 +28,7 @@ AJHMissile::AJHMissile()
 	MeshComp->SetupAttachment(BoxComp);
 	MeshComp->SetCollisionProfileName(TEXT("NoCollision"));
 
-	ConstructorHelpers::FObjectFinder<UStaticMesh> TempMesh(TEXT("/Script/Engine.StaticMesh'/Engine/BasicShapes/Cube.Cube'"));
+	ConstructorHelpers::FObjectFinder<UStaticMesh> TempMesh(TEXT("/Script/Engine.StaticMesh'/ControlRig/Controls/ControlRig_Wedge_solid.ControlRig_Wedge_solid'"));
 	if (TempMesh.Succeeded()) {
 		MeshComp->SetStaticMesh(TempMesh.Object);
 	}
@@ -35,6 +36,13 @@ AJHMissile::AJHMissile()
 	ConstructorHelpers::FObjectFinder<UMaterial> TempMat(TEXT("/Script/Engine.Material'/Engine/MapTemplates/Materials/BasicAsset01.BasicAsset01'"));
 	if (TempMat.Succeeded()) {
 		MeshComp->SetMaterial(0, TempMat.Object);
+	}
+
+	// Particle
+	ConstructorHelpers::FObjectFinder<UParticleSystem> ParticleFinder(TEXT("/Script/Engine.ParticleSystem'/Game/Effects/Effects/FX_Monsters/FX_Monster_Gruntling/Master/P_BackPack_MuzzleFlash.P_BackPack_MuzzleFlash'"));
+	if (ParticleFinder.Succeeded())
+	{
+		PsExplosion = ParticleFinder.Object;
 	}
 
 }
@@ -90,8 +98,9 @@ void AJHMissile::Tick(float DeltaTime)
 
 void AJHMissile::NotifyActorBeginOverlap(AActor* OtherActor)
 {
-	if (OtherActor->IsA<AHJCharacter>())
+	if (PsExplosion != nullptr)
 	{
+		UGameplayStatics::SpawnEmitterAtLocation(GetWorld(), PsExplosion, GetActorLocation(), FRotator(90, 0, 0), true);
 		Destroy();
 	}
 }
