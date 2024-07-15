@@ -104,7 +104,7 @@ void UJHMissileSkill::OnSpawnAtOnce()
 
 			if (Missile != nullptr)
 			{
-				Missile->SetActorLocation(Missile->GetActorForwardVector() * Radius);
+				Missile->SetActorLocation(Missile->GetActorLocation() + Missile->GetActorForwardVector() * Radius);
 			}
 		}
 
