@@ -367,7 +367,7 @@ void AJHEnemy::OnDamageProcess(UPrimitiveComponent* OverlappedComponent, AActor*
 	{
 		Damage = UKismetMathLibrary::RandomIntegerInRange(1, 3);
 		Fsm->OnDamageProcess(Damage);
-		OtherActor->Destroy();
+		/*OtherActor->Destroy();*/
 		UE_LOG(LogTemp, Warning, TEXT("PetBullet Overlap!"));
 	}
 	else if (OtherActor->Tags.Contains(TEXT("PetLaser")))
