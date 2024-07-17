@@ -33,7 +33,6 @@ private:
 	UPROPERTY(EditAnywhere)
 	float TweenDuration = 0.5f;
 
-
 	FTimerHandle TimerHandle;
 	FVector TracePos;
 	FVector RandomOffset;
@@ -42,8 +41,6 @@ private:
 	float ElapsedTime;
 	bool bIsTweening;
 	
-
-
 public:
 	void SetTextDamage(int32 Value);
 	void SetTracePosision(FVector Value);
