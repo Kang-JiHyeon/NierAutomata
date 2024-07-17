@@ -41,8 +41,17 @@ public:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
 	class UJHEnemyFSM* Fsm;
 
+	// Particle
 	UPROPERTY(EditAnywhere)
 	class UParticleSystemComponent* PsDamageComp;
+
+	// Sound
+	UPROPERTY(EditAnywhere)
+	class USoundBase* ExplosionSound;
+	UPROPERTY(EditAnywhere)
+	class USoundBase* ScreamSound;
+	UPROPERTY(EditAnywhere)
+	class USoundBase* AttackSound;
 
 	//Manager
 	UPROPERTY(EditAnywhere)
@@ -80,7 +89,8 @@ public:
 	UPROPERTY(EditAnywhere)
 	TSubclassOf<class UJHEnemyDamageUI> DamageUIFactory;
 
-
+	UPROPERTY(EditAnywhere)
+	class UAudioComponent* AudioComp;
 private:
 	// Move
 	UPROPERTY(EditAnywhere)
@@ -131,6 +141,8 @@ public:
 	UFUNCTION()
 	void OnDamageProcess(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
 
+	void SetSoundBase(USoundBase* SoundBase);
+	void SetActiveSound(bool bPlay);
 
 private:
 	void OnCreatedDamageUI(int32 Damage);

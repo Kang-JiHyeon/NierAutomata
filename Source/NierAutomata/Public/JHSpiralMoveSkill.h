@@ -54,11 +54,13 @@ private:
 	UPROPERTY(VisibleAnywhere)
 	float Sign = 1;
 
-	// Test
 	UPROPERTY(EditAnywhere)
-	bool bIsAttack;
+	bool bStartAttack;
 
-	AActor* MyOwner;
+	UPROPERTY(EditAnywhere)
+	USoundBase* AttackSound;
+
+	class AJHEnemy* MyOwner;
 	FVector CenterPos;
 
 

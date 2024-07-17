@@ -207,7 +207,6 @@ void UJHEnemyFSM::OnChangeAttackPlay(bool bPlay)
 /// </summary>
 void UJHEnemyFSM::OnDamageProcess(int32 Damage)
 {
-
 	if(Hp <=0) return;
 	
 	Hp -= Damage;
@@ -221,6 +220,8 @@ void UJHEnemyFSM::OnDamageProcess(int32 Damage)
 		EnemyState = EEnemyState::Die;
 		CurrentTime = 0;
 		OnChangeAnimState();
+
+		UGameplayStatics::PlaySound2D(GetWorld(), MyOwner->ExplosionSound);
 
 	}
 	// 일정 비율보다 낮고, 데미지 애니메이션을 시작한 적이 없다면
@@ -247,6 +248,10 @@ void UJHEnemyFSM::OnDamageProcess(int32 Damage)
         // Damage 상태로 전환
         EnemyState = EEnemyState::Damage;
 		OnChangeAnimState();
+
+		// Sound 재생
+		UGameplayStatics::PlaySound2D(GetWorld(), MyOwner->ExplosionSound);
+		UGameplayStatics::PlaySound2D(GetWorld(), MyOwner->ScreamSound);
 	}
 
 	//UE_LOG(LogTemp, Warning, TEXT("Enemy Damage : %d , %f, %f"), Hp, MaxHp, HpRate);

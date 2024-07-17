@@ -18,6 +18,7 @@
 #include "Components/CapsuleComponent.h"
 #include "Components/SphereComponent.h"
 #include "Components/SkeletalMeshComponent.h"
+#include "Components/AudioComponent.h"
 #include "Particles/ParticleSystemComponent.h"
 #include "Kismet/KismetMathLibrary.h"
 #include "JHEnemyDamageUI.h"
@@ -183,7 +184,9 @@ AJHEnemy::AJHEnemy()
 		DamageUIFactory = DamageUIFinder.Class;
 	}
 
-
+	// Audio
+	AudioComp = CreateDefaultSubobject<UAudioComponent>(TEXT("AudioComp"));
+	AudioComp->Activate(false);
 }
 
 // Called when the game starts or when spawned
@@ -379,8 +382,6 @@ void AJHEnemy::OnDamageProcess(UPrimitiveComponent* OverlappedComponent, AActor*
 	}
 	UE_LOG(LogTemp, Warning, TEXT("Overlap : %s"), *OtherActor->GetName());
 
-
-
 	if (Damage <= 0) return;
 
 	// Damage UI 생성
@@ -396,4 +397,17 @@ void AJHEnemy::OnDamageProcess(UPrimitiveComponent* OverlappedComponent, AActor*
 			DamageUI->AddToViewport(1);
 		}
 	}
+}
+
+void AJHEnemy::SetSoundBase(USoundBase* SoundBase)
+{
+	AudioComp->Sound = SoundBase;
+}
+
+void AJHEnemy::SetActiveSound(bool bPlay)
+{
+	if(bPlay)
+		AudioComp->Play();
+	else
+		AudioComp->Stop();
 }

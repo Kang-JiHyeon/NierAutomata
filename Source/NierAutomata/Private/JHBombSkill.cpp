@@ -50,8 +50,6 @@ void UJHBombSkill::Fire()
 			return;
 		}
 
-
-
 		AJHBomb* Bomb = GetWorld()->SpawnActor<AJHBomb>(SkillFactory, FirePos->GetComponentLocation(), FirePos->GetComponentRotation());
 
 		if (Bomb != nullptr)
