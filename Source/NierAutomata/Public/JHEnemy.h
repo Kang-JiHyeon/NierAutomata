@@ -43,7 +43,11 @@ public:
 
 	// Particle
 	UPROPERTY(EditAnywhere)
-	class UParticleSystemComponent* PsDamageComp;
+	class UParticleSystemComponent* PsFireComp;
+
+	// Niagara Systam
+	UPROPERTY(EditAnywhere)
+	class UNiagaraComponent* NsExplosionComp;
 
 	// Sound
 	UPROPERTY(EditAnywhere)
@@ -57,8 +61,7 @@ public:
 	UPROPERTY(EditAnywhere)
 	class UJHBossSkillManager* BossSkillManager;
 
-
-	 //SkeletalMesh
+	//SkeletalMesh
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	class USkeletalMeshComponent* SkeletalMeshComp;
 
@@ -135,15 +138,10 @@ public:
 	void RotateSpinBody();
 	void RotateSpinBottom();
 
-	void SetBodyMaterial(UMaterialInterface* NewMaterial);
-	UMaterialInterface* GetBodyMaterial();
-	
 	UFUNCTION()
 	void OnDamageProcess(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
 
 	void SetSoundBase(USoundBase* SoundBase);
 	void SetActiveSound(bool bPlay);
 
-private:
-	void OnCreatedDamageUI(int32 Damage);
 };

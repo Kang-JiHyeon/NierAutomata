@@ -44,17 +44,6 @@ AJHLaserBeam::AJHLaserBeam()
 		AttackStyle.Material = ActiveMatFinder.Object;
 	}
 
-
-	//// ParticleSystem
-	//ParticleSystem = CreateDefaultSubobject<UParticleSystemComponent>(TEXT("ParticleSystem"));
-	//ParticleSystem->SetupAttachment(RootComponent);
-
-	//ConstructorHelpers::FObjectFinder<UParticleSystem> ParticleSystemFinder(TEXT("/Script/Engine.ParticleSystem'/Game/Assets/Kang/P_JHLaser_Red.PS_JHLaser_Red'"));
-	//if (ParticleSystemFinder.Succeeded())
-	//{
-	//	ParticleSystem->SetTemplate(ParticleSystemFinder.Object);
-	//}
-
 	// Niagara System
 	NSLaser = CreateDefaultSubobject<UNiagaraComponent>(TEXT("NSLaser"));
 	NSLaser->SetupAttachment(RootComponent);
@@ -74,8 +63,12 @@ AJHLaserBeam::AJHLaserBeam()
 		NSLaserImpact->SetAsset(NiagaraLaserImpactFinder.Object);
 	}
 
+	// Sound
 	LaserAudioComp = CreateDefaultSubobject<UAudioComponent>(TEXT("LaserAudioComp"));
+	LaserAudioComp->SetupAttachment(RootComponent);
+	
 	LaserEffectAudioComp = CreateDefaultSubobject<UAudioComponent>(TEXT("LaserEffectAudioComp"));
+	LaserEffectAudioComp->SetupAttachment(RootComponent);
 }
 
 // Called when the game starts or when spawned

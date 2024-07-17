@@ -5,26 +5,23 @@
 #include "JHEnemyFSM.h"
 #include "JHBombSkill.h"
 #include "JHBomb.h"
-#include "JHMissileSkill.h"
 #include "JHMissile.h"
-#include "JHLaserBeamSkill.h"
 #include "JHLaserBeam.h"
+#include "JHMissileSkill.h"
+#include "JHLaserBeamSkill.h"
 #include "JHSpiralMoveSkill.h"
 #include "JHBossSkillManager.h"
 #include "JHBossAnimInstance.h"
-#include "Components/SplineComponent.h"
-#include "Components/SplineMeshComponent.h"
+#include "JHEnemyDamageUI.h"
 #include "Components/ArrowComponent.h"
+#include "Components/AudioComponent.h"
 #include "Components/CapsuleComponent.h"
 #include "Components/SphereComponent.h"
 #include "Components/SkeletalMeshComponent.h"
-#include "Components/AudioComponent.h"
-#include "Particles/ParticleSystemComponent.h"
 #include "Kismet/KismetMathLibrary.h"
-#include "JHEnemyDamageUI.h"
-#include "Blueprint/SlateBlueprintLibrary.h"
-
-
+#include "Particles/ParticleSystemComponent.h"
+#include "NiagaraFunctionLibrary.h"
+#include "NiagaraComponent.h"
 
 // Sets default values
 AJHEnemy::AJHEnemy()
@@ -53,18 +50,6 @@ AJHEnemy::AJHEnemy()
 	SphereBottomComp->SetCollisionProfileName(TEXT("Enemy"));
 	SphereBottomComp->OnComponentBeginOverlap.AddDynamic(this, &AJHEnemy::OnDamageProcess);
 
-
-	// todo : 캡슐 충돌체 설정
-	//BodyMeshComp = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("Body Mesh"));
-	//BodyMeshComp->SetupAttachment(RootComponent);
-	//BodyMeshComp->SetCollisionProfileName(TEXT("NoCollision"));
-
-	//// Top - Capsule
-	//ConstructorHelpers::FObjectFinder<UStaticMesh> TopMeshFinder(TEXT("/Script/Engine.StaticMesh'/Game/StarterContent/Shapes/Shape_NarrowCapsule.Shape_NarrowCapsule'"));
-	//if (TopMeshFinder.Succeeded())
-	//	BodyMeshComp->SetStaticMesh(TopMeshFinder.Object);
-	//BodyMeshComp->SetRelativeLocation(FVector(0, 0, -50));
-
 	// BossSkillManager
 	BossSkillManager = CreateDefaultSubobject<UJHBossSkillManager>(TEXT("BossSkillManager"));
 
@@ -77,10 +62,6 @@ AJHEnemy::AJHEnemy()
 	BottomSceneComp->SetupAttachment(RootComponent);
 	BottomSceneComp->SetRelativeLocation(FVector(0, 0, -50));
 
-	//BottomMeshComp = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("Bottom Mesh"));
-	//BottomMeshComp->SetupAttachment(RootComponent);
-	//BottomMeshComp->SetCollisionProfileName(TEXT("NoCollision"));
-
 	// Top : SkeletalMeshComp
 	SkeletalMeshComp = CreateDefaultSubobject<USkeletalMeshComponent>(TEXT("SkeletalMeshComp"));
 	SkeletalMeshComp->SetupAttachment(RootComponent);
@@ -91,7 +72,6 @@ AJHEnemy::AJHEnemy()
 	// SkeletalMesh Collision
 	SkeletalMeshComp->SetGenerateOverlapEvents(true);
 	SkeletalMeshComp->SetCollisionProfileName(TEXT("Enemy"));
-	//SkeletalMeshComp->OnComponentBeginOverlap.AddDynamic(this, &AJHEnemy::OnDamageProcess);
 
 	// SkeletalMesh
 	ConstructorHelpers::FObjectFinder<USkeletalMesh> SkeletalMeshFinder(TEXT("/Script/Engine.SkeletalMesh'/Game/Models/Beauvoir/NierAutomata_Beauvoir.NierAutomata_Beauvoir'"));
@@ -105,12 +85,6 @@ AJHEnemy::AJHEnemy()
 	{
 		SkeletalMeshComp->SetAnimClass(AnimFinder.Class);
 	}
-
-	// Bottom - Cylinder
-	//ConstructorHelpers::FObjectFinder<UStaticMesh> BottomMeshFinder(TEXT("/Script/Engine.StaticMesh'/Game/StarterContent/Shapes/Shape_Cylinder.Shape_Cylinder'"));
-	//if (BottomMeshFinder.Succeeded())
-	//	BottomMeshComp->SetStaticMesh(BottomMeshFinder.Object);
-	//BottomMeshComp->SetRelativeLocation(FVector(0, 0, -50));
 
 	// Bomb
 	BombSkill = CreateDefaultSubobject<UJHBombSkill>(TEXT("Bomb Skill"));
@@ -174,8 +148,12 @@ AJHEnemy::AJHEnemy()
 	SpiralMoveSkill = CreateDefaultSubobject<UJHSpiralMoveSkill>(TEXT("SpiralMove Skill"));
 
 	// Particle System Component
-	PsDamageComp = CreateDefaultSubobject<UParticleSystemComponent>(TEXT("PSDamageComp"));
-	PsDamageComp->SetupAttachment(RootComponent);
+	PsFireComp = CreateDefaultSubobject<UParticleSystemComponent>(TEXT("PSDamageComp"));
+	PsFireComp->SetupAttachment(RootComponent);
+
+	// Niagara System
+	NsExplosionComp = CreateDefaultSubobject<UNiagaraComponent>(TEXT("NSDieComp"));
+	NsExplosionComp->SetupAttachment(RootComponent);
 
 	// Damage UI
 	ConstructorHelpers::FClassFinder<UJHEnemyDamageUI> DamageUIFinder(TEXT("/Script/UMGEditor.WidgetBlueprint'/Game/Blueprints/Kang/BP_JHEnemyDamageUI.BP_JHEnemyDamageUI_C'"));
@@ -186,6 +164,7 @@ AJHEnemy::AJHEnemy()
 
 	// Audio
 	AudioComp = CreateDefaultSubobject<UAudioComponent>(TEXT("AudioComp"));
+	AudioComp->SetupAttachment(RootComponent);
 	AudioComp->Activate(false);
 }
 
@@ -335,23 +314,6 @@ void AJHEnemy::RotateSpinBottom()
 	FRotator Rot = BottomSceneComp->GetRelativeRotation() + FRotator(0, RotSpeed * GetWorld()->DeltaTimeSeconds, 0);
 
 	BottomSceneComp->SetRelativeRotation(Rot);
-
-	//UE_LOG(LogTemp, Warning, TEXT("RotateSpinBottom!"));
-}
-
-void AJHEnemy::SetBodyMaterial(UMaterialInterface* NewMaterial)
-{
-	if(SkeletalMeshComp == nullptr || SkeletalMeshComp->GetMaterial(0) == NewMaterial) return;
-
-	SkeletalMeshComp->SetMaterial(0, NewMaterial);
-}
-
-UMaterialInterface* AJHEnemy::GetBodyMaterial()
-{
-	if(SkeletalMeshComp == nullptr)
-		return nullptr;
-	
-	return SkeletalMeshComp->GetMaterial(0);
 }
 
 void AJHEnemy::OnDamageProcess(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)

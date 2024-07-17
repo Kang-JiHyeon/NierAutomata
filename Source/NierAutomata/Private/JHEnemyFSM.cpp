@@ -11,6 +11,8 @@
 #include "Kismet/KismetMathLibrary.h"
 #include "Particles/ParticleSystem.h"
 #include "Particles/ParticleSystemComponent.h"
+#include "NiagaraFunctionLibrary.h"
+#include "NiagaraComponent.h"
 
 // Sets default values for this component's properties
 UJHEnemyFSM::UJHEnemyFSM()
@@ -40,9 +42,9 @@ void UJHEnemyFSM::BeginPlay()
 		// todo : 불타는 파티클로 바꿔야 함
 		//DefaultMaterial = MyOwner->GetBodyMaterial();
 		
-		PSDamageComp = MyOwner->PsDamageComp;
-		PSDamageComp->AttachToComponent(MyOwner->GetRootComponent(), FAttachmentTransformRules::KeepWorldTransform);
-		PSDamageComp->SetActive(false);
+		PsFireComp = MyOwner->PsFireComp;
+		PsFireComp->AttachToComponent(MyOwner->GetRootComponent(), FAttachmentTransformRules::KeepWorldTransform);
+		PsFireComp->SetActive(false);
 	}
 
 }
@@ -133,7 +135,6 @@ void UJHEnemyFSM::MoveState()
 /// </summary>
 void UJHEnemyFSM::AttackState()
 {
-
 	SkillManager->OnAttack();
 }
 
@@ -167,7 +168,6 @@ void UJHEnemyFSM::DieState()
 	if(CurrentTime > DieTime)
 	{
 		MyOwner->Destroy();
-		//CurrentTime = 0;
 	}
 }
 
@@ -220,7 +220,13 @@ void UJHEnemyFSM::OnDamageProcess(int32 Damage)
 		EnemyState = EEnemyState::Die;
 		CurrentTime = 0;
 		OnChangeAnimState();
+		
+		// 폭발 NS 활성화
+		MyOwner->NsExplosionComp->Activate(true);
+		PsFireComp->Activate(true);
 
+
+		// 폭발 사운드 재생
 		UGameplayStatics::PlaySound2D(GetWorld(), MyOwner->ExplosionSound);
 
 	}
@@ -230,15 +236,15 @@ void UJHEnemyFSM::OnDamageProcess(int32 Damage)
 		bIsPlayDamageAnim = true;
 
 		// Damage 파티클 재생
-		PSDamageComp->SetActive(true);
+		PsFireComp->SetActive(true);
 		UE_LOG(LogTemp, Warning, TEXT("Fire Particle Start!"));
 
 		// 1초 뒤에 Damage 파티클 비활성화
 		GetWorld()->GetTimerManager().SetTimer(TimerHandle, [this]()
 		{
-			if (PSDamageComp)
+			if (PsFireComp)
 			{
-				PSDamageComp->SetActive(false);
+				PsFireComp->SetActive(false);
 				UE_LOG(LogTemp, Warning, TEXT("Fire Particle End!"));
 
 			}
