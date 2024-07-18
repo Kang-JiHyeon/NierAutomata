@@ -11,6 +11,7 @@
 UENUM(BlueprintType)
 enum class ESkillType : uint8
 {
+	None,
 	Bomb,
 	Missile,
 	LaserBeam,
