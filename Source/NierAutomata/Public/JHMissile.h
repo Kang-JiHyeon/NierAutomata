@@ -56,6 +56,14 @@ private:
 	UPROPERTY(EditAnywhere)
 	float TraceDelayTime = 0.5f;
 
+	UPROPERTY(EditAnywhere)
+	USoundBase* TailSound;
+	UPROPERTY(EditAnywhere)
+	USoundBase* ExplosionSound;
+
+	UPROPERTY(EditAnywhere)
+	USoundAttenuation* Attenuation;
+
 	FVector TargetPosition;
 	FVector Direction;
 	float CurrTime;

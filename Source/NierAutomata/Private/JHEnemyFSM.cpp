@@ -11,6 +11,8 @@
 #include "Kismet/KismetMathLibrary.h"
 #include "Particles/ParticleSystem.h"
 #include "Particles/ParticleSystemComponent.h"
+#include "NiagaraFunctionLibrary.h"
+#include "NiagaraComponent.h"
 
 // Sets default values for this component's properties
 UJHEnemyFSM::UJHEnemyFSM()
@@ -40,9 +42,9 @@ void UJHEnemyFSM::BeginPlay()
 		// todo : 불타는 파티클로 바꿔야 함
 		//DefaultMaterial = MyOwner->GetBodyMaterial();
 		
-		PSDamageComp = MyOwner->PsDamageComp;
-		PSDamageComp->AttachToComponent(MyOwner->GetRootComponent(), FAttachmentTransformRules::KeepWorldTransform);
-		PSDamageComp->SetActive(false);
+		PsFireComp = MyOwner->PsFireComp;
+		PsFireComp->AttachToComponent(MyOwner->GetRootComponent(), FAttachmentTransformRules::KeepWorldTransform);
+		PsFireComp->SetActive(false);
 	}
 
 }
@@ -133,7 +135,6 @@ void UJHEnemyFSM::MoveState()
 /// </summary>
 void UJHEnemyFSM::AttackState()
 {
-
 	SkillManager->OnAttack();
 }
 
@@ -167,7 +168,6 @@ void UJHEnemyFSM::DieState()
 	if(CurrentTime > DieTime)
 	{
 		MyOwner->Destroy();
-		//CurrentTime = 0;
 	}
 }
 
@@ -207,7 +207,6 @@ void UJHEnemyFSM::OnChangeAttackPlay(bool bPlay)
 /// </summary>
 void UJHEnemyFSM::OnDamageProcess(int32 Damage)
 {
-
 	if(Hp <=0) return;
 	
 	Hp -= Damage;
@@ -221,6 +220,14 @@ void UJHEnemyFSM::OnDamageProcess(int32 Damage)
 		EnemyState = EEnemyState::Die;
 		CurrentTime = 0;
 		OnChangeAnimState();
+		
+		// 폭발 NS 활성화
+		MyOwner->NsExplosionComp->Activate(true);
+		PsFireComp->Activate(true);
+
+
+		// 폭발 사운드 재생
+		UGameplayStatics::PlaySound2D(GetWorld(), MyOwner->ExplosionSound);
 
 	}
 	// 일정 비율보다 낮고, 데미지 애니메이션을 시작한 적이 없다면
@@ -229,15 +236,15 @@ void UJHEnemyFSM::OnDamageProcess(int32 Damage)
 		bIsPlayDamageAnim = true;
 
 		// Damage 파티클 재생
-		PSDamageComp->SetActive(true);
+		PsFireComp->SetActive(true);
 		UE_LOG(LogTemp, Warning, TEXT("Fire Particle Start!"));
 
 		// 1초 뒤에 Damage 파티클 비활성화
 		GetWorld()->GetTimerManager().SetTimer(TimerHandle, [this]()
 		{
-			if (PSDamageComp)
+			if (PsFireComp)
 			{
-				PSDamageComp->SetActive(false);
+				PsFireComp->SetActive(false);
 				UE_LOG(LogTemp, Warning, TEXT("Fire Particle End!"));
 
 			}
@@ -247,6 +254,10 @@ void UJHEnemyFSM::OnDamageProcess(int32 Damage)
         // Damage 상태로 전환
         EnemyState = EEnemyState::Damage;
 		OnChangeAnimState();
+
+		// Sound 재생
+		UGameplayStatics::PlaySound2D(GetWorld(), MyOwner->ExplosionSound);
+		UGameplayStatics::PlaySound2D(GetWorld(), MyOwner->ScreamSound);
 	}
 
 	//UE_LOG(LogTemp, Warning, TEXT("Enemy Damage : %d , %f, %f"), Hp, MaxHp, HpRate);

@@ -2,10 +2,11 @@
 
 
 #include "JHBomb.h"
+#include "HJCharacter.h"
 #include "Components/SphereComponent.h"
 #include "Particles/ParticleSystem.h"
 #include "Kismet/GameplayStatics.h"
-#include "HJCharacter.h"
+#include "Sound/SoundAttenuation.h"
 
 // Sets default values
 AJHBomb::AJHBomb()
@@ -60,7 +61,7 @@ void AJHBomb::NotifyActorBeginOverlap(AActor* OtherActor)
 	if (OtherActor->IsA<AHJCharacter>())
 	{
 		// 폭발 파티클을 생성하고 죽는다.
-		UGameplayStatics::SpawnEmitterAtLocation(GetWorld(), PsExplosion.Particle, GetActorLocation(), FRotator::ZeroRotator, PsExplosion.Scale, true);
+		UGameplayStatics::SpawnEmitterAtLocation(GetWorld(), PsExplosion.Particle, GetActorLocation(), FRotator::ZeroRotator, FVector(PsExplosion.Scale), true);
 		this->Destroy();
 	}
 	// 만약 감지된 대상이 바닥이라면
@@ -68,9 +69,11 @@ void AJHBomb::NotifyActorBeginOverlap(AActor* OtherActor)
 	{
 		// 폭발, 흔적 파티클을 재생하고 싶다.
 		FVector Pos = GetActorLocation() * FVector(1, 1, 0);
-		UGameplayStatics::SpawnEmitterAtLocation(GetWorld(), PsExplosion.Particle, Pos, FRotator::ZeroRotator, PsExplosion.Scale, true);
-		UGameplayStatics::SpawnEmitterAtLocation(GetWorld(), PsBlastMark.Particle, Pos, FRotator::ZeroRotator, PsBlastMark.Scale, true);
+		UGameplayStatics::SpawnEmitterAtLocation(GetWorld(), PsExplosion.Particle, Pos, FRotator::ZeroRotator, FVector(PsExplosion.Scale), true);
+		UGameplayStatics::SpawnEmitterAtLocation(GetWorld(), PsBlastMark.Particle, Pos, FRotator::ZeroRotator, FVector(PsBlastMark.Scale), true);
 	}
+	// 폭발음을 재생하고 싶다.
+	UGameplayStatics::PlaySoundAtLocation(GetWorld(), ExplosionSound, GetActorLocation(), 1, 1, 0, ExplosionAttenuation);
 }
 
 // Called every frame

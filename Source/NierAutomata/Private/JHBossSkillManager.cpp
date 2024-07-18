@@ -8,13 +8,14 @@
 #include "JHMissileSkill.h"
 #include "JHLaserBeamSkill.h"
 #include "JHSpiralMoveSkill.h"
+#include "Kismet/GameplayStatics.h"
 
 // Sets default values for this component's properties
 UJHBossSkillManager::UJHBossSkillManager()
 {
 	// Set this component to be initialized when the game starts, and to be ticked every frame.  You can turn these features
 	// off to improve performance if you don't need them.
-	PrimaryComponentTick.bCanEverTick = true;
+	PrimaryComponentTick.bCanEverTick = false;
 
 }
 
@@ -106,15 +107,18 @@ void UJHBossSkillManager::OnAttack()
 
 		}
 
+		// 지연 시간이 지난 후
 		if (CurrDelayTime > MaxDelayTime)
 		{	
+			// 공격 패턴 변경
 			PatternIndex = (++PatternIndex) % SkillPattern.Num();
-			
 			UpdatePattern();
+
+			// Sound 재생
+			UGameplayStatics::PlaySound2D(GetWorld(), MyOwner->AttackSound);
 
 			// 애니메이션 초기화
 			MyOwnerFsm->OnChangeAttackPlay(true);
-			//MyOwnerFsm->OnChangeAttackPlay(false);
 			
 			bDelay = false;
 		}
@@ -163,10 +167,6 @@ void UJHBossSkillManager::OnAttack()
 			break;
 		}
 	}
-
-
-
-
 }
 
 void UJHBossSkillManager::UpdatePattern()

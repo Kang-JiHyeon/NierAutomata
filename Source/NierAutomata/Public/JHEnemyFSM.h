@@ -99,7 +99,7 @@ public:
 	class UParticleSystem* PSFire;
 
 	UPROPERTY()
-	class UParticleSystemComponent* PSDamageComp;
+	class UParticleSystemComponent* PsFireComp;
 	UPROPERTY()
 	FTimerHandle TimerHandle;
 
