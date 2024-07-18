@@ -74,6 +74,13 @@ void AJHBomb::NotifyActorBeginOverlap(AActor* OtherActor)
 	}
 	// 폭발음을 재생하고 싶다.
 	UGameplayStatics::PlaySoundAtLocation(GetWorld(), ExplosionSound, GetActorLocation(), 1, 1, 0, ExplosionAttenuation);
+
+	// 카메라 쉐이크로 재생하고 싶다.
+	if (CameraShake != nullptr)
+	{
+		GetWorld()->GetFirstPlayerController()->ClientStartCameraShake(CameraShake);
+	}
+
 }
 
 // Called every frame
