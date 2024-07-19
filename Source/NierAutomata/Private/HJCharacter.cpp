@@ -50,6 +50,14 @@ AHJCharacter::AHJCharacter()
 	{
 		WeaponFactory = tempWeapon.Class;
 	}
+
+	ConstructorHelpers::FClassFinder<AHJWeapon2> tempWeapon2(TEXT("/Script/Engine.Blueprint'/Game/Blueprints/Han/BP_HJWeapon2.BP_HJWeapon2_C'"));
+	if (tempWeapon2.Succeeded())
+	{
+		WeaponFactory2 = tempWeapon2.Class;
+	}
+
+
 }
 
 // Called when the game starts or when spawned
@@ -206,6 +214,19 @@ void AHJCharacter::WeaponEquip()
 		{
 			CurrentWeapon->AttachToComponent(GetMesh(),
 				FAttachmentTransformRules::SnapToTargetNotIncludingScale, WeaponSocket);
+		}
+	}
+
+	FName WeaponSocket2(TEXT("sky_sword_socket2"));
+
+	if (CurrentWeapon2 == nullptr)
+	{
+		CurrentWeapon2 = GetWorld()->SpawnActor<AHJWeapon2>(WeaponFactory2, GetActorLocation(), FRotator::ZeroRotator);
+
+		if (CurrentWeapon2)
+		{
+			CurrentWeapon2->AttachToComponent(GetMesh(),
+				FAttachmentTransformRules::SnapToTargetNotIncludingScale, WeaponSocket2);
 		}
 	}
 }
