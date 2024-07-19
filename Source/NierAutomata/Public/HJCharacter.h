@@ -65,7 +65,10 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	// ¹«±â ÀåÂø 
 	class AHJWeapon* CurrentWeapon;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	class AHJWeapon2* CurrentWeapon2;
+
 	void WeaponEquip();
 
 	UPROPERTY(EditAnywhere)
