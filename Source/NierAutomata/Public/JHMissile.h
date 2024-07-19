@@ -35,6 +35,8 @@ public:
 	UPROPERTY(EditAnywhere)
 	class UParticleSystem* PsExplosion;
 
+	UPROPERTY(EditAnywhere)
+	TSubclassOf<class UCameraShakeBase> CameraShake;
 
 private:
 	

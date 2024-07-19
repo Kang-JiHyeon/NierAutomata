@@ -52,9 +52,13 @@ public:
 	// Sound
 	UPROPERTY(EditAnywhere)
 	USoundBase* ExplosionSound;
-
 	UPROPERTY(EditAnywhere)
 	USoundAttenuation* ExplosionAttenuation;
+
+	// Camera Shake
+	UPROPERTY(EditAnywhere)
+	TSubclassOf<class UCameraShakeBase> CameraShake;
+
 
 
 public:

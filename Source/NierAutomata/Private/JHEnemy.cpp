@@ -361,6 +361,22 @@ void AJHEnemy::OnDamageProcess(UPrimitiveComponent* OverlappedComponent, AActor*
 	}
 }
 
+ESkillType AJHEnemy::GetSkillType()
+{
+
+	// 보스가 Attack 중이라면
+	// 현재 스킬 타입을 반환한다.
+	// Attack 중이 아니라면
+	// None을 반환한다.
+
+	if (Fsm->EnemyState == EEnemyState::Attack)
+	{
+		return BossSkillManager->CurrSkillType;
+	}
+	
+	return ESkillType::None;
+}
+
 void AJHEnemy::SetSoundBase(USoundBase* SoundBase)
 {
 	AudioComp->Sound = SoundBase;

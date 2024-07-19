@@ -105,6 +105,11 @@ void AJHMissile::NotifyActorBeginOverlap(AActor* OtherActor)
 		UGameplayStatics::SpawnEmitterAtLocation(GetWorld(), PsExplosion, GetActorLocation(), FRotator(90, 0, 0), true);
 		UGameplayStatics::PlaySoundAtLocation(GetWorld(), ExplosionSound, GetActorLocation(), 0.5f, 1, 0, Attenuation);
 
+        if (CameraShake != nullptr)
+        {
+			GetWorld()->GetFirstPlayerController()->ClientStartCameraShake(CameraShake);
+        }
+
 		Destroy();
 	}
 }
