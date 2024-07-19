@@ -2,6 +2,8 @@
 
 
 #include "JHSpiralMoveSkill.h"
+#include "JHEnemy.h"
+#include "Kismet/GameplayStatics.h"
 
 // Sets default values for this component's properties
 UJHSpiralMoveSkill::UJHSpiralMoveSkill()
@@ -10,7 +12,6 @@ UJHSpiralMoveSkill::UJHSpiralMoveSkill()
 	// off to improve performance if you don't need them.
 	PrimaryComponentTick.bCanEverTick = true;
 
-	// ...
 }
 
 // Called when the game starts
@@ -18,7 +19,8 @@ void UJHSpiralMoveSkill::BeginPlay()
 {
 	Super::BeginPlay();
 
-	MyOwner = GetOwner();
+	MyOwner = Cast<AJHEnemy>(GetOwner());
+
 	CenterPos = MyOwner->GetActorLocation();
 }
 
@@ -28,16 +30,6 @@ void UJHSpiralMoveSkill::TickComponent(float DeltaTime, ELevelTick TickType, FAc
 {
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
 
-	//// Test
-	//if (bIsAttack)
-	//{
-	//	OnAttack();
-	//}
-	//else
-	//{
-	//	OnInitialize();
-	//}
-
 }
 
 void UJHSpiralMoveSkill::OnInitialize()
@@ -45,9 +37,10 @@ void UJHSpiralMoveSkill::OnInitialize()
 	CurrTime = 0;
 	Sign = 1;
 	Radius = 0;
-	//DegreeAngle = 0;
 	CenterPos = FVector(0, 0, 0);
-	bIsAttack = false;
+	bStartAttack = false;
+
+	MyOwner->SetActiveSound(false);
 }
 
 void UJHSpiralMoveSkill::OnAttack()
@@ -58,10 +51,13 @@ void UJHSpiralMoveSkill::OnAttack()
 		return;
 	}
 
-	if (!bIsAttack)
+	if (!bStartAttack)
 	{
 		SetCenterPosition(MyOwner->GetActorLocation());
-		bIsAttack = true;
+		bStartAttack = true;
+
+		MyOwner->SetSoundBase(AttackSound);
+		MyOwner->SetActiveSound(true);
 	}
 
 	if (CurrTime < 0)

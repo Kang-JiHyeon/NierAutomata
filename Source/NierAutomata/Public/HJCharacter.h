@@ -7,6 +7,7 @@
 #include "GameFramework/SpringArmComponent.h"
 #include "Camera/CameraComponent.h"
 #include "Components/CapsuleComponent.h"
+#include "HJWeapon2.h"
 
 #include "HJCharacter.generated.h"
 
@@ -61,13 +62,20 @@ public:
 	UPROPERTY(EditAnywhere)
 	class AHJBullet2* LaserBeam;
 
-	UPROPERTY()
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	// ¹«±â ÀåÂø 
 	class AHJWeapon* CurrentWeapon;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	class AHJWeapon2* CurrentWeapon2;
+
 	void WeaponEquip();
 
 	UPROPERTY(EditAnywhere)
 	TSubclassOf<AHJWeapon> WeaponFactory;
+
+	UPROPERTY(EditAnywhere)
+	TSubclassOf<AHJWeapon2> WeaponFactory2;
 
 	UFUNCTION(BlueprintCallable)
 	void StartWeapon();

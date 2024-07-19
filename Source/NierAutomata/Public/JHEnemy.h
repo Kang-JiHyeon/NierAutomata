@@ -41,15 +41,27 @@ public:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
 	class UJHEnemyFSM* Fsm;
 
+	// Particle
 	UPROPERTY(EditAnywhere)
-	class UParticleSystemComponent* PsDamageComp;
+	class UParticleSystemComponent* PsFireComp;
+
+	// Niagara Systam
+	UPROPERTY(EditAnywhere)
+	class UNiagaraComponent* NsExplosionComp;
+
+	// Sound
+	UPROPERTY(EditAnywhere)
+	class USoundBase* ExplosionSound;
+	UPROPERTY(EditAnywhere)
+	class USoundBase* ScreamSound;
+	UPROPERTY(EditAnywhere)
+	class USoundBase* AttackSound;
 
 	//Manager
 	UPROPERTY(EditAnywhere)
 	class UJHBossSkillManager* BossSkillManager;
 
-
-	 //SkeletalMesh
+	//SkeletalMesh
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	class USkeletalMeshComponent* SkeletalMeshComp;
 
@@ -80,7 +92,8 @@ public:
 	UPROPERTY(EditAnywhere)
 	TSubclassOf<class UJHEnemyDamageUI> DamageUIFactory;
 
-
+	UPROPERTY(EditAnywhere)
+	class UAudioComponent* AudioComp;
 private:
 	// Move
 	UPROPERTY(EditAnywhere)
@@ -125,13 +138,14 @@ public:
 	void RotateSpinBody();
 	void RotateSpinBottom();
 
-	void SetBodyMaterial(UMaterialInterface* NewMaterial);
-	UMaterialInterface* GetBodyMaterial();
+	void SetSoundBase(USoundBase* SoundBase);
+	void SetActiveSound(bool bPlay);
 	
 	UFUNCTION()
 	void OnDamageProcess(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
 
 
-private:
-	void OnCreatedDamageUI(int32 Damage);
+	UFUNCTION(BlueprintCallable)
+	ESkillType GetSkillType();
+
 };

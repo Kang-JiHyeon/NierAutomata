@@ -8,6 +8,7 @@
 #include "Particles/ParticleSystemComponent.h"
 #include "NiagaraFunctionLibrary.h"
 #include "NiagaraComponent.h"
+#include "Components/AudioComponent.h"
 
 // Sets default values
 AJHLaserBeam::AJHLaserBeam()
@@ -43,17 +44,6 @@ AJHLaserBeam::AJHLaserBeam()
 		AttackStyle.Material = ActiveMatFinder.Object;
 	}
 
-
-	//// ParticleSystem
-	//ParticleSystem = CreateDefaultSubobject<UParticleSystemComponent>(TEXT("ParticleSystem"));
-	//ParticleSystem->SetupAttachment(RootComponent);
-
-	//ConstructorHelpers::FObjectFinder<UParticleSystem> ParticleSystemFinder(TEXT("/Script/Engine.ParticleSystem'/Game/Assets/Kang/P_JHLaser_Red.PS_JHLaser_Red'"));
-	//if (ParticleSystemFinder.Succeeded())
-	//{
-	//	ParticleSystem->SetTemplate(ParticleSystemFinder.Object);
-	//}
-
 	// Niagara System
 	NSLaser = CreateDefaultSubobject<UNiagaraComponent>(TEXT("NSLaser"));
 	NSLaser->SetupAttachment(RootComponent);
@@ -72,6 +62,13 @@ AJHLaserBeam::AJHLaserBeam()
 	{
 		NSLaserImpact->SetAsset(NiagaraLaserImpactFinder.Object);
 	}
+
+	// Sound
+	LaserAudioComp = CreateDefaultSubobject<UAudioComponent>(TEXT("LaserAudioComp"));
+	LaserAudioComp->SetupAttachment(RootComponent);
+	
+	LaserEffectAudioComp = CreateDefaultSubobject<UAudioComponent>(TEXT("LaserEffectAudioComp"));
+	LaserEffectAudioComp->SetupAttachment(RootComponent);
 }
 
 // Called when the game starts or when spawned
@@ -94,6 +91,7 @@ void AJHLaserBeam::BeginPlay()
 
 	// Beam 상태 Idle 상태로 변경
 	SetLaserBeamState(ELaserBeamState::Idle);
+	LaserAudioComp->Play();
 
 	// Niagara 설정
 	NSLaser->SetVisibility(false);
@@ -102,7 +100,6 @@ void AJHLaserBeam::BeginPlay()
 	NSLaser->SetColorParameter(FName(TEXT("Color")), FLinearColor::Red);
 	NSLaserImpact->SetColorParameter(FName(TEXT("Color")), FLinearColor::Red);
 
-	//UE_LOG(LogTemp, Warning, TEXT("LaserBeam 생성 위치 : (%f, %f, %f)"), GetActorLocation().X, GetActorLocation().Y, GetActorLocation().Z);
 }
 
 // Called every frame
@@ -143,6 +140,7 @@ void AJHLaserBeam::Tick(float DeltaTime)
 
 		NSLaserImpact->SetWorldLocation(StartPos);
 		NSLaserImpact->SetVisibility(true);
+
 	}
 }
 
@@ -167,14 +165,23 @@ void AJHLaserBeam::SetLaserBeamState(ELaserBeamState State)
 	SplineMesh->SetGenerateOverlapEvents(!bIdle);
 
 	// StaticMesh, Material 변경
-	FLaserBeamStyle Style = bIdle ? IdleStyle : AttackStyle;
+	FLaserBeamInfo LaserInfo = bIdle ? IdleStyle : AttackStyle;
 
-	SplineMesh->SetStaticMesh(Style.StaticMesh);
-	SplineMesh->SetMaterial(0, Style.Material);
+	SplineMesh->SetStaticMesh(LaserInfo.StaticMesh);
+	SplineMesh->SetMaterial(0, LaserInfo.Material);
 
-	FVector2D TargetScale = FVector2D(Style.Scale.Y, Style.Scale.Z);
+	FVector2D TargetScale = FVector2D(LaserInfo.Scale);
 	SplineMesh->SetStartScale(TargetScale);
 	SplineMesh->SetEndScale(TargetScale);
 
 	SplineMesh->SetVisibility(bIdle);
+
+	// Laser마다 다른 Sound로 교체
+	LaserAudioComp->SetSound(LaserInfo.Sound);
+
+	// Attack Laser일 경우 Effect 재생
+	if (!bIdle)
+	{
+		UGameplayStatics::PlaySound2D(GetWorld(), EffectSound, 0.1f);
+	}
 }

@@ -39,11 +39,11 @@ public:
 
 	EMissileSpawnType MissileSpawnType = EMissileSpawnType::Sequential;
 
-	UPROPERTY(EditAnywhere)
-	TSubclassOf<class AJHMissile> SequentialMissileFactory;
+    UPROPERTY(EditAnywhere)
+    TSubclassOf<class AJHMissile> SequentialMissileFactory;
 
-	UPROPERTY(EditAnywhere)
-	TSubclassOf<class AJHMissile> OnceMissileFactory;
+    UPROPERTY(EditAnywhere)
+    TSubclassOf<class AJHMissile> OnceMissileFactory;
 
 	//UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	class UArrowComponent* SequentilSkillArrow;

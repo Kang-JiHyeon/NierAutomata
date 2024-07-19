@@ -55,6 +55,8 @@ void AJHMissile::BeginPlay()
 	// 플레이어를 찾아 타겟으로 설정한다.
 	Target = GetWorld()->GetFirstPlayerController()->GetPawn();
 	TargetPosition = GetActorLocation() + (FVector::UpVector * OffsetUp + GetActorForwardVector() * OffsetForward);
+
+	UGameplayStatics::PlaySoundAtLocation(GetWorld(), TailSound, GetActorLocation(), 0.1f, 1, 0);
 }
 
 // Called every frame
@@ -101,6 +103,13 @@ void AJHMissile::NotifyActorBeginOverlap(AActor* OtherActor)
 	if (PsExplosion != nullptr)
 	{
 		UGameplayStatics::SpawnEmitterAtLocation(GetWorld(), PsExplosion, GetActorLocation(), FRotator(90, 0, 0), true);
+		UGameplayStatics::PlaySoundAtLocation(GetWorld(), ExplosionSound, GetActorLocation(), 0.5f, 1, 0, Attenuation);
+
+        if (CameraShake != nullptr)
+        {
+			GetWorld()->GetFirstPlayerController()->ClientStartCameraShake(CameraShake);
+        }
+
 		Destroy();
 	}
 }

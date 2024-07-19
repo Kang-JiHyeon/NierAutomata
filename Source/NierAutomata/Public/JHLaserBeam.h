@@ -15,7 +15,7 @@ enum class ELaserBeamState : uint8
 };
 
 USTRUCT(Atomic)
-struct FLaserBeamStyle
+struct FLaserBeamInfo
 {
 	GENERATED_USTRUCT_BODY()
 public:
@@ -24,7 +24,9 @@ public:
 	UPROPERTY(EditAnywhere)
 	class UMaterial* Material;
 	UPROPERTY(EditAnywhere)
-	FVector Scale;
+	float Scale;
+	UPROPERTY(EditAnywhere)
+	class USoundBase* Sound;
 };
 
 UCLASS()
@@ -56,10 +58,10 @@ private:
 	class USplineMeshComponent* SplineMesh;
 
 	UPROPERTY(EditAnywhere)
-	FLaserBeamStyle IdleStyle;
+	FLaserBeamInfo IdleStyle;
 
 	UPROPERTY(EditAnywhere)
-	FLaserBeamStyle AttackStyle;
+	FLaserBeamInfo AttackStyle;
 
 	UPROPERTY(EditAnywhere)
 	float Distance = 10000;
@@ -72,6 +74,15 @@ private:
 
 	UPROPERTY(EditAnywhere)
 	class UNiagaraComponent* NSLaserImpact;
+
+	UPROPERTY(EditAnywhere)
+	class USoundBase* EffectSound;
+
+	UPROPERTY(EditAnywhere)
+	class UAudioComponent* LaserAudioComp;
+	
+	UPROPERTY(EditAnywhere)
+	class UAudioComponent* LaserEffectAudioComp;
 
 	UPROPERTY(EditAnywhere)
 	float IdleTime = 3;

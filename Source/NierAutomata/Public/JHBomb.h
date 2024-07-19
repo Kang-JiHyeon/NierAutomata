@@ -14,7 +14,7 @@ public :
 	UPROPERTY(EditAnywhere)
 	class UParticleSystem* Particle;
 	UPROPERTY(EditAnywhere)
-	FVector Scale;
+	float Scale;
 };
 
 UCLASS()
@@ -48,6 +48,17 @@ public:
 	FBombParticle PsExplosion;
 	UPROPERTY(EditAnywhere)
 	FBombParticle PsBlastMark;
+
+	// Sound
+	UPROPERTY(EditAnywhere)
+	USoundBase* ExplosionSound;
+	UPROPERTY(EditAnywhere)
+	USoundAttenuation* ExplosionAttenuation;
+
+	// Camera Shake
+	UPROPERTY(EditAnywhere)
+	TSubclassOf<class UCameraShakeBase> CameraShake;
+
 
 
 public:
