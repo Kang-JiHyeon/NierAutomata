@@ -39,6 +39,7 @@ void UJHBossSkillManager::BeginPlay()
 
 		SkillBases.Add(BombSkill);
 		SkillBases.Add(MissileSkill);
+		SkillBases.Add(LaserBeamSkill);
 
 		if (SkillPattern.Num() <= 0)
 		{

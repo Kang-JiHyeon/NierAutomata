@@ -12,6 +12,7 @@ enum class EMissileSpawnType : uint8
 	Sequential,
 	AtOnce,
 };
+
 USTRUCT(Atomic)
 struct FMissilSkillInfo
 {
@@ -39,12 +40,14 @@ protected:
 public:	
 	// Called every frame
 	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
-
+	
 	virtual void OnInitialize() override;
 	virtual void OnAttack() override;
-	virtual void OnEndAttack() override;
+	virtual void OnEnd() override;
 
 public:
+	UPROPERTY(EditAnywhere)
+	TMap<ESkillLevel, FMissilSkillInfo> SkillInfoByLevel;
 
 	EMissileSpawnType MissileSpawnType = EMissileSpawnType::Sequential;
 
@@ -60,27 +63,15 @@ public:
     UPROPERTY()
 	class UArrowComponent* OnceSkillArrow;
 
-	UPROPERTY(EditAnywhere)
-	TMap<ESkillLevel, FMissilSkillInfo> MissileSkillInfo;
 
 	UPROPERTY(EditAnywhere)
 	float RandomRotRange = 30;
 
 	UPROPERTY(EditAnywhere)
-	//float CreateTime = 0.25f;
-	float CurrTime;
-
-	int32 CurrFireCount = 0;
-	//UPROPERTY(EditAnywhere)
-	//int32 MaxFireCount = 10;
-	//int32 CurrCount = 0;
-
-	UPROPERTY(EditAnywhere)
 	float Radius = 200;
-	
-	//bool bIsAttack;
-	//bool bIsSequential;
 
+	float CurrTime;
+	int32 CurrFireCount = 0;
 
 private:
 	void OnSpawnSequential();

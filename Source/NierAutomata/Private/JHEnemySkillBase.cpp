@@ -43,7 +43,7 @@ void UJHEnemySkillBase::OnAttack()
 {
 }
 
-void UJHEnemySkillBase::OnEndAttack()
+void UJHEnemySkillBase::OnEnd()
 {
 	MyEnemy->OnEndAttackSkill();
 	bAttack = false;

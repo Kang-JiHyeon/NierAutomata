@@ -21,7 +21,6 @@ void UJHMissileSkill::BeginPlay()
 	Super::BeginPlay();
 
 	CurrTime = 0;
-	//bIsAttack = false;	
 }
 
 
@@ -67,9 +66,9 @@ void UJHMissileSkill::OnAttack()
 	bAttack = true;
 }
 
-void UJHMissileSkill::OnEndAttack()
+void UJHMissileSkill::OnEnd()
 {
-	Super::OnEndAttack();
+	Super::OnEnd();
 
 	CurrFireCount = 0;
 }
@@ -79,7 +78,7 @@ void UJHMissileSkill::OnEndAttack()
 /// </summary>
 void UJHMissileSkill::OnSpawnSequential()
 {
-	if(MissileSkillInfo.Num() <= 0)
+	if(SkillInfoByLevel.Num() <= 0)
 	{
 		UE_LOG(LogTemp, Warning, TEXT("MissileSkillInfo가 없습니다."));
 		return;
@@ -87,7 +86,7 @@ void UJHMissileSkill::OnSpawnSequential()
 	
 	CurrTime += GetWorld()->DeltaTimeSeconds;
 
-	if (CurrTime > MissileSkillInfo[CurrSkillLevel].CreateTime) {
+	if (CurrTime > SkillInfoByLevel[CurrSkillLevel].CreateTime) {
 		
 		if (SequentialMissileFactory == nullptr)
 		{
@@ -108,11 +107,11 @@ void UJHMissileSkill::OnSpawnSequential()
 		CurrTime = 0;
 	}
 
-	if (CurrFireCount >= MissileSkillInfo[CurrSkillLevel].MaxFireCount)
+	// 최대 발사 횟수만큼 발사했으면 공격 종료
+	if (CurrFireCount >= SkillInfoByLevel[CurrSkillLevel].MaxFireCount)
 	{
-		OnEndAttack();
+		OnEnd();
 	}
-
 }
 
 /// <summary>
@@ -120,27 +119,22 @@ void UJHMissileSkill::OnSpawnSequential()
 /// </summary>
 void UJHMissileSkill::OnSpawnAtOnce()
 {
-	if (MissileSkillInfo.Num() <= 0)
+	if (SkillInfoByLevel.Num() <= 0)
 	{
 		UE_LOG(LogTemp, Warning, TEXT("MissileSkillInfo가 없습니다."));
 		return;
 	}
 
-	//if (!bIsAttack)
-	//{
-		for (int i = 0; i < MissileSkillInfo[CurrSkillLevel].MaxFireCount; i++)
+	for (int i = 0; i < SkillInfoByLevel[CurrSkillLevel].MaxFireCount; i++)
+	{
+		FRotator Rotation = FRotator(0, i * (360 / SkillInfoByLevel[CurrSkillLevel].MaxFireCount), 0);
+
+		//AJHMissile* Missile = GetWorld()->SpawnActor<AJHMissile>(OnceMissileFactory, OnceSkillArrow->GetComponentLocation() + Missile->GetActorForwardVector() * Radius, Rotation);
+		AJHMissile* Missile = GetWorld()->SpawnActor<AJHMissile>(OnceMissileFactory, OnceSkillArrow->GetComponentLocation(), Rotation);
+
+		if (Missile != nullptr)
 		{
-			FRotator Rotation = FRotator(0, i * (360 / MissileSkillInfo[CurrSkillLevel].MaxFireCount), 0);
-
-			//AJHMissile* Missile = GetWorld()->SpawnActor<AJHMissile>(OnceMissileFactory, OnceSkillArrow->GetComponentLocation() + Missile->GetActorForwardVector() * Radius, Rotation);
-			AJHMissile* Missile = GetWorld()->SpawnActor<AJHMissile>(OnceMissileFactory, OnceSkillArrow->GetComponentLocation(), Rotation);
-
-			if (Missile != nullptr)
-			{
-				Missile->SetActorLocation(Missile->GetActorLocation() + Missile->GetActorForwardVector() * Radius);
-			}
+			Missile->SetActorLocation(Missile->GetActorLocation() + Missile->GetActorForwardVector() * Radius);
 		}
-
-	//	bIsAttack = true;
-	//}
+	}
 }

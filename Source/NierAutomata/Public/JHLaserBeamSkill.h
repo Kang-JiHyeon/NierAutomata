@@ -3,13 +3,27 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "Components/SceneComponent.h"
-#include "JHAttackInterface.h"
+#include "JHEnemySkillBase.h"
 #include "JHLaserBeamSkill.generated.h"
+
+USTRUCT(Atomic)
+struct FLaserBeamSkillInfo
+{
+	GENERATED_USTRUCT_BODY()
+public:
+	UPROPERTY(EditAnywhere)
+	float IdleTime = 3;
+	UPROPERTY(EditAnywhere)
+	float AttackTime = 10;
+	UPROPERTY(EditAnywhere)
+	int32 MaxCount = 10;
+	UPROPERTY(EditAnywhere)
+	float RotSpeed = 20;
+};
 
 
 UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
-class NIERAUTOMATA_API UJHLaserBeamSkill : public USceneComponent, public IJHAttackInterface
+class NIERAUTOMATA_API UJHLaserBeamSkill : public UJHEnemySkillBase
 {
 	GENERATED_BODY()
 
@@ -27,9 +41,12 @@ public:
 
 	virtual void OnInitialize() override;
 	virtual void OnAttack() override;
+	virtual void OnEnd() override;
 
 public:
-	class AJHEnemy* MyBoss;
+
+	UPROPERTY(EditAnywhere)
+	TMap<ESkillLevel, FLaserBeamSkillInfo> SkillInfoByLevel;
 
 	UPROPERTY(EditAnywhere)
 	TSubclassOf<class AJHLaserBeam> SkillFactory;
@@ -37,26 +54,19 @@ public:
 	UPROPERTY(EditAnywhere)
 	float Radius = 350;
 
-	UPROPERTY(EditAnywhere)
-	int32 MaxCount = 10;
-
-	UPROPERTY(EditAnywhere)
-	float RotSpeed = 20;
-
-	UPROPERTY(EditAnywhere)
-	float IdleTime = 3;
-
-	float CurrIdleTime;
-
-	float CurrRotZ;
 
 	UPROPERTY()
-	TArray<AJHLaserBeam*> LaserBeams;
+	TArray<class AJHLaserBeam*> LaserBeams;
 
-	bool bEnable;
-	bool bAttack;
+	bool bRotate;
+
+	FTimerHandle IdleTimerHandle;
+	FTimerHandle AttackTimerHandle;
 
 private:
+	
 	void CreateLaserBeams();
 	void DestroyLaserBeams();
+
+	void SetActiveAttack();
 };

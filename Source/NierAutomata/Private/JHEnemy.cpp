@@ -193,13 +193,6 @@ void AJHEnemy::Tick(float DeltaTime)
 
 }
 
-//void AJHEnemy::NotifyActorBeginOverlap(AActor* OtherActor)
-//{
-//	Super::NotifyActorBeginOverlap(OtherActor);
-//
-//}
-
-
 void AJHEnemy::SetMovement(bool bValue)
 {
 	bIsMove = bValue;

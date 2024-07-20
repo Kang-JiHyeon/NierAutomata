@@ -4,9 +4,6 @@
 #include "JHLaserBeamSkill.h"
 #include "JHEnemy.h"
 #include "JHLaserBeam.h"
-#include "Components/SplineComponent.h"
-#include "Components/SplineMeshComponent.h"
-#include "Kismet/KismetMathLibrary.h"
 
 // Sets default values for this component's properties
 UJHLaserBeamSkill::UJHLaserBeamSkill()
@@ -23,8 +20,6 @@ UJHLaserBeamSkill::UJHLaserBeamSkill()
 void UJHLaserBeamSkill::BeginPlay()
 {
 	Super::BeginPlay();
-
-	MyBoss = Cast<AJHEnemy>(GetOwner());
 }
 
 
@@ -33,45 +28,59 @@ void UJHLaserBeamSkill::TickComponent(float DeltaTime, ELevelTick TickType, FAct
 {
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
 
+	if (bAttack && bRotate)
+	{
+		if (MyEnemy != nullptr)
+		{
+			MyEnemy->RotateSpinBottom();
+		}
+	}
 }
 
 void UJHLaserBeamSkill::OnInitialize()
 {
-	bAttack = false;
-	CurrIdleTime = 0;
+	Super::OnInitialize();
 
-	DestroyLaserBeams();
 }
 
 void UJHLaserBeamSkill::OnAttack()
 {
-	// 이미 공격 중이라면
-	 if (bAttack)
+	Super::OnAttack();
+
+	if (SkillInfoByLevel.Num() <= 0)
 	{
-		// 일정 시간이 지나면 회전하고 싶다.
-		if (MyBoss != nullptr)
-		{
-			if (CurrIdleTime <= IdleTime)
-			{
-				CurrIdleTime += GetWorld()->DeltaTimeSeconds;
-			}
-			else
-			{
-				MyBoss->RotateSpinBottom();
-			}
-		}
+		UE_LOG(LogTemp, Warning, TEXT("LaserBeamSkill : SKillInfoByLevel Null!!"));
+		return;
 	}
-	else
+
+	if (!bAttack)
 	{
 		// LaserBeam 생성
 		CreateLaserBeams();
-		
-		bAttack = true;
+
+		// 대기 시간이 지나면 공격 상태로 전환한다.
+		GetWorld()->GetTimerManager().SetTimer(IdleTimerHandle, this, &UJHLaserBeamSkill::SetActiveAttack, SkillInfoByLevel[CurrSkillLevel].IdleTime, false);
 	}
+
+	bAttack = true;
 }
 
+void UJHLaserBeamSkill::OnEnd()
+{
+	Super::OnEnd();
+
+	bRotate = false;
+	
+	DestroyLaserBeams();
+}
+
+/// <summary>
+/// LaserBeam 생성
+/// </summary>
 void UJHLaserBeamSkill::CreateLaserBeams()
 {
+	int32 MaxCount = SkillInfoByLevel[CurrSkillLevel].MaxCount;
+
 	for (int32 i = 0; i < MaxCount; i++)
 	{
 		FRotator Rotation = FRotator(0, i * (360 / MaxCount), 0);
@@ -84,13 +93,16 @@ void UJHLaserBeamSkill::CreateLaserBeams()
 		USceneComponent* Root = LaserBeam->GetRootComponent();
 		Root->AttachToComponent(this, FAttachmentTransformRules::KeepWorldTransform);
 
-		LaserBeam->SetIdleTime(IdleTime);
+		LaserBeam->SetIdleTime(SkillInfoByLevel[CurrSkillLevel].IdleTime);
 		LaserBeams.Add(LaserBeam);
 	}
 
 	UE_LOG(LogTemp, Warning, TEXT("CreateLaserBeams!!"));
 }
 
+/// <summary>
+/// LaserBeam 제거
+/// </summary>
 void UJHLaserBeamSkill::DestroyLaserBeams()
 {
 	if (LaserBeams.IsEmpty())
@@ -103,5 +115,20 @@ void UJHLaserBeamSkill::DestroyLaserBeams()
 	LaserBeams.Empty();
 
 	UE_LOG(LogTemp, Warning, TEXT("DestroyLaserBeams!!"));
+}
+
+/// <summary>
+/// 공격 활성화
+/// </summary>
+void UJHLaserBeamSkill::SetActiveAttack()
+{
+	// 회전 여부 활성화
+	bRotate = true;
+
+	// 회전 속도 변경
+	MyEnemy->SetRotSpeed(SkillInfoByLevel[CurrSkillLevel].RotSpeed);
+
+	// 공격 시간이 지난 후 공격을 종료
+	GetWorld()->GetTimerManager().SetTimer(AttackTimerHandle, this, &UJHLaserBeamSkill::OnEnd, SkillInfoByLevel[CurrSkillLevel].AttackTime);
 }
 

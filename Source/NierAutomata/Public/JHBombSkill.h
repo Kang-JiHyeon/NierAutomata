@@ -35,7 +35,12 @@ public:
 	// Called every frame
 	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
 
+	virtual void OnInitialize() override;
+	virtual void OnAttack() override;
+
 public:
+	UPROPERTY(EditAnywhere)
+	TMap<ESkillLevel, FBombSkillInfo> SkillInfoByLevel;
 
 	UPROPERTY(EditDefaultsOnly)
 	TSubclassOf<class AJHBomb> SkillFactory;
@@ -43,8 +48,6 @@ public:
 	UPROPERTY()
 	TArray<class USceneComponent*> FirePositions;
 
-	UPROPERTY(EditAnywhere)
-	TMap<ESkillLevel, FBombSkillInfo> SkillInfo;
 
 	// ÇÑ¹ø¿¡ ¹ß»çÇÒ ÆøÅº °³¼ö
 	UPROPERTY(EditAnywhere)
@@ -61,8 +64,7 @@ public:
 	float CurrFireTime = 0;
 
 public:
-	virtual void OnInitialize() override;
-	virtual void OnAttack() override;
+
 
 	void Fire();
 };

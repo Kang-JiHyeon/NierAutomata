@@ -42,7 +42,7 @@ public:
 
 	virtual void OnInitialize();
 	virtual void OnAttack();
-	virtual void OnEndAttack();
+	virtual void OnEnd();
 
 	void SetCurrSkillLevel(ESkillLevel TargetLevel);
 };

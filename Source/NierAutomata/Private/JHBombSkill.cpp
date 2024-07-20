@@ -26,13 +26,19 @@ void UJHBombSkill::TickComponent(float DeltaTime, ELevelTick TickType, FActorCom
 {
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
 
+	if (SkillInfoByLevel.Num() <= 0)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("BombSkill : SKillInfoByLevel Null!!"));
+		return;
+	}
+
 	// 공격 중이라면
 	if (bAttack)
 	{
 		// 발사 시간이 되었을 때 
 		CurrFireTime += DeltaTime;
 
-		if (CurrFireTime >= SkillInfo[CurrSkillLevel].FireTime)
+		if (CurrFireTime >= SkillInfoByLevel[CurrSkillLevel].FireTime)
 		{
 			// 폭탄 발사
 			Fire();
@@ -43,11 +49,11 @@ void UJHBombSkill::TickComponent(float DeltaTime, ELevelTick TickType, FActorCom
 		}
 
 		// 공격 횟수만큼 발사했다면 스킬 종료
-		if (CurrFireCount >= SkillInfo[CurrSkillLevel].MaxFireCount)
+		if (CurrFireCount >= SkillInfoByLevel[CurrSkillLevel].MaxFireCount)
 		{
 			OnInitialize();
 
-			OnEndAttack();
+			OnEnd();
 		}
 	}
 }
