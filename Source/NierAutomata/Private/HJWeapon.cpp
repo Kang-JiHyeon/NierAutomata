@@ -11,7 +11,7 @@ AHJWeapon::AHJWeapon()
 	// 콜리전 박스 설정
 	CompBox = CreateDefaultSubobject<UBoxComponent>(TEXT("BOX"));
 	RootComponent = CompBox;
-	CompBox->SetBoxExtent(FVector(8.f, 16.f, 140.f));
+	CompBox->SetBoxExtent(FVector(8.f, 16.f, 120.f));
 
 
 	// 스케레탈 메시 객체 부여 
