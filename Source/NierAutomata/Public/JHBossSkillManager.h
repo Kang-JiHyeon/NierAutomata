@@ -89,6 +89,10 @@ public:
 	UPROPERTY(VisibleAnywhere)
 	class UJHSpiralMoveSkill* SpiralMoveSkill;
 
+
+	UPROPERTY()
+	TArray<class UJHEnemySkillBase*> SkillBases;
+
 	UPROPERTY(EditAnywhere)
 	TArray<FSkillProperty> SkillPattern;
 
@@ -103,11 +107,15 @@ public:
 	bool bAttackPlay = false;
 	bool bDelay = false;
 
+	UPROPERTY(EditAnywhere)
+	bool bHardLevel = false;
+
 public:
 	void OnInitialize();
 	void OnAttack();
+	void UpdatePattern();
+	void OnToggleSkillLevel();
 
 private:
-	void UpdatePattern();
 	void SetRotateType(ERotateType Type);
 };

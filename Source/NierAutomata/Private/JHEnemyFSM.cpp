@@ -250,10 +250,12 @@ void UJHEnemyFSM::OnDamageProcess(int32 Damage)
 			}
 		}, 1.0f, false);
 
-
         // Damage 상태로 전환
         EnemyState = EEnemyState::Damage;
 		OnChangeAnimState();
+
+		// Skill 의 난이도를 Hard 로 변경
+		SkillManager->OnToggleSkillLevel();
 
 		// Sound 재생
 		UGameplayStatics::PlaySound2D(GetWorld(), MyOwner->ExplosionSound);

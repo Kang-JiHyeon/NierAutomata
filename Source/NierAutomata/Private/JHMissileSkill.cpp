@@ -1,6 +1,4 @@
 // Fill out your copyright notice in the Description page of Project Settings.
-
-
 #include "JHMissileSkill.h"
 #include "Components/ArrowComponent.h"
 #include "JHEnemy.h"
@@ -23,7 +21,7 @@ void UJHMissileSkill::BeginPlay()
 	Super::BeginPlay();
 
 	CurrTime = 0;
-	bIsAttack = false;	
+	//bIsAttack = false;	
 }
 
 
@@ -32,33 +30,48 @@ void UJHMissileSkill::TickComponent(float DeltaTime, ELevelTick TickType, FActor
 {
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
 
+	if (bAttack)
+	{
+		switch (MissileSpawnType)
+		{
+		case EMissileSpawnType::Sequential:
+			OnSpawnSequential();
+			break;
+		case EMissileSpawnType::AtOnce:
+			OnSpawnAtOnce();
+			break;
+		default:
+			break;
+		}
+	}
 }
 
 void UJHMissileSkill::OnInitialize()
 {
-	CurrTime = 0;
-	bIsAttack = false;
+	Super::OnInitialize();
 
-	if (MissileSpawnType == EMissileSpawnType::Sequential)
-		MissileSpawnType = EMissileSpawnType::AtOnce;
-	else
-		MissileSpawnType = EMissileSpawnType::Sequential;
+	CurrTime = 0;
+	//bIsAttack = false;
+	bAttack = false;
+
+	//if (MissileSpawnType == EMissileSpawnType::Sequential)
+	//	MissileSpawnType = EMissileSpawnType::AtOnce;
+	//else
+	//	MissileSpawnType = EMissileSpawnType::Sequential;
 }
 
 void UJHMissileSkill::OnAttack()
 {
+	Super::OnAttack();
 
-	switch (MissileSpawnType)
-	{
-	case EMissileSpawnType::Sequential:
-		OnSpawnSequential();
-		break;
-	case EMissileSpawnType::AtOnce:
-		OnSpawnAtOnce();
-		break;
-	default:
-		break;
-	}
+	bAttack = true;
+}
+
+void UJHMissileSkill::OnEndAttack()
+{
+	Super::OnEndAttack();
+
+	CurrFireCount = 0;
 }
 
 /// <summary>
@@ -66,14 +79,19 @@ void UJHMissileSkill::OnAttack()
 /// </summary>
 void UJHMissileSkill::OnSpawnSequential()
 {
+	if(MissileSkillInfo.Num() <= 0)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("MissileSkillInfo가 없습니다."));
+		return;
+	}
+	
 	CurrTime += GetWorld()->DeltaTimeSeconds;
 
-	if (CurrTime > CreateTime) {
-		CurrTime = 0;
-
+	if (CurrTime > MissileSkillInfo[CurrSkillLevel].CreateTime) {
+		
 		if (SequentialMissileFactory == nullptr)
 		{
-			UE_LOG(LogTemp, Warning, TEXT("MissileFactory가 없습니다."))
+			UE_LOG(LogTemp, Warning, TEXT("MissileFactory가 없습니다."));
 		}
 		else
 		{
@@ -85,7 +103,16 @@ void UJHMissileSkill::OnSpawnSequential()
 
 			GetWorld()->SpawnActor<AJHMissile>(SequentialMissileFactory, SequentilSkillArrow->GetComponentLocation(), Rotation);
 		}
+
+		CurrFireCount++;
+		CurrTime = 0;
 	}
+
+	if (CurrFireCount >= MissileSkillInfo[CurrSkillLevel].MaxFireCount)
+	{
+		OnEndAttack();
+	}
+
 }
 
 /// <summary>
@@ -93,11 +120,17 @@ void UJHMissileSkill::OnSpawnSequential()
 /// </summary>
 void UJHMissileSkill::OnSpawnAtOnce()
 {
-	if (!bIsAttack)
+	if (MissileSkillInfo.Num() <= 0)
 	{
-		for (int i = 0; i < MaxCount; i++)
+		UE_LOG(LogTemp, Warning, TEXT("MissileSkillInfo가 없습니다."));
+		return;
+	}
+
+	//if (!bIsAttack)
+	//{
+		for (int i = 0; i < MissileSkillInfo[CurrSkillLevel].MaxFireCount; i++)
 		{
-			FRotator Rotation = FRotator(0, i * (360 / MaxCount), 0);
+			FRotator Rotation = FRotator(0, i * (360 / MissileSkillInfo[CurrSkillLevel].MaxFireCount), 0);
 
 			//AJHMissile* Missile = GetWorld()->SpawnActor<AJHMissile>(OnceMissileFactory, OnceSkillArrow->GetComponentLocation() + Missile->GetActorForwardVector() * Radius, Rotation);
 			AJHMissile* Missile = GetWorld()->SpawnActor<AJHMissile>(OnceMissileFactory, OnceSkillArrow->GetComponentLocation(), Rotation);
@@ -108,6 +141,6 @@ void UJHMissileSkill::OnSpawnAtOnce()
 			}
 		}
 
-		bIsAttack = true;
-	}
+	//	bIsAttack = true;
+	//}
 }

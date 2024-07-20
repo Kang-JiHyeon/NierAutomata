@@ -389,3 +389,8 @@ void AJHEnemy::SetActiveSound(bool bPlay)
 	else
 		AudioComp->Stop();
 }
+
+void AJHEnemy::OnEndAttackSkill()
+{
+	BossSkillManager->UpdatePattern();
+}

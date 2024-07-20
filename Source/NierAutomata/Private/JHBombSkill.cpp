@@ -19,13 +19,37 @@ void UJHBombSkill::BeginPlay()
 {
 	Super::BeginPlay();
 
-	MyActor = GetOwner();
 }
 
 // Called every frame
 void UJHBombSkill::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)
 {
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
+
+	// 공격 중이라면
+	if (bAttack)
+	{
+		// 발사 시간이 되었을 때 
+		CurrFireTime += DeltaTime;
+
+		if (CurrFireTime >= SkillInfo[CurrSkillLevel].FireTime)
+		{
+			// 폭탄 발사
+			Fire();
+
+			CurrFireTime = 0;
+			CurrFireCount++;
+			ForceIndex = ++ForceIndex % Forces.Num();
+		}
+
+		// 공격 횟수만큼 발사했다면 스킬 종료
+		if (CurrFireCount >= SkillInfo[CurrSkillLevel].MaxFireCount)
+		{
+			OnInitialize();
+
+			OnEndAttack();
+		}
+	}
 }
 
 void UJHBombSkill::Fire()
@@ -63,28 +87,21 @@ void UJHBombSkill::Fire()
 			UE_LOG(LogTemp, Warning, TEXT("Bottom Null!"));
 		}
 	}
-
-	ForceIndex = ++ForceIndex % Forces.Num();
-}
-
-void UJHBombSkill::SetSkillTime(float Value)
-{
-	SkillTime = Value;
 }
 
 void UJHBombSkill::OnInitialize()
 {
-	CurrSkillTime = 0;
+	Super::OnInitialize();
+
+	CurrFireTime = 0;
+	CurrFireCount = 0;
 	ForceIndex = 0;
+
 }
 
 void UJHBombSkill::OnAttack()
 {
-	CurrSkillTime += GetWorld()->DeltaTimeSeconds;
+	Super::OnAttack();
 
-	if (CurrSkillTime >= SkillTime) {
-
-		CurrSkillTime = 0;
-		Fire();
-	}
+	bAttack = true;
 }

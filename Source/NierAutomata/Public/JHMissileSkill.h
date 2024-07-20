@@ -3,8 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "Components/SceneComponent.h"
-#include "JHAttackInterface.h"
+#include "JHEnemySkillBase.h"
 #include "JHMissileSkill.generated.h"
 
 UENUM(BlueprintType)
@@ -13,9 +12,19 @@ enum class EMissileSpawnType : uint8
 	Sequential,
 	AtOnce,
 };
+USTRUCT(Atomic)
+struct FMissilSkillInfo
+{
+	GENERATED_USTRUCT_BODY()
+public:
+	UPROPERTY(EditAnywhere)
+	float CreateTime = 0.1f;
+	UPROPERTY(EditAnywhere)
+	int32 MaxFireCount = 10;
+};
 
 UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
-class NIERAUTOMATA_API UJHMissileSkill : public USceneComponent, public IJHAttackInterface
+class NIERAUTOMATA_API UJHMissileSkill : public UJHEnemySkillBase
 {
 	GENERATED_BODY()
 
@@ -32,8 +41,8 @@ public:
 	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
 
 	virtual void OnInitialize() override;
-
 	virtual void OnAttack() override;
+	virtual void OnEndAttack() override;
 
 public:
 
@@ -45,27 +54,32 @@ public:
     UPROPERTY(EditAnywhere)
     TSubclassOf<class AJHMissile> OnceMissileFactory;
 
-	//UPROPERTY(EditAnywhere, BlueprintReadWrite)
+    UPROPERTY()
 	class UArrowComponent* SequentilSkillArrow;
 
-	//UPROPERTY(EditAnywhere, BlueprintReadWrite)
+    UPROPERTY()
 	class UArrowComponent* OnceSkillArrow;
+
+	UPROPERTY(EditAnywhere)
+	TMap<ESkillLevel, FMissilSkillInfo> MissileSkillInfo;
 
 	UPROPERTY(EditAnywhere)
 	float RandomRotRange = 30;
 
 	UPROPERTY(EditAnywhere)
-	float CreateTime = 0.25f;
+	//float CreateTime = 0.25f;
 	float CurrTime;
 
-	UPROPERTY(EditAnywhere)
-	int32 MaxCount = 10;
+	int32 CurrFireCount = 0;
+	//UPROPERTY(EditAnywhere)
+	//int32 MaxFireCount = 10;
+	//int32 CurrCount = 0;
 
 	UPROPERTY(EditAnywhere)
 	float Radius = 200;
 	
-	bool bIsAttack;
-	bool bIsSequential;
+	//bool bIsAttack;
+	//bool bIsSequential;
 
 
 private:
