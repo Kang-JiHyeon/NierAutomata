@@ -19,9 +19,7 @@ void UJHSpiralMoveSkill::BeginPlay()
 {
 	Super::BeginPlay();
 
-	MyOwner = Cast<AJHEnemy>(GetOwner());
-
-	CenterPos = MyOwner->GetActorLocation();
+	CenterPos = MyEnemy->GetActorLocation();
 }
 
 
@@ -30,62 +28,120 @@ void UJHSpiralMoveSkill::TickComponent(float DeltaTime, ELevelTick TickType, FAc
 {
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
 
+	if (bAttack)
+	{
+		if (!bStartAttack)
+		{
+			SetCenterPosition(MyEnemy->GetActorLocation());
+			bStartAttack = true;
+
+			MyEnemy->SetSoundBase(AttackSound);
+			MyEnemy->SetActiveSound(true);
+		}
+
+		if (CurrTime < 0)
+		{
+			MyEnemy->SetActorLocation(CenterPos);
+
+			OnEnd();
+			return;
+		}
+
+		if (CurrTime > SkillInfoByLevel[CurrSkillLevel].MoveTime)
+			Sign = -1;
+
+		CurrTime += Sign * DeltaTime;
+
+		Radius += Sign * SkillInfoByLevel[CurrSkillLevel].RadiusSpeed * DeltaTime;
+		DegreeAngle += SkillInfoByLevel[CurrSkillLevel].AngleSpeed * DeltaTime;
+
+		if (FMath::Abs(DegreeAngle) > 360)
+			DegreeAngle = 0;
+
+		float RadianAngle = FMath::DegreesToRadians(DegreeAngle);
+
+		float X = CenterPos.X + FMath::Cos(RadianAngle) * Radius;
+		float Y = CenterPos.Y + FMath::Sin(RadianAngle) * Radius * -1.0f;
+
+		MyEnemy->SetActorLocation(CenterPos + FVector(X, Y, 0));
+	}
 }
 
 void UJHSpiralMoveSkill::OnInitialize()
 {
+	Super::OnInitialize();
+
 	CurrTime = 0;
 	Sign = 1;
 	Radius = 0;
 	CenterPos = FVector(0, 0, 0);
 	bStartAttack = false;
 
-	MyOwner->SetActiveSound(false);
+	MyEnemy->SetActiveSound(false);
 }
 
 void UJHSpiralMoveSkill::OnAttack()
 {
-	if (MyOwner == nullptr)
-	{
-		UE_LOG(LogTemp, Warning, TEXT("Owner가 Null입니다."));
-		return;
-	}
+	Super::OnAttack();
 
-	if (!bStartAttack)
-	{
-		SetCenterPosition(MyOwner->GetActorLocation());
-		bStartAttack = true;
+	//bAttack = true;
 
-		MyOwner->SetSoundBase(AttackSound);
-		MyOwner->SetActiveSound(true);
-	}
+	//if (MyEnemy == nullptr)
+	//{
+	//	UE_LOG(LogTemp, Warning, TEXT("Owner가 Null입니다."));
+	//	return;
+	//}
 
-	if (CurrTime < 0)
-	{
-		MyOwner->SetActorLocation(CenterPos);
-		return;
-	}
+	//if (!bStartAttack)
+	//{
+	//	SetCenterPosition(MyEnemy->GetActorLocation());
+	//	bStartAttack = true;
 
-	if (CurrTime > MoveTime)
-		Sign = -1;
+	//	MyEnemy->SetSoundBase(AttackSound);
+	//	MyEnemy->SetActiveSound(true);
+	//}
+
+	//if (CurrTime < 0)
+	//{
+	//	MyEnemy->SetActorLocation(CenterPos);
+
+	//	OnEnd();
+	//	return;
+	//}
+
+	//if (CurrTime > MoveTime)
+	//	Sign = -1;
 
 
-	float DeltaTime = GetWorld()->DeltaTimeSeconds;
+	//float DeltaTime = GetWorld()->DeltaTimeSeconds;
 
-	CurrTime += Sign * DeltaTime;
+	//CurrTime += Sign * DeltaTime;
 
-	Radius += Sign * RadiusSpeed * DeltaTime;
-	DegreeAngle += AngleSpeed * DeltaTime;
+	//Radius += Sign * RadiusSpeed * DeltaTime;
+	//DegreeAngle += AngleSpeed * DeltaTime;
 
-	if (FMath::Abs(DegreeAngle) > 360)
-		DegreeAngle = 0;
+	//if (FMath::Abs(DegreeAngle) > 360)
+	//	DegreeAngle = 0;
 
-	float RadianAngle = FMath::DegreesToRadians(DegreeAngle);
+	//float RadianAngle = FMath::DegreesToRadians(DegreeAngle);
 
-	float X = CenterPos.X + FMath::Cos(RadianAngle) * Radius;
-	float Y = CenterPos.Y + FMath::Sin(RadianAngle) * Radius * -1.0f;
+	//float X = CenterPos.X + FMath::Cos(RadianAngle) * Radius;
+	//float Y = CenterPos.Y + FMath::Sin(RadianAngle) * Radius * -1.0f;
 
-	MyOwner->SetActorLocation(CenterPos + FVector(X, Y, 0));
+	//MyEnemy->SetActorLocation(CenterPos + FVector(X, Y, 0));
+}
+
+void UJHSpiralMoveSkill::OnEnd()
+{
+	Super::OnEnd();
+
+	CurrTime = 0;
+	Sign = 1;
+	Radius = 0;
+	CenterPos = FVector(0, 0, 0);
+	bStartAttack = false;
+
+	MyEnemy->SetActiveSound(false);
 }
 
 void UJHSpiralMoveSkill::SetCenterPosition(FVector Position)

@@ -40,6 +40,7 @@ void UJHBossSkillManager::BeginPlay()
 		SkillBases.Add(BombSkill);
 		SkillBases.Add(MissileSkill);
 		SkillBases.Add(LaserBeamSkill);
+		SkillBases.Add(SpiralMoveSkill);
 
 		if (SkillPattern.Num() <= 0)
 		{
@@ -214,7 +215,7 @@ void UJHBossSkillManager::UpdatePattern()
 	MyOwnerFsm->OnChangeAttackPlay(true);
 
 
-	UE_LOG(LogTemp, Warning, TEXT("Update Pattern!"));
+	UE_LOG(LogTemp, Warning, TEXT("Update Pattern :  %d"), PatternIndex);
 }
 
 void UJHBossSkillManager::OnToggleSkillLevel()
@@ -233,6 +234,11 @@ void UJHBossSkillManager::OnToggleSkillLevel()
 	{
 		Skill->SetCurrSkillLevel(Level);
 	}
+}
+
+void UJHBossSkillManager::SetAttackPlay(bool bValue)
+{
+	bAttackPlay = bValue;
 }
 
 void UJHBossSkillManager::SetRotateType(ERotateType Type)

@@ -59,6 +59,7 @@ public:
 	TArray<class AJHLaserBeam*> LaserBeams;
 
 	bool bRotate;
+	bool bCreatedBeam;
 
 	FTimerHandle IdleTimerHandle;
 	FTimerHandle AttackTimerHandle;

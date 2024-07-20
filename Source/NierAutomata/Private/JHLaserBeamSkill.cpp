@@ -53,16 +53,16 @@ void UJHLaserBeamSkill::OnAttack()
 		return;
 	}
 
-	if (!bAttack)
+	if (!bCreatedBeam)
 	{
 		// LaserBeam 생성
 		CreateLaserBeams();
 
 		// 대기 시간이 지나면 공격 상태로 전환한다.
 		GetWorld()->GetTimerManager().SetTimer(IdleTimerHandle, this, &UJHLaserBeamSkill::SetActiveAttack, SkillInfoByLevel[CurrSkillLevel].IdleTime, false);
-	}
 
-	bAttack = true;
+		bCreatedBeam = true;
+	}
 }
 
 void UJHLaserBeamSkill::OnEnd()
@@ -70,7 +70,7 @@ void UJHLaserBeamSkill::OnEnd()
 	Super::OnEnd();
 
 	bRotate = false;
-	
+	bCreatedBeam = false;
 	DestroyLaserBeams();
 }
 

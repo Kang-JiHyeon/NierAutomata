@@ -115,7 +115,7 @@ public:
 	void OnAttack();
 	void UpdatePattern();
 	void OnToggleSkillLevel();
-
+	void SetAttackPlay(bool bValue);
 private:
 	void SetRotateType(ERotateType Type);
 };

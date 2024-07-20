@@ -41,6 +41,7 @@ void UJHEnemySkillBase::OnInitialize()
 
 void UJHEnemySkillBase::OnAttack()
 {
+	bAttack = true;
 }
 
 void UJHEnemySkillBase::OnEnd()

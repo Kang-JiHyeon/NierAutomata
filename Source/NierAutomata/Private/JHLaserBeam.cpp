@@ -89,7 +89,6 @@ void AJHLaserBeam::BeginPlay()
 
 	ObjectParams.RemoveObjectTypesToQuery(ECollisionChannel::ECC_Camera);
 	ObjectParams.RemoveObjectTypesToQuery(ECollisionChannel::ECC_GameTraceChannel3);
-	ObjectParams.RemoveObjectTypesToQuery(ECollisionChannel::ECC_Visibility);
 
 	// Beam 상태 Idle 상태로 변경
 	SetLaserBeamState(ELaserBeamState::Idle);
@@ -118,7 +117,6 @@ void AJHLaserBeam::Tick(float DeltaTime)
 		HitDistance = (Hit.Location - StartPos).Length();
 		// SlineMesh 길이 변경
 		SplineMesh->SetStartAndEnd(FVector::ZeroVector, FVector(100, 0, 0), FVector::ForwardVector * HitDistance, FVector(100, 0, 0), true);
-
 		// Hit Location
 		HitLocation = Hit.Location;
 		bHit = true;

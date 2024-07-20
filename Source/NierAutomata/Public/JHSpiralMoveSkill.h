@@ -3,13 +3,25 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "Components/ActorComponent.h"
-#include "JHAttackInterface.h"
+#include "JHEnemySkillBase.h"
 #include "JHSpiralMoveSkill.generated.h"
+
+USTRUCT(Atomic)
+struct FSpiralMoveSkillInfo
+{
+	GENERATED_USTRUCT_BODY()
+public:
+	UPROPERTY(EditAnywhere)
+	float RadiusSpeed = 700;
+	UPROPERTY(EditAnywhere)
+	float AngleSpeed = 100;
+	UPROPERTY(EditAnywhere)
+	float MoveTime = 3;
+};
 
 
 UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
-class NIERAUTOMATA_API UJHSpiralMoveSkill : public UActorComponent, public IJHAttackInterface
+class NIERAUTOMATA_API UJHSpiralMoveSkill : public UJHEnemySkillBase
 {
 	GENERATED_BODY()
 
@@ -26,45 +38,36 @@ public:
 	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
 
 	virtual void OnInitialize() override;
-
 	virtual void OnAttack() override;
+	virtual void OnEnd() override;
 
 private:
-
-	// 각도
-	UPROPERTY(VisibleAnywhere)
-	float Radius;
-
 	UPROPERTY(EditAnywhere)
-	float RadiusSpeed = 700;
+	TMap<ESkillLevel, FSpiralMoveSkillInfo> SkillInfoByLevel;
 
-	UPROPERTY(VisibleAnywhere)
-	float DegreeAngle;
+	//UPROPERTY(EditAnywhere)
+	//float RadiusSpeed = 700;
 
-	UPROPERTY(EditAnywhere)
-	float AngleSpeed = 100;
+	//UPROPERTY(EditAnywhere)
+	//float AngleSpeed = 100;
 
-	// 시간
-	UPROPERTY(EditAnywhere)
-	float MoveTime = 3;
+	//UPROPERTY(EditAnywhere)
+	//float MoveTime = 3;
 
 	UPROPERTY(VisibleAnywhere)
-	float CurrTime;
-
-	UPROPERTY(VisibleAnywhere)
-	float Sign = 1;
-
-	UPROPERTY(EditAnywhere)
-	bool bStartAttack;
+	float CurrTime = 0;
 
 	UPROPERTY(EditAnywhere)
 	USoundBase* AttackSound;
 
-	class AJHEnemy* MyOwner;
 	FVector CenterPos;
+	float Radius = 0;
+	float DegreeAngle = 0;
+	float Sign = 1;
+	bool bStartAttack;
 
 
-public:
+private:
 	void SetCenterPosition(FVector Position);
 
 };

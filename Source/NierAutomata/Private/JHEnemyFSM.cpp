@@ -150,6 +150,7 @@ void UJHEnemyFSM::DamageState()
 	{
 		CurrentTime = 0;
 		EnemyState = EEnemyState::Attack;
+		SkillManager->SetAttackPlay(true);
 		OnChangeAnimState();
 	}
 }

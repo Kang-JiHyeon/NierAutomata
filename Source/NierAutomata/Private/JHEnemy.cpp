@@ -146,6 +146,7 @@ AJHEnemy::AJHEnemy()
 
 	// SpiralMoveSkill
 	SpiralMoveSkill = CreateDefaultSubobject<UJHSpiralMoveSkill>(TEXT("SpiralMove Skill"));
+	SpiralMoveSkill->SetupAttachment(RootComponent);
 
 	// Particle System Component
 	PsFireComp = CreateDefaultSubobject<UParticleSystemComponent>(TEXT("PSDamageComp"));
