@@ -43,7 +43,7 @@ void UJHSpiralMoveSkill::TickComponent(float DeltaTime, ELevelTick TickType, FAc
 		{
 			MyEnemy->SetActorLocation(CenterPos);
 
-			OnEnd();
+			OnEndAttack();
 			return;
 		}
 
@@ -69,20 +69,20 @@ void UJHSpiralMoveSkill::TickComponent(float DeltaTime, ELevelTick TickType, FAc
 
 void UJHSpiralMoveSkill::OnInitialize()
 {
-	Super::OnInitialize();
+	//Super::OnInitialize();
 
-	CurrTime = 0;
-	Sign = 1;
-	Radius = 0;
-	CenterPos = FVector(0, 0, 0);
-	bStartAttack = false;
+	//CurrTime = 0;
+	//Sign = 1;
+	//Radius = 0;
+	//CenterPos = FVector(0, 0, 0);
+	//bStartAttack = false;
 
-	MyEnemy->SetActiveSound(false);
+	//MyEnemy->SetActiveSound(false);
 }
 
-void UJHSpiralMoveSkill::OnAttack()
+void UJHSpiralMoveSkill::OnStartAttack()
 {
-	Super::OnAttack();
+	Super::OnStartAttack();
 
 	//bAttack = true;
 
@@ -131,9 +131,15 @@ void UJHSpiralMoveSkill::OnAttack()
 	//MyEnemy->SetActorLocation(CenterPos + FVector(X, Y, 0));
 }
 
-void UJHSpiralMoveSkill::OnEnd()
+void UJHSpiralMoveSkill::OnEndAttack()
 {
-	Super::OnEnd();
+	Super::OnEndAttack();
+
+	//CurrTime = 0;
+	//Sign = 1;
+	//Radius = 0;
+	//CenterPos = FVector(0, 0, 0);
+	//bStartAttack = false;
 
 	CurrTime = 0;
 	Sign = 1;
@@ -142,6 +148,7 @@ void UJHSpiralMoveSkill::OnEnd()
 	bStartAttack = false;
 
 	MyEnemy->SetActiveSound(false);
+	//OnInitialize();
 }
 
 void UJHSpiralMoveSkill::SetCenterPosition(FVector Position)

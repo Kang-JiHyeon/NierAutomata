@@ -36,10 +36,6 @@ public :
 	UPROPERTY(EditAnywhere)
 	ESkillType SkillType;
 	UPROPERTY(EditAnywhere)
-	float CastTime;
-	UPROPERTY(EditAnywhere)
-	float DelayTime;
-	UPROPERTY(EditAnywhere)
 	ERotateType RotateType;
 	UPROPERTY(EditAnywhere)
 	float RotateSpeed;
@@ -77,38 +73,34 @@ public:
 	UPROPERTY(VisibleAnywhere)
 	class UJHEnemyFSM* MyOwnerFsm;
 
-	UPROPERTY(VisibleAnywhere)
-	class UJHBombSkill* BombSkill;
+	//UPROPERTY(VisibleAnywhere)
+	//class UJHBombSkill* BombSkill;
 
-	UPROPERTY(VisibleAnywhere)
-	class UJHMissileSkill* MissileSkill;
+	//UPROPERTY(VisibleAnywhere)
+	//class UJHMissileSkill* MissileSkill;
 
-	UPROPERTY(VisibleAnywhere)
-	class UJHLaserBeamSkill* LaserBeamSkill;
+	//UPROPERTY(VisibleAnywhere)
+	//class UJHLaserBeamSkill* LaserBeamSkill;
 
-	UPROPERTY(VisibleAnywhere)
-	class UJHSpiralMoveSkill* SpiralMoveSkill;
-
+	//UPROPERTY(VisibleAnywhere)
+	//class UJHSpiralMoveSkill* SpiralMoveSkill;
 
 	UPROPERTY()
-	TArray<class UJHEnemySkillBase*> SkillBases;
+	TMap<ESkillType, class UJHEnemySkillBase*> SkillBases;
 
 	UPROPERTY(EditAnywhere)
 	TArray<FSkillProperty> SkillPattern;
 
-	float MaxCastTime = 0;
-	float CurrCastTime = 0;
-	
-	float MaxDelayTime = 0;
-	float CurrDelayTime = 0;
-
 	int32 PatternIndex = 0;
 	
-	bool bAttackPlay = false;
+	bool bPlayAttack = false;
 	bool bDelay = false;
 
 	UPROPERTY(EditAnywhere)
 	bool bHardLevel = false;
+
+
+	FTimerHandle DelayTimerHandle;
 
 public:
 	void OnInitialize();
@@ -116,6 +108,9 @@ public:
 	void UpdatePattern();
 	void OnToggleSkillLevel();
 	void SetAttackPlay(bool bValue);
+
+	void OnDelayNextAttack();
+
 private:
 	void SetRotateType(ERotateType Type);
 };

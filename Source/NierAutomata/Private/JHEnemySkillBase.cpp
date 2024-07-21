@@ -37,14 +37,15 @@ void UJHEnemySkillBase::TickComponent(float DeltaTime, ELevelTick TickType, FAct
 
 void UJHEnemySkillBase::OnInitialize()
 {
+	bAttack = false;
 }
 
-void UJHEnemySkillBase::OnAttack()
+void UJHEnemySkillBase::OnStartAttack()
 {
 	bAttack = true;
 }
 
-void UJHEnemySkillBase::OnEnd()
+void UJHEnemySkillBase::OnEndAttack()
 {
 	MyEnemy->OnEndAttackSkill();
 	bAttack = false;

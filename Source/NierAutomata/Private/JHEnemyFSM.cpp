@@ -43,7 +43,7 @@ void UJHEnemyFSM::BeginPlay()
 		//DefaultMaterial = MyOwner->GetBodyMaterial();
 		
 		PsFireComp = MyOwner->PsFireComp;
-		PsFireComp->AttachToComponent(MyOwner->GetRootComponent(), FAttachmentTransformRules::KeepWorldTransform);
+		//PsFireComp->AttachToComponent(MyOwner->GetRootComponent(), FAttachmentTransformRules::KeepWorldTransform);
 		PsFireComp->SetActive(false);
 	}
 
@@ -217,6 +217,9 @@ void UJHEnemyFSM::OnDamageProcess(int32 Damage)
 	// 체력이 없으면 
 	if(Hp <= 0)
 	{
+		// Skill 초기화
+		SkillManager->OnInitialize();
+
 		// Die 상태로 전환
 		EnemyState = EEnemyState::Die;
 		CurrentTime = 0;
@@ -226,14 +229,20 @@ void UJHEnemyFSM::OnDamageProcess(int32 Damage)
 		MyOwner->NsExplosionComp->Activate(true);
 		PsFireComp->Activate(true);
 
-
 		// 폭발 사운드 재생
 		UGameplayStatics::PlaySound2D(GetWorld(), MyOwner->ExplosionSound);
+		UGameplayStatics::PlaySound2D(GetWorld(), MyOwner->ScreamSound);
 
 	}
 	// 일정 비율보다 낮고, 데미지 애니메이션을 시작한 적이 없다면
 	else if(HpRate < DamageRate && !bIsPlayDamageAnim)
 	{
+		// Skill 초기화
+		SkillManager->OnInitialize();
+		// Skill 의 난이도를 Hard 로 변경
+		SkillManager->OnToggleSkillLevel();
+
+
 		bIsPlayDamageAnim = true;
 
 		// Damage 파티클 재생
@@ -255,12 +264,12 @@ void UJHEnemyFSM::OnDamageProcess(int32 Damage)
         EnemyState = EEnemyState::Damage;
 		OnChangeAnimState();
 
-		// Skill 의 난이도를 Hard 로 변경
-		SkillManager->OnToggleSkillLevel();
-
 		// Sound 재생
 		UGameplayStatics::PlaySound2D(GetWorld(), MyOwner->ExplosionSound);
 		UGameplayStatics::PlaySound2D(GetWorld(), MyOwner->ScreamSound);
+
+
+
 	}
 
 	//UE_LOG(LogTemp, Warning, TEXT("Enemy Damage : %d , %f, %f"), Hp, MaxHp, HpRate);

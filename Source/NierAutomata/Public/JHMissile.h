@@ -60,6 +60,7 @@ private:
 
 	UPROPERTY(EditAnywhere)
 	USoundBase* TailSound;
+	
 	UPROPERTY(EditAnywhere)
 	USoundBase* ExplosionSound;
 

@@ -40,8 +40,8 @@ public:
 	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
 
 	virtual void OnInitialize() override;
-	virtual void OnAttack() override;
-	virtual void OnEnd() override;
+	virtual void OnStartAttack() override;
+	virtual void OnEndAttack() override;
 
 public:
 

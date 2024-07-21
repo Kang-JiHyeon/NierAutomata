@@ -32,15 +32,10 @@ void UJHBossSkillManager::BeginPlay()
 		// FSM
 		MyOwnerFsm = MyOwner->Fsm;
 		// Skill
-		BombSkill = MyOwner->BombSkill;
-		MissileSkill = MyOwner->MissileSkill;
-		LaserBeamSkill = MyOwner->LaserBeamSkill;
-		SpiralMoveSkill = MyOwner->SpiralMoveSkill;
-
-		SkillBases.Add(BombSkill);
-		SkillBases.Add(MissileSkill);
-		SkillBases.Add(LaserBeamSkill);
-		SkillBases.Add(SpiralMoveSkill);
+		SkillBases.Add(ESkillType::Bomb, MyOwner->BombSkill);
+		SkillBases.Add(ESkillType::Missile, MyOwner->MissileSkill);
+		SkillBases.Add(ESkillType::LaserBeam, MyOwner->LaserBeamSkill);
+		SkillBases.Add(ESkillType::SpiralMove, MyOwner->SpiralMoveSkill);
 
 		if (SkillPattern.Num() <= 0)
 		{
@@ -51,7 +46,7 @@ void UJHBossSkillManager::BeginPlay()
 		UpdatePattern();
 	
 	}
-	bAttackPlay = true;
+	bPlayAttack = true;
 }
 
 
@@ -65,22 +60,17 @@ void UJHBossSkillManager::TickComponent(float DeltaTime, ELevelTick TickType, FA
 
 void UJHBossSkillManager::OnInitialize()
 {
-	switch (CurrSkillType)
+	// 스킬 패턴이 없을 경우 종료
+	if (SkillPattern.Num() <= 0) {
+		UE_LOG(LogTemp, Warning, TEXT("SkillPattern Null!"));
+		return;
+	}
+	if (CurrSkillType != ESkillType::SpiralMove)
 	{
-	case ESkillType::Bomb:
-		BombSkill->OnInitialize();
-		break;
-	case ESkillType::Missile:
-		MissileSkill->OnInitialize();
-		break;
-	case ESkillType::LaserBeam:
-		LaserBeamSkill->OnInitialize();
-		break;
-	case ESkillType::SpiralMove:
-		SpiralMoveSkill->OnInitialize();
-		break;
-	default:
-		break;
+		SkillBases[CurrSkillType]->OnInitialize();
+
+		bPlayAttack = false;
+		MyOwnerFsm->OnChangeAttackPlay(false);
 	}
 }
 
@@ -94,83 +84,15 @@ void UJHBossSkillManager::OnAttack()
 	}
 
 	// 공격 애니메이션 
-	if (bAttackPlay)
+	if (bPlayAttack)
 	{
-		bAttackPlay = false;
+		bPlayAttack = false;
 		MyOwnerFsm->OnChangeAttackPlay(false);
 
-		switch (CurrSkillType)
-		{
-		case ESkillType::Bomb:
-			BombSkill->OnAttack();
-			break;
-		case ESkillType::Missile:
-			MissileSkill->OnAttack();
-			break;
-		case ESkillType::LaserBeam:
-			LaserBeamSkill->OnAttack();
-			break;
-		case ESkillType::SpiralMove:
-			SpiralMoveSkill->OnAttack();
-			break;
-		default:
-			break;
-		}
-
+		SkillBases[CurrSkillType]->OnStartAttack();
 	}
 
-	// 스킬 발동 시간이 최대 시간보다 클 경우
-	//if (CurrCastTime > MaxCastTime)
-	//{
-	//	// 지연 시간이 흐르다가 
-	//	CurrDelayTime += GetWorld()->DeltaTimeSeconds;
-
-	//	if (!bDelay) {
-	//		OnInitialize();
-	//		bDelay = true;
-
-	//	}
-
-	//	// 지연 시간이 지난 후
-	//	if (CurrDelayTime > MaxDelayTime)
-	//	{	
-	//		// 공격 패턴 변경
-	//		//PatternIndex = (++PatternIndex) % SkillPattern.Num();
-	//		UpdatePattern();
-
-	//		// Sound 재생
-	//		UGameplayStatics::PlaySound2D(GetWorld(), MyOwner->AttackSound);
-
-	//		// 애니메이션 초기화
-	//		MyOwnerFsm->OnChangeAttackPlay(true);
-	//		
-	//		bDelay = false;
-	//	}
-	////}
-	//else 
-	//{
-	//	CurrCastTime += GetWorld()->DeltaTimeSeconds;
-	//}
-
 	if (!bDelay) {
-		// 공격
-		//switch (CurrSkillType)
-		//{
-		//case ESkillType::Bomb:
-		//	BombSkill->OnAttack();
-		//	break;
-		//case ESkillType::Missile:
-		//	MissileSkill->OnAttack();
-		//	break;
-		//case ESkillType::LaserBeam:
-		//	LaserBeamSkill->OnAttack();
-		//	break;
-		//case ESkillType::SpiralMove:
-		//	SpiralMoveSkill->OnAttack();
-		//	break;
-		//default:
-		//	break;
-		//}
 
 		 // 회전
 		switch (CurrRotateType)
@@ -202,24 +124,17 @@ void UJHBossSkillManager::UpdatePattern()
 	CurrSkillType = SkillPattern[PatternIndex].SkillType;
 	CurrRotateType = SkillPattern[PatternIndex].RotateType;
 
-	MaxCastTime = SkillPattern[PatternIndex].CastTime;
-	MaxDelayTime = SkillPattern[PatternIndex].DelayTime;
-
 	MyOwner->SetRotSpeed(SkillPattern[PatternIndex].RotateSpeed);
 	
-	// 지속, 대기 시간 초기화
-	CurrCastTime = 0;
-	CurrDelayTime = 0;
-
-	bAttackPlay = true;
+	bPlayAttack = true;
 	MyOwnerFsm->OnChangeAttackPlay(true);
-
 
 	UE_LOG(LogTemp, Warning, TEXT("Update Pattern :  %d"), PatternIndex);
 }
 
 void UJHBossSkillManager::OnToggleSkillLevel()
 {
+	
 	if (SkillBases.Num() <= 0)
 	{
 		UE_LOG(LogTemp, Warning, TEXT("OnToggleSkillLevel : SkillBases Null!!"));
@@ -230,15 +145,21 @@ void UJHBossSkillManager::OnToggleSkillLevel()
 
 	ESkillLevel Level = bHardLevel ? ESkillLevel::Hard : ESkillLevel::Easy;
 
-	for (auto Skill : SkillBases)
+	for (auto SkillBase : SkillBases)
 	{
-		Skill->SetCurrSkillLevel(Level);
+		SkillBase.Value->SetCurrSkillLevel(Level);
 	}
 }
 
 void UJHBossSkillManager::SetAttackPlay(bool bValue)
 {
-	bAttackPlay = bValue;
+	bPlayAttack = bValue;
+}
+
+void UJHBossSkillManager::OnDelayNextAttack()
+{
+	// 3초 뒤에 다음 공격으로 업데이트
+	GetWorld()->GetTimerManager().SetTimer(DelayTimerHandle, this, &UJHBossSkillManager::UpdatePattern, 3, false);
 }
 
 void UJHBossSkillManager::SetRotateType(ERotateType Type)

@@ -314,8 +314,7 @@ void AJHEnemy::OnDamageProcess(UPrimitiveComponent* OverlappedComponent, AActor*
 {
 	// HP 
 	int32 Damage = 0;
-	// TODO : Weapon 중복 Overlap 해결
-	// 플레이어의 무기라면 제거하지 않음
+
 	if (OtherActor->Tags.Contains(TEXT("PlayerWeapon")))
 	{
 		Damage = UKismetMathLibrary::RandomIntegerInRange(5, 10);;
@@ -386,5 +385,5 @@ void AJHEnemy::SetActiveSound(bool bPlay)
 
 void AJHEnemy::OnEndAttackSkill()
 {
-	BossSkillManager->UpdatePattern();
+	BossSkillManager->OnDelayNextAttack();
 }

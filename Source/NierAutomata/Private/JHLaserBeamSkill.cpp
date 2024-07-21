@@ -41,11 +41,14 @@ void UJHLaserBeamSkill::OnInitialize()
 {
 	Super::OnInitialize();
 
+	DestroyLaserBeams();
+	bRotate = false;
+	bCreatedBeam = false;
 }
 
-void UJHLaserBeamSkill::OnAttack()
+void UJHLaserBeamSkill::OnStartAttack()
 {
-	Super::OnAttack();
+	Super::OnStartAttack();
 
 	if (SkillInfoByLevel.Num() <= 0)
 	{
@@ -65,13 +68,15 @@ void UJHLaserBeamSkill::OnAttack()
 	}
 }
 
-void UJHLaserBeamSkill::OnEnd()
+void UJHLaserBeamSkill::OnEndAttack()
 {
-	Super::OnEnd();
+	Super::OnEndAttack();
 
-	bRotate = false;
-	bCreatedBeam = false;
-	DestroyLaserBeams();
+	//bRotate = false;
+	//bCreatedBeam = false;
+	//DestroyLaserBeams();
+
+	OnInitialize();
 }
 
 /// <summary>
@@ -129,6 +134,6 @@ void UJHLaserBeamSkill::SetActiveAttack()
 	MyEnemy->SetRotSpeed(SkillInfoByLevel[CurrSkillLevel].RotSpeed);
 
 	// 공격 시간이 지난 후 공격을 종료
-	GetWorld()->GetTimerManager().SetTimer(AttackTimerHandle, this, &UJHLaserBeamSkill::OnEnd, SkillInfoByLevel[CurrSkillLevel].AttackTime);
+	GetWorld()->GetTimerManager().SetTimer(AttackTimerHandle, this, &UJHLaserBeamSkill::OnEndAttack, SkillInfoByLevel[CurrSkillLevel].AttackTime);
 }
 

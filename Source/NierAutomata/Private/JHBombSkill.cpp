@@ -19,6 +19,10 @@ void UJHBombSkill::BeginPlay()
 {
 	Super::BeginPlay();
 
+	CurrFireCount = 0;
+	CurrFireTime = 0;
+	ForceIndex = 0;
+
 }
 
 // Called every frame
@@ -51,16 +55,15 @@ void UJHBombSkill::TickComponent(float DeltaTime, ELevelTick TickType, FActorCom
 		// 공격 횟수만큼 발사했다면 스킬 종료
 		if (CurrFireCount >= SkillInfoByLevel[CurrSkillLevel].MaxFireCount)
 		{
-			OnInitialize();
+			//OnInitialize();
 
-			OnEnd();
+			OnEndAttack();
 		}
 	}
 }
 
 void UJHBombSkill::Fire()
 {
-
 	if (FirePositions.Num() <= 0) {
 		UE_LOG(LogTemp, Warning, TEXT("FirePositions null!!"));
 		return;
@@ -86,7 +89,7 @@ void UJHBombSkill::Fire()
 		{
  			Bomb->SetForce(Forces[ForceIndex]);
 			Bomb->Fire();
-			UE_LOG(LogTemp, Warning, TEXT("Bottom Fire!"));
+			//UE_LOG(LogTemp, Warning, TEXT("Bottom Fire!"));
 		}
 		else
 		{
@@ -105,9 +108,15 @@ void UJHBombSkill::OnInitialize()
 
 }
 
-void UJHBombSkill::OnAttack()
+void UJHBombSkill::OnStartAttack()
 {
-	Super::OnAttack();
+	Super::OnStartAttack();
 
-	bAttack = true;
+}
+
+void UJHBombSkill::OnEndAttack()
+{
+	Super::OnEndAttack();
+
+	OnInitialize();
 }

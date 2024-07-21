@@ -50,8 +50,7 @@ void UJHMissileSkill::OnInitialize()
 	Super::OnInitialize();
 
 	CurrTime = 0;
-	//bIsAttack = false;
-	bAttack = false;
+	CurrFireCount = 0;
 
 	//if (MissileSpawnType == EMissileSpawnType::Sequential)
 	//	MissileSpawnType = EMissileSpawnType::AtOnce;
@@ -59,18 +58,20 @@ void UJHMissileSkill::OnInitialize()
 	//	MissileSpawnType = EMissileSpawnType::Sequential;
 }
 
-void UJHMissileSkill::OnAttack()
+void UJHMissileSkill::OnStartAttack()
 {
-	Super::OnAttack();
+	Super::OnStartAttack();
 
 	bAttack = true;
 }
 
-void UJHMissileSkill::OnEnd()
+void UJHMissileSkill::OnEndAttack()
 {
-	Super::OnEnd();
+	Super::OnEndAttack();
 
-	CurrFireCount = 0;
+	//CurrFireCount = 0;
+
+	OnInitialize();
 }
 
 /// <summary>
@@ -110,7 +111,7 @@ void UJHMissileSkill::OnSpawnSequential()
 	// 최대 발사 횟수만큼 발사했으면 공격 종료
 	if (CurrFireCount >= SkillInfoByLevel[CurrSkillLevel].MaxFireCount)
 	{
-		OnEnd();
+		OnEndAttack();
 	}
 }
 
