@@ -14,6 +14,7 @@ enum class ESkillType : uint8
 	None,
 	Bomb,
 	Missile,
+	GuidedMissile,
 	LaserBeam,
 	SpiralMove,
 };

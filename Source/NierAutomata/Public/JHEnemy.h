@@ -77,6 +77,9 @@ public:
 	class UJHMissileSkill* MissileSkill;
 
 	UPROPERTY(EditAnywhere)
+	class UJHGuidedMissileSkill* GuidedMissileSkill;
+
+	UPROPERTY(EditAnywhere)
 	class UJHLaserBeamSkill* LaserBeamSkill;
 	
 	UPROPERTY(EditAnywhere)

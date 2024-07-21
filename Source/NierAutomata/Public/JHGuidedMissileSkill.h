@@ -4,59 +4,59 @@
 
 #include "CoreMinimal.h"
 #include "JHEnemySkillBase.h"
-#include "JHMissileSkill.generated.h"
+#include "JHGuidedMissileSkill.generated.h"
 
 USTRUCT(Atomic)
-struct FMissilSkillInfo
+struct FGuidedMissillInfo
 {
 	GENERATED_USTRUCT_BODY()
 public:
 	UPROPERTY(EditAnywhere)
-	float CreateTime = 0.1f;
+	float MaxFireTime;
 	UPROPERTY(EditAnywhere)
-	int32 MaxFireCount = 10;
+	float MaxFireCount;
+	UPROPERTY(EditAnywhere)
+	float MaxMissileCount;
+	UPROPERTY(EditAnywhere)
+	float Speed;
 };
 
-UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
-class NIERAUTOMATA_API UJHMissileSkill : public UJHEnemySkillBase
+
+UCLASS()
+class NIERAUTOMATA_API UJHGuidedMissileSkill : public UJHEnemySkillBase
 {
 	GENERATED_BODY()
-
-public:	
+	
+public:
 	// Sets default values for this component's properties
-	UJHMissileSkill();
+	UJHGuidedMissileSkill();
 
 protected:
 	// Called when the game starts
 	virtual void BeginPlay() override;
 
-public:	
+public:
 	// Called every frame
 	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
-	
+
 	virtual void OnInitialize() override;
 	virtual void OnStartAttack() override;
 	virtual void OnEndAttack() override;
 
-public:
+private:
 	UPROPERTY(EditAnywhere)
-	TMap<ESkillLevel, FMissilSkillInfo> SkillInfoByLevel;
+	TMap<ESkillLevel, FGuidedMissillInfo> SkillInfoByLevel;
 
-    UPROPERTY(EditAnywhere)
-    TSubclassOf<class AJHMissile> MissileFactory;
-
-    UPROPERTY()
-	class UArrowComponent* SkillArrow;
+	// 미사일 공장
+	UPROPERTY(EditAnywhere)
+	TSubclassOf<class AJHGuidedMissile> GuidedMissileFactory;
 
 	UPROPERTY(EditAnywhere)
-	float RandomRotRange = 30;
+	float Radius = 300;
 
-	UPROPERTY(EditAnywhere)
-	float Radius = 200;
-
-	float CurrTime;
-	int32 CurrFireCount = 0;
+	float CurrFireTime = 0;
+	float CurrFireCount = 0;
 
 private:
-	void OnFire();
+	void Fire();
 };

@@ -6,6 +6,7 @@
 #include "JHEnemyFsm.h"
 #include "JHBombSkill.h"
 #include "JHMissileSkill.h"
+#include "JHGuidedMissileSkill.h"
 #include "JHLaserBeamSkill.h"
 #include "JHSpiralMoveSkill.h"
 #include "Kismet/GameplayStatics.h"
@@ -34,6 +35,7 @@ void UJHBossSkillManager::BeginPlay()
 		// Skill
 		SkillBases.Add(ESkillType::Bomb, MyOwner->BombSkill);
 		SkillBases.Add(ESkillType::Missile, MyOwner->MissileSkill);
+		SkillBases.Add(ESkillType::GuidedMissile, MyOwner->GuidedMissileSkill);
 		SkillBases.Add(ESkillType::LaserBeam, MyOwner->LaserBeamSkill);
 		SkillBases.Add(ESkillType::SpiralMove, MyOwner->SpiralMoveSkill);
 

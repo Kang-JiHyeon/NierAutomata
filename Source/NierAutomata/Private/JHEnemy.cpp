@@ -8,6 +8,7 @@
 #include "JHMissile.h"
 #include "JHLaserBeam.h"
 #include "JHMissileSkill.h"
+#include "JHGuidedMissileSkill.h"
 #include "JHLaserBeamSkill.h"
 #include "JHSpiralMoveSkill.h"
 #include "JHBossSkillManager.h"
@@ -119,20 +120,17 @@ AJHEnemy::AJHEnemy()
 	OnceMissileArrow->SetupAttachment(MissileSkill);
 	OnceMissileArrow->SetRelativeLocation(FVector(0, 0, -35));
 
-	MissileSkill->SequentilSkillArrow = SequentialMissileArrow;
-	MissileSkill->OnceSkillArrow = OnceMissileArrow;
+	MissileSkill->SkillArrow = SequentialMissileArrow;
 	
 	ConstructorHelpers::FClassFinder<AJHMissile> SequentialMissileFinder(TEXT("/Script/Engine.Blueprint'/Game/Blueprints/Kang/BP_JHMissile.BP_JHMissile_C'"));
 	if (SequentialMissileFinder.Succeeded())
 	{
-		MissileSkill->SequentialMissileFactory = SequentialMissileFinder.Class;
+		MissileSkill->MissileFactory = SequentialMissileFinder.Class;
 	}
 
-	ConstructorHelpers::FClassFinder<AJHMissile> AtOnceMissileFinder(TEXT("/Script/Engine.Blueprint'/Game/Blueprints/Kang/BP_JHMissile_AtOnce.BP_JHMissile_AtOnce_C'"));
-	if (AtOnceMissileFinder.Succeeded())
-	{
-		MissileSkill->OnceMissileFactory = AtOnceMissileFinder.Class;
-	}
+	// Guided Missile
+	GuidedMissileSkill = CreateDefaultSubobject<UJHGuidedMissileSkill>(TEXT("Guided Missile Skill"));
+	GuidedMissileSkill->SetupAttachment(RootComponent);
 
 	// LaserBeam
 	LaserBeamSkill = CreateDefaultSubobject<UJHLaserBeamSkill>(TEXT("LaserBeam Skill"));
