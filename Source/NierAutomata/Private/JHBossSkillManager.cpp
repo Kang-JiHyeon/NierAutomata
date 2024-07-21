@@ -67,15 +67,13 @@ void UJHBossSkillManager::OnInitialize()
 		UE_LOG(LogTemp, Warning, TEXT("SkillPattern Null!"));
 		return;
 	}
-	if (CurrSkillType != ESkillType::SpiralMove)
-	{
-		SkillBases[CurrSkillType]->OnInitialize();
 
-		bPlayAttack = false;
-		MyOwnerFsm->OnChangeAttackPlay(false);
-	}
+	SkillBases[CurrSkillType]->OnInitialize();
+
+	bPlayAttack = false;
+	MyOwnerFsm->OnChangeAttackPlay(false);
+
 }
-
 
 void UJHBossSkillManager::OnAttack()
 {
@@ -117,11 +115,27 @@ void UJHBossSkillManager::OnAttack()
 	}
 }
 
+void UJHBossSkillManager::OnEnd()
+{
+	// 스킬 패턴이 없을 경우 종료
+	if (SkillPattern.Num() <= 0) {
+		UE_LOG(LogTemp, Warning, TEXT("SkillPattern Null!"));
+		return;
+	}
+
+	SkillBases[CurrSkillType]->OnEndAttack();
+
+	bPlayAttack = false;
+	MyOwnerFsm->OnChangeAttackPlay(false);
+}
+
+
 void UJHBossSkillManager::UpdatePattern()
 {
 	// 랜덤 스킬 인덱스 
-	PatternIndex = FMath::RandRange(0, SkillPattern.Num() - 1);
-	
+	int32 RandIndex = FMath::RandRange(0, SkillPattern.Num() - 1);
+	PatternIndex = RandIndex != PatternIndex ? RandIndex : (RandIndex + 1) % SkillPattern.Num();
+
 	// 스킬 정보 초기화
 	CurrSkillType = SkillPattern[PatternIndex].SkillType;
 	CurrRotateType = SkillPattern[PatternIndex].RotateType;
