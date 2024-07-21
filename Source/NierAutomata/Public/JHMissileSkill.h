@@ -3,19 +3,22 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "Components/SceneComponent.h"
-#include "JHAttackInterface.h"
+#include "JHEnemySkillBase.h"
 #include "JHMissileSkill.generated.h"
 
-UENUM(BlueprintType)
-enum class EMissileSpawnType : uint8
+USTRUCT(Atomic)
+struct FMissilSkillInfo
 {
-	Sequential,
-	AtOnce,
+	GENERATED_USTRUCT_BODY()
+public:
+	UPROPERTY(EditAnywhere)
+	float CreateTime = 0.1f;
+	UPROPERTY(EditAnywhere)
+	int32 MaxFireCount = 10;
 };
 
 UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
-class NIERAUTOMATA_API UJHMissileSkill : public USceneComponent, public IJHAttackInterface
+class NIERAUTOMATA_API UJHMissileSkill : public UJHEnemySkillBase
 {
 	GENERATED_BODY()
 
@@ -30,45 +33,30 @@ protected:
 public:	
 	// Called every frame
 	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
-
+	
 	virtual void OnInitialize() override;
-
-	virtual void OnAttack() override;
+	virtual void OnStartAttack() override;
+	virtual void OnEndAttack() override;
 
 public:
-
-	EMissileSpawnType MissileSpawnType = EMissileSpawnType::Sequential;
-
-    UPROPERTY(EditAnywhere)
-    TSubclassOf<class AJHMissile> SequentialMissileFactory;
+	UPROPERTY(EditAnywhere)
+	TMap<ESkillLevel, FMissilSkillInfo> SkillInfoByLevel;
 
     UPROPERTY(EditAnywhere)
-    TSubclassOf<class AJHMissile> OnceMissileFactory;
+    TSubclassOf<class AJHMissile> MissileFactory;
 
-	//UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	class UArrowComponent* SequentilSkillArrow;
-
-	//UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	class UArrowComponent* OnceSkillArrow;
+    UPROPERTY()
+	class UArrowComponent* SkillArrow;
 
 	UPROPERTY(EditAnywhere)
 	float RandomRotRange = 30;
 
 	UPROPERTY(EditAnywhere)
-	float CreateTime = 0.25f;
-	float CurrTime;
-
-	UPROPERTY(EditAnywhere)
-	int32 MaxCount = 10;
-
-	UPROPERTY(EditAnywhere)
 	float Radius = 200;
-	
-	bool bIsAttack;
-	bool bIsSequential;
 
+	float CurrTime;
+	int32 CurrFireCount = 0;
 
 private:
-	void OnSpawnSequential();
-	void OnSpawnAtOnce();
+	void OnFire();
 };

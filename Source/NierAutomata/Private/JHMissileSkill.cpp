@@ -1,6 +1,4 @@
 // Fill out your copyright notice in the Description page of Project Settings.
-
-
 #include "JHMissileSkill.h"
 #include "Components/ArrowComponent.h"
 #include "JHEnemy.h"
@@ -23,7 +21,6 @@ void UJHMissileSkill::BeginPlay()
 	Super::BeginPlay();
 
 	CurrTime = 0;
-	bIsAttack = false;	
 }
 
 
@@ -32,48 +29,53 @@ void UJHMissileSkill::TickComponent(float DeltaTime, ELevelTick TickType, FActor
 {
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
 
+	if (bAttack)
+	{
+		OnFire();
+
+	}
 }
 
 void UJHMissileSkill::OnInitialize()
 {
-	CurrTime = 0;
-	bIsAttack = false;
+	Super::OnInitialize();
 
-	if (MissileSpawnType == EMissileSpawnType::Sequential)
-		MissileSpawnType = EMissileSpawnType::AtOnce;
-	else
-		MissileSpawnType = EMissileSpawnType::Sequential;
+	CurrTime = 0;
+	CurrFireCount = 0;
 }
 
-void UJHMissileSkill::OnAttack()
+void UJHMissileSkill::OnStartAttack()
 {
+	Super::OnStartAttack();
 
-	switch (MissileSpawnType)
-	{
-	case EMissileSpawnType::Sequential:
-		OnSpawnSequential();
-		break;
-	case EMissileSpawnType::AtOnce:
-		OnSpawnAtOnce();
-		break;
-	default:
-		break;
-	}
+	bAttack = true;
+}
+
+void UJHMissileSkill::OnEndAttack()
+{
+	Super::OnEndAttack();
+
+	OnInitialize();
 }
 
 /// <summary>
 /// 일정 시간마다 발사 
 /// </summary>
-void UJHMissileSkill::OnSpawnSequential()
+void UJHMissileSkill::OnFire()
 {
+	if(SkillInfoByLevel.Num() <= 0)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("MissileSkillInfo가 없습니다."));
+		return;
+	}
+	
 	CurrTime += GetWorld()->DeltaTimeSeconds;
 
-	if (CurrTime > CreateTime) {
-		CurrTime = 0;
-
-		if (SequentialMissileFactory == nullptr)
+	if (CurrTime > SkillInfoByLevel[CurrSkillLevel].CreateTime) {
+		
+		if (MissileFactory == nullptr)
 		{
-			UE_LOG(LogTemp, Warning, TEXT("MissileFactory가 없습니다."))
+			UE_LOG(LogTemp, Warning, TEXT("MissileFactory가 없습니다."));
 		}
 		else
 		{
@@ -83,31 +85,16 @@ void UJHMissileSkill::OnSpawnSequential()
 
 			FRotator Rotation = FRotator(RandX, RandY, RandZ);
 
-			GetWorld()->SpawnActor<AJHMissile>(SequentialMissileFactory, SequentilSkillArrow->GetComponentLocation(), Rotation);
+			GetWorld()->SpawnActor<AJHMissile>(MissileFactory, SkillArrow->GetComponentLocation(), Rotation);
 		}
+
+		CurrFireCount++;
+		CurrTime = 0;
 	}
-}
 
-/// <summary>
-/// n발을 동시에 한번만 발사
-/// </summary>
-void UJHMissileSkill::OnSpawnAtOnce()
-{
-	if (!bIsAttack)
+	// 최대 발사 횟수만큼 발사했으면 공격 종료
+	if (CurrFireCount >= SkillInfoByLevel[CurrSkillLevel].MaxFireCount)
 	{
-		for (int i = 0; i < MaxCount; i++)
-		{
-			FRotator Rotation = FRotator(0, i * (360 / MaxCount), 0);
-
-			//AJHMissile* Missile = GetWorld()->SpawnActor<AJHMissile>(OnceMissileFactory, OnceSkillArrow->GetComponentLocation() + Missile->GetActorForwardVector() * Radius, Rotation);
-			AJHMissile* Missile = GetWorld()->SpawnActor<AJHMissile>(OnceMissileFactory, OnceSkillArrow->GetComponentLocation(), Rotation);
-
-			if (Missile != nullptr)
-			{
-				Missile->SetActorLocation(Missile->GetActorLocation() + Missile->GetActorForwardVector() * Radius);
-			}
-		}
-
-		bIsAttack = true;
+		OnEndAttack();
 	}
 }

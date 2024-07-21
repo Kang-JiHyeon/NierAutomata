@@ -4,38 +4,38 @@
 
 #include "CoreMinimal.h"
 #include "JHEnemySkillBase.h"
-#include "JHLaserBeamSkill.generated.h"
+#include "JHGuidedMissileSkill.generated.h"
 
 USTRUCT(Atomic)
-struct FLaserBeamSkillInfo
+struct FGuidedMissillInfo
 {
 	GENERATED_USTRUCT_BODY()
 public:
 	UPROPERTY(EditAnywhere)
-	float IdleTime = 3;
+	float MaxFireTime;
 	UPROPERTY(EditAnywhere)
-	float AttackTime = 10;
+	float MaxFireCount;
 	UPROPERTY(EditAnywhere)
-	int32 MaxCount = 10;
+	float MaxMissileCount;
 	UPROPERTY(EditAnywhere)
-	float RotSpeed = 20;
+	float Speed;
 };
 
 
-UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
-class NIERAUTOMATA_API UJHLaserBeamSkill : public UJHEnemySkillBase
+UCLASS()
+class NIERAUTOMATA_API UJHGuidedMissileSkill : public UJHEnemySkillBase
 {
 	GENERATED_BODY()
-
-public:	
+	
+public:
 	// Sets default values for this component's properties
-	UJHLaserBeamSkill();
+	UJHGuidedMissileSkill();
 
 protected:
 	// Called when the game starts
 	virtual void BeginPlay() override;
 
-public:	
+public:
 	// Called every frame
 	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
 
@@ -43,31 +43,20 @@ public:
 	virtual void OnStartAttack() override;
 	virtual void OnEndAttack() override;
 
-public:
+private:
+	UPROPERTY(EditAnywhere)
+	TMap<ESkillLevel, FGuidedMissillInfo> SkillInfoByLevel;
+
+	// 미사일 공장
+	UPROPERTY(EditAnywhere)
+	TSubclassOf<class AJHGuidedMissile> GuidedMissileFactory;
 
 	UPROPERTY(EditAnywhere)
-	TMap<ESkillLevel, FLaserBeamSkillInfo> SkillInfoByLevel;
+	float Radius = 300;
 
-	UPROPERTY(EditAnywhere)
-	TSubclassOf<class AJHLaserBeam> SkillFactory;
-
-	UPROPERTY(EditAnywhere)
-	float Radius = 350;
-
-
-	UPROPERTY()
-	TArray<class AJHLaserBeam*> LaserBeams;
-
-	bool bRotate;
-	bool bCreatedBeam;
-
-	FTimerHandle IdleTimerHandle;
-	FTimerHandle AttackTimerHandle;
+	float CurrFireTime = 0;
+	float CurrFireCount = 0;
 
 private:
-	
-	void CreateLaserBeams();
-	void DestroyLaserBeams();
-
-	void SetActiveAttack();
+	void Fire();
 };

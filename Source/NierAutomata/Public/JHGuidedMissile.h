@@ -4,16 +4,16 @@
 
 #include "CoreMinimal.h"
 #include "JHEnemySkill.h"
-#include "JHMissile.generated.h"
+#include "JHGuidedMissile.generated.h"
 
 UCLASS()
-class NIERAUTOMATA_API AJHMissile : public AJHEnemySkill
+class NIERAUTOMATA_API AJHGuidedMissile : public AJHEnemySkill
 {
 	GENERATED_BODY()
 	
 public:	
 	// Sets default values for this actor's properties
-	AJHMissile();
+	AJHGuidedMissile();
 
 protected:
 	// Called when the game starts or when spawned
@@ -22,13 +22,14 @@ protected:
 public:	
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
+
 	virtual void NotifyActorBeginOverlap(AActor* OtherActor) override;
 
-public:
+
 
 	UPROPERTY(EditAnywhere)
 	class UBoxComponent* BoxComp;
-	
+
 	UPROPERTY(EditAnywhere)
 	class UStaticMeshComponent* MeshComp;
 
@@ -38,36 +39,32 @@ public:
 	UPROPERTY(EditAnywhere)
 	TSubclassOf<class UCameraShakeBase> CameraShake;
 
-private:
-	
-	UPROPERTY(VisibleAnywhere)
-	APawn* Target;
+	UPROPERTY(EditAnywhere)
+	class USoundBase* ExplosionSound;
 
 	UPROPERTY(EditAnywhere)
-	float OffsetForward;
+	class USoundAttenuation* Attenuation;
 
 	UPROPERTY(EditAnywhere)
-	float OffsetUp;
+	AActor* Target;
 
 	UPROPERTY(EditAnywhere)
-	float MoveSpeed = 2000;
+	float UpTime = 1;
+	float CurrUpTime = 0;
 
 	UPROPERTY(EditAnywhere)
-	float InterpSpeed = 5;
+	float TraceTime = 5;
+	float CurrTraceTime = 0;
 
 	UPROPERTY(EditAnywhere)
-	float TraceDelayTime = 0.5f;
+	float Speed = 3000;
 
-	UPROPERTY(EditAnywhere)
-	USoundBase* TailSound;
-	
-	UPROPERTY(EditAnywhere)
-	USoundBase* ExplosionSound;
-
-	UPROPERTY(EditAnywhere)
-	USoundAttenuation* Attenuation;
-
-	FVector TargetPosition;
 	FVector Direction;
-	float CurrTime;
+	FRotator TargetRotator;
+	bool bRotate;
+
+public:
+	void OnExplosion();
+	void SetSpeed(float Value);
+
 };

@@ -78,13 +78,14 @@ void AJHLaserBeam::BeginPlay()
 
 	// Hit 대상 설정
 	AActor* Player = GetWorld()->GetFirstPlayerController()->GetPawn();
-	// ray
+
+	// ray Ignore
 	Params.AddIgnoredActor(GetOwner());
 	Params.AddIgnoredActor(Player);
 
 	ObjectParams.AddObjectTypesToQuery(ECollisionChannel::ECC_WorldStatic);
 	ObjectParams.AddObjectTypesToQuery(ECollisionChannel::ECC_WorldDynamic);
-	ObjectParams.AddObjectTypesToQuery(ECollisionChannel::ECC_PhysicsBody);
+	//ObjectParams.AddObjectTypesToQuery(ECollisionChannel::ECC_PhysicsBody);
 
 	ObjectParams.RemoveObjectTypesToQuery(ECollisionChannel::ECC_Camera);
 	ObjectParams.RemoveObjectTypesToQuery(ECollisionChannel::ECC_GameTraceChannel3);
@@ -116,7 +117,6 @@ void AJHLaserBeam::Tick(float DeltaTime)
 		HitDistance = (Hit.Location - StartPos).Length();
 		// SlineMesh 길이 변경
 		SplineMesh->SetStartAndEnd(FVector::ZeroVector, FVector(100, 0, 0), FVector::ForwardVector * HitDistance, FVector(100, 0, 0), true);
-
 		// Hit Location
 		HitLocation = Hit.Location;
 		bHit = true;
@@ -160,9 +160,7 @@ void AJHLaserBeam::SetLaserBeamState(ELaserBeamState State)
 	// 현재 state 업데이트
 	CurLaserBeamState = State;
 
-	// collision 활성화 여부 설정
 	bool bIdle = State == ELaserBeamState::Idle;
-	SplineMesh->SetGenerateOverlapEvents(!bIdle);
 
 	// StaticMesh, Material 변경
 	FLaserBeamInfo LaserInfo = bIdle ? IdleStyle : AttackStyle;
@@ -170,18 +168,31 @@ void AJHLaserBeam::SetLaserBeamState(ELaserBeamState State)
 	SplineMesh->SetStaticMesh(LaserInfo.StaticMesh);
 	SplineMesh->SetMaterial(0, LaserInfo.Material);
 
+	// Scale 변경
 	FVector2D TargetScale = FVector2D(LaserInfo.Scale);
 	SplineMesh->SetStartScale(TargetScale);
 	SplineMesh->SetEndScale(TargetScale);
 
-	SplineMesh->SetVisibility(bIdle);
-
 	// Laser마다 다른 Sound로 교체
 	LaserAudioComp->SetSound(LaserInfo.Sound);
 
-	// Attack Laser일 경우 Effect 재생
-	if (!bIdle)
+	// 노출 활성화 여부 설정
+	SplineMesh->SetVisibility(bIdle);
+
+	// 대기 상태일 때
+	if (bIdle)
 	{
+		// Collision 비활성화
+		SplineMesh->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+	}
+	// 공격 상태일 때
+	else
+	{
+		// Collision 활성화
+		SplineMesh->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);
+		// Effect 재생
 		UGameplayStatics::PlaySound2D(GetWorld(), EffectSound, 0.1f);
 	}
+	
+
 }
