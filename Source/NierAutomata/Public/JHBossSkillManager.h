@@ -106,6 +106,7 @@ public:
 public:
 	void OnInitialize();
 	void OnAttack();
+	void OnEnd();
 	void UpdatePattern();
 	void OnToggleSkillLevel();
 	void SetAttackPlay(bool bValue);

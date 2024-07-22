@@ -217,8 +217,8 @@ void UJHEnemyFSM::OnDamageProcess(int32 Damage)
 	// 체력이 없으면 
 	if(Hp <= 0)
 	{
-		// Skill 초기화
-		SkillManager->OnInitialize();
+		// Skill 종료
+		SkillManager->OnEnd();
 
 		// Die 상태로 전환
 		EnemyState = EEnemyState::Die;
@@ -241,7 +241,6 @@ void UJHEnemyFSM::OnDamageProcess(int32 Damage)
 		SkillManager->OnInitialize();
 		// Skill 의 난이도를 Hard 로 변경
 		SkillManager->OnToggleSkillLevel();
-
 
 		bIsPlayDamageAnim = true;
 
@@ -267,8 +266,6 @@ void UJHEnemyFSM::OnDamageProcess(int32 Damage)
 		// Sound 재생
 		UGameplayStatics::PlaySound2D(GetWorld(), MyOwner->ExplosionSound);
 		UGameplayStatics::PlaySound2D(GetWorld(), MyOwner->ScreamSound);
-
-
 
 	}
 

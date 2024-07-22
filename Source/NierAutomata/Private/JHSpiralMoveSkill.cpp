@@ -69,7 +69,7 @@ void UJHSpiralMoveSkill::TickComponent(float DeltaTime, ELevelTick TickType, FAc
 
 void UJHSpiralMoveSkill::OnInitialize()
 {
-	//Super::OnInitialize();
+	Super::OnInitialize();
 
 	//CurrTime = 0;
 	//Sign = 1;
@@ -134,13 +134,6 @@ void UJHSpiralMoveSkill::OnStartAttack()
 void UJHSpiralMoveSkill::OnEndAttack()
 {
 	Super::OnEndAttack();
-
-	//CurrTime = 0;
-	//Sign = 1;
-	//Radius = 0;
-	//CenterPos = FVector(0, 0, 0);
-	//bStartAttack = false;
-
 	CurrTime = 0;
 	Sign = 1;
 	Radius = 0;
